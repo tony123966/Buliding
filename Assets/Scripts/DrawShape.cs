@@ -52,6 +52,7 @@ public class DrawShape : MonoBehaviour
 		for (int i = 0; i < ControlPointPos.Length; i++)
 		{
 			GameObject clone = Instantiate(TranslateControlPoint,(ControlPointPos[i]), TranslateControlPoint.transform.rotation) as GameObject;
+			//ZZZ
 		}
 	}
 }
