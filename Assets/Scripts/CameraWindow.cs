@@ -3,7 +3,7 @@ using System.Collections;
 
 public class CameraWindow : MonoBehaviour{
 
-	private Rect windowPosition;//儲存可被拖曳的window的位置
+	public Rect windowPosition;//儲存可被拖曳的window的位置
 	private Rect windowPositionDrag;//儲存可被拖曳的window的位置
 	private Rect buttonPosition;//儲存button在window內的位置
 	private Rect buttonPositionScale;//儲存button在window內的位置
@@ -28,11 +28,12 @@ public class CameraWindow : MonoBehaviour{
 
 	public Camera camera;
 	public string cameraName;
-	private Rect cameraRectPos;//儲存camera在window內的位置
-	private Rect cameraRectRect;
+	//儲存camera在window內的位置
+	public Rect cameraRect;
 
-	private DrawShape drawShape;
 
+	public FixedWindows fixedWindows;
+	public GameObject TranslateControlPoint;
 	void initSetting() 
 	{
 		windowWidth = 200f;
@@ -44,7 +45,7 @@ public class CameraWindow : MonoBehaviour{
 		buttonWidthScale = 5f;//按鈕的寬度
 		buttonHeightScale = 5f;//按鈕的高度
 
-		drawShape = GameObject.Find("ShapeController").GetComponent<DrawShape>();
+		fixedWindows = GameObject.Find("Main Camera").GetComponent<FixedWindows>();
 		camera = GameObject.Find(cameraName).GetComponent<Camera>();
 
 		windowPositionDrag = new Rect(0, 0, windowWidthDrag, windowHeightDrag); 
@@ -81,6 +82,7 @@ public class CameraWindow : MonoBehaviour{
 		setButtonPosition();
 
 		GUI.BringWindowToFront(windowsId);
+		DrawQuidHouse(new Vector3(1,1,0),new Vector3(10,30,0), Color.red);
 	}
 	public void setMoveWindowPosition(float PosX, float PosY)//設定window的位置
 	{
@@ -111,14 +113,15 @@ public class CameraWindow : MonoBehaviour{
 			// viewport adjustment code:
 			float w = Screen.width;
 			float h = Screen.height;
+			float border=10f;
 			// make a copy of the window rect...
-			cameraRectRect = windowPosition;
-			cameraRectRect.y += 20; // add the top margin...
-			cameraRectRect.x += 10; // add the left margin...
-			cameraRectRect.width -= 20; // adjust width to include left + right margins...
-			cameraRectRect.height -= 30; // adjust height to include top + down margins... 
+			cameraRect = windowPosition;
+			cameraRect.y += windowHeightDrag + border; // add the top margin...
+			cameraRect.x += border; // add the left margin...
+			cameraRect.width -= border*2; // adjust width to include left + right margins...
+			cameraRect.height -= (border*2 + windowHeightDrag); // adjust height to include top + down margins... 
 			// set the camera viewport size:
-			camera.rect = new Rect(cameraRectRect.x / w, (h - cameraRectRect.y - cameraRectRect.height) / h, cameraRectRect.width / w, cameraRectRect.height / h);
+			camera.rect = new Rect(cameraRect.x / w, (h - cameraRect.y - cameraRect.height) / h, cameraRect.width / w, cameraRect.height / h);
 
 		}
 	}
@@ -150,16 +153,44 @@ public class CameraWindow : MonoBehaviour{
 			windowPositionDrag = new Rect(0, 0, windowWidthDrag, windowHeightDrag); 
 			GUI.DragWindow(windowPositionDrag);
 			Vector3 Pos = new Vector3(Input.mousePosition.x,Screen.height-Input.mousePosition.y,0);
-			if (windowPosition.Contains(Pos) && drawShape.chooseObj==null)
+			if (windowPosition.Contains(Pos) && fixedWindows.chooseObj == null)
 			{
 				float offsetX = windowPosition.width * 0.05f;
 				float offsetY = windowPosition.height * 0.05f;
-				drawShape.chooseCamera = camera;
-				drawShape.choosewindowRect = new Rect(windowPosition.x + offsetX, windowPosition.y + offsetY + windowHeightDrag, windowPosition.width - 2 * offsetX, windowPosition.height - 2 * offsetY - windowHeightDrag);
+				fixedWindows.chooseCamera = camera;
+				fixedWindows.choosewindowRect = new Rect(windowPosition.x + offsetX, windowPosition.y + offsetY + windowHeightDrag, windowPosition.width - 2 * offsetX, windowPosition.height - 2 * offsetY - windowHeightDrag);
 			}
 		}
 
 	}
+	public void DrawQuidHouse(Vector3 start,Vector3 end, Color color)
+	{
+		float scaleX = cameraRect.width / Screen.width;
+		float scaleY = cameraRect.height / Screen.height;
+		Vector3 []conrolPoint=new Vector3[]
+		{
+			new Vector3(start.x,start.y,0)+new Vector3(cameraRect.x,cameraRect.y,0),	
+			new Vector3(end.x,start.y,0)+new Vector3(cameraRect.x,cameraRect.y,0),	
+			new Vector3(start.x,end.y,0)+new Vector3(cameraRect.x,cameraRect.y,0),	
+			new Vector3(end.x,end.y,0)+new Vector3(cameraRect.x,cameraRect.y,0),	
+		};
+		for(int i=0;i<conrolPoint.Length;i++){
+
+			Vector3 newPos = Camera.main.ScreenToViewportPoint(conrolPoint[i]);
+			newPos = camera.ScreenToWorldPoint(newPos) + new Vector3(camera.transform.position.x, camera.transform.position.y, 0);
+			newPos.z = 0;
+			Debug.Log("newPos:" + newPos);
+			GameObject clone = Instantiate(TranslateControlPoint, newPos, TranslateControlPoint.transform.rotation)as GameObject;
+		}
+	}
+	public Vector3 WorldToGuiPoint(Vector3 position)
+	{
+		Vector3 guiPosition = camera.WorldToScreenPoint(position);
+		guiPosition.y = Screen.height - guiPosition.y;
+
+		return guiPosition;
+	}
+
 /*
 	void DrawQuad(Rect position, Color color)
 	{

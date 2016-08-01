@@ -13,12 +13,46 @@ public class FixedWindows : MonoBehaviour
 	private float buttonWidth = 20f;//按鈕的寬度
 	private float buttonHeight = 20f;//按鈕的高度
 	public GUISkin customSkin;
+	
+	
+	public GameObject chooseObj = null;
+	public Camera chooseCamera = null;
+	public Rect choosewindowRect;
 
 	void Update() 
 	{ 
 		if(Input.GetKeyDown(KeyCode.R))
 		{
 			ShowAllWindow();
+		}
+		if (chooseObj)
+		{
+			if (Input.GetMouseButtonUp(0))
+			{
+				chooseObj = null;
+				return;
+			}
+			else
+			{
+				Vector3 mousePos = new Vector3(Input.mousePosition.x, Screen.height - Input.mousePosition.y, 0);
+				if (choosewindowRect.Contains(mousePos)) chooseObj.transform.position = new Vector3(chooseCamera.ScreenToWorldPoint(Input.mousePosition).x, chooseCamera.ScreenToWorldPoint(Input.mousePosition).y, 0);
+			}
+		}
+		else
+		{
+			Vector3 mousePos = new Vector3(Camera.main.ScreenToWorldPoint(Input.mousePosition).x, Camera.main.ScreenToWorldPoint(Input.mousePosition).y, 0);
+			if (Input.GetMouseButtonDown(0))
+			{
+				Ray ray = chooseCamera.ScreenPointToRay(Input.mousePosition);
+				RaycastHit hit;
+				if (Physics.Raycast(ray, out hit))
+				{
+					if (hit.collider.gameObject)
+					{
+						if (hit.collider.gameObject.tag == "ControlPoint") chooseObj = hit.collider.gameObject;
+					}
+				}
+			}
 		}
 	}
     void Start()
