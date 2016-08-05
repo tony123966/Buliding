@@ -132,7 +132,7 @@ public class UIProgressBar : UIWidgetContainer
 				{
 					ForceUpdate();
 
-					if (NGUITools.GetActive(this) && EventDelegate.IsValid(onChange))
+					if (current == null && NGUITools.GetActive(this) && EventDelegate.IsValid(onChange))
 					{
 						current = this;
 						EventDelegate.Execute(onChange);
@@ -457,47 +457,5 @@ public class UIProgressBar : UIWidgetContainer
 		}
 		else if (Vector3.Distance(thumb.position, worldPos) > 0.00001f)
 			thumb.position = worldPos;
-	}
-
-	/// <summary>
-	/// Watch for key events and adjust the value accordingly.
-	/// </summary>
-
-	public virtual void OnPan (Vector2 delta)
-	{
-		if (enabled)
-		{
-			switch (mFill)
-			{
-				case FillDirection.LeftToRight:
-				{
-					float after = Mathf.Clamp01(mValue + delta.x);
-					value = after;
-					mValue = after;
-					break;
-				}
-				case FillDirection.RightToLeft:
-				{
-					float after = Mathf.Clamp01(mValue - delta.x);
-					value = after;
-					mValue = after;
-					break;
-				}
-				case FillDirection.BottomToTop:
-				{
-					float after = Mathf.Clamp01(mValue + delta.y);
-					value = after;
-					mValue = after;
-					break;
-				}
-				case FillDirection.TopToBottom:
-				{
-					float after = Mathf.Clamp01(mValue - delta.y);
-					value = after;
-					mValue = after;
-					break;
-				}
-			}
-		}
 	}
 }

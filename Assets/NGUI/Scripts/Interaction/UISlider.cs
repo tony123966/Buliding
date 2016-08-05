@@ -29,21 +29,6 @@ public class UISlider : UIProgressBar
 	[HideInInspector][SerializeField] Direction direction = Direction.Upgraded; // Use 'fillDirection'
 	[HideInInspector][SerializeField] protected bool mInverted = false;
 
-	/// <summary>
-	/// Whether the collider is enabled and the widget can be interacted with.
-	/// </summary>
-
-	public bool isColliderEnabled
-	{
-		get
-		{
-			Collider c = GetComponent<Collider>();
-			if (c != null) return c.enabled;
-			Collider2D b = GetComponent<Collider2D>();
-			return (b != null && b.enabled);
-		}
-	}
-
 	[System.Obsolete("Use 'value' instead")]
 	public float sliderValue { get { return this.value; } set { this.value = value; } }
 
@@ -114,7 +99,7 @@ public class UISlider : UIProgressBar
 	{
 		if (UICamera.currentScheme == UICamera.ControlScheme.Controller) return;
 		mCam = UICamera.currentCamera;
-		value = ScreenToValue(UICamera.lastEventPosition);
+		value = ScreenToValue(UICamera.lastTouchPosition);
 		if (!isPressed && onDragFinished != null) onDragFinished();
 	}
 
@@ -126,7 +111,7 @@ public class UISlider : UIProgressBar
 	{
 		if (UICamera.currentScheme == UICamera.ControlScheme.Controller) return;
 		mCam = UICamera.currentCamera;
-		value = ScreenToValue(UICamera.lastEventPosition);
+		value = ScreenToValue(UICamera.lastTouchPosition);
 	}
 
 	/// <summary>
@@ -141,7 +126,7 @@ public class UISlider : UIProgressBar
 		if (isPressed)
 		{
 			mOffset = (mFG == null) ? 0f :
-				value - ScreenToValue(UICamera.lastEventPosition);
+				value - ScreenToValue(UICamera.lastTouchPosition);
 		}
 		else if (onDragFinished != null) onDragFinished();
 	}
@@ -154,12 +139,49 @@ public class UISlider : UIProgressBar
 	{
 		if (UICamera.currentScheme == UICamera.ControlScheme.Controller) return;
 		mCam = UICamera.currentCamera;
-		value = mOffset + ScreenToValue(UICamera.lastEventPosition);
+		value = mOffset + ScreenToValue(UICamera.lastTouchPosition);
 	}
 
 	/// <summary>
 	/// Watch for key events and adjust the value accordingly.
 	/// </summary>
 
-	public override void OnPan (Vector2 delta) { if (enabled && isColliderEnabled) base.OnPan(delta); }
+	protected void OnKey (KeyCode key)
+	{
+		if (enabled)
+		{
+			float step = (numberOfSteps > 1f) ? 1f / (numberOfSteps - 1) : 0.125f;
+
+			switch (mFill)
+			{
+				case FillDirection.LeftToRight:
+				{
+					if (key == KeyCode.LeftArrow) value = mValue - step;
+					else if (key == KeyCode.RightArrow) value = mValue + step;
+				}
+				break;
+
+				case FillDirection.RightToLeft:
+				{
+					if (key == KeyCode.LeftArrow) value = mValue + step;
+					else if (key == KeyCode.RightArrow) value = mValue - step;
+				}
+				break;
+
+				case FillDirection.BottomToTop:
+				{
+					if (key == KeyCode.DownArrow) value = mValue - step;
+					else if (key == KeyCode.UpArrow) value = mValue + step;
+				}
+				break;
+
+				case FillDirection.TopToBottom:
+				{
+					if (key == KeyCode.DownArrow) value = mValue + step;
+					else if (key == KeyCode.UpArrow) value = mValue - step;
+				}
+				break;
+			}
+		}
+	}
 }

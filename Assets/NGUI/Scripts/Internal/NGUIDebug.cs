@@ -29,9 +29,11 @@ public class NGUIDebug : MonoBehaviour
 		}
 		set
 		{
-			mRayDebug = value;
-			if (value && Application.isPlaying)
-				CreateInstance();
+			if (Application.isPlaying)
+			{
+				mRayDebug = value;
+				if (value) CreateInstance();
+			}
 		}
 	}
 
@@ -113,74 +115,19 @@ public class NGUIDebug : MonoBehaviour
 	
 	void OnGUI()
 	{
-		Rect rect = new Rect(5f, 5f, 1000f, 22f);
-
-		if (mRayDebug)
+		if (mLines.Count == 0)
 		{
-			UICamera.ControlScheme scheme = UICamera.currentScheme;
-			string text = "Scheme: " + scheme;
-			GUI.color = Color.black;
-			GUI.Label(rect, text);
-			rect.y -= 1f;
-			rect.x -= 1f;
-			GUI.color = Color.white;
-			GUI.Label(rect, text);
-			rect.y += 18f;
-			rect.x += 1f;
-
-			text = "Hover: " + NGUITools.GetHierarchy(UICamera.hoveredObject).Replace("\"", "");
-			GUI.color = Color.black;
-			GUI.Label(rect, text);
-			rect.y -= 1f;
-			rect.x -= 1f;
-			GUI.color = Color.white;
-			GUI.Label(rect, text);
-			rect.y += 18f;
-			rect.x += 1f;
-
-			text = "Selection: " + NGUITools.GetHierarchy(UICamera.selectedObject).Replace("\"", "");
-			GUI.color = Color.black;
-			GUI.Label(rect, text);
-			rect.y -= 1f;
-			rect.x -= 1f;
-			GUI.color = Color.white;
-			GUI.Label(rect, text);
-			rect.y += 18f;
-			rect.x += 1f;
-
-			text = "Controller: " + NGUITools.GetHierarchy(UICamera.controllerNavigationObject).Replace("\"", "");
-			GUI.color = Color.black;
-			GUI.Label(rect, text);
-			rect.y -= 1f;
-			rect.x -= 1f;
-			GUI.color = Color.white;
-			GUI.Label(rect, text);
-			rect.y += 18f;
-			rect.x += 1f;
-
-			text = "Active events: " + UICamera.CountInputSources();
-			if (UICamera.disableController) text += ", disabled controller";
-			if (UICamera.inputHasFocus) text += ", input focus";
-			GUI.color = Color.black;
-			GUI.Label(rect, text);
-			rect.y -= 1f;
-			rect.x -= 1f;
-			GUI.color = Color.white;
-			GUI.Label(rect, text);
-			rect.y += 18f;
-			rect.x += 1f;
+			if (mRayDebug && UICamera.hoveredObject != null && Application.isPlaying)
+			{
+				GUILayout.Label("Last Hit: " + NGUITools.GetHierarchy(UICamera.hoveredObject).Replace("\"", ""));
+			}
 		}
-
-		for (int i = 0, imax = mLines.Count; i < imax; ++i)
+		else
 		{
-			GUI.color = Color.black;
-			GUI.Label(rect, mLines[i]);
-			rect.y -= 1f;
-			rect.x -= 1f;
-			GUI.color = Color.white;
-			GUI.Label(rect, mLines[i]);
-			rect.y += 18f;
-			rect.x += 1f;
+			for (int i = 0, imax = mLines.Count; i < imax; ++i)
+			{
+				GUILayout.Label(mLines[i]);
+			}
 		}
 	}
 }

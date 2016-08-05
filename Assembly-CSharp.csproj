@@ -70,7 +70,7 @@
      <Compile Include="Assets\NGUI\Examples\Scripts\Other\OpenURLOnClick.cs" />
      <Compile Include="Assets\NGUI\Examples\Scripts\Other\PanWithMouse.cs" />
      <Compile Include="Assets\NGUI\Examples\Scripts\Other\PlayIdleAnimations.cs" />
-     <Compile Include="Assets\NGUI\Examples\Scripts\Other\SetColorPickerColor.cs" />
+     <Compile Include="Assets\NGUI\Examples\Scripts\Other\SetColorOnSelection.cs" />
      <Compile Include="Assets\NGUI\Examples\Scripts\Other\Spin.cs" />
      <Compile Include="Assets\NGUI\Examples\Scripts\Other\SpinWithMouse.cs" />
      <Compile Include="Assets\NGUI\Examples\Scripts\Other\Tutorial5.cs" />
@@ -111,7 +111,6 @@
      <Compile Include="Assets\NGUI\Scripts\Interaction\UISavedOption.cs" />
      <Compile Include="Assets\NGUI\Scripts\Interaction\UIScrollBar.cs" />
      <Compile Include="Assets\NGUI\Scripts\Interaction\UIScrollView.cs" />
-     <Compile Include="Assets\NGUI\Scripts\Interaction\UIShowControlScheme.cs" />
      <Compile Include="Assets\NGUI\Scripts\Interaction\UISlider.cs" />
      <Compile Include="Assets\NGUI\Scripts\Interaction\UISoundVolume.cs" />
      <Compile Include="Assets\NGUI\Scripts\Interaction\UITable.cs" />
@@ -165,7 +164,6 @@
      <Compile Include="Assets\NGUI\Scripts\UI\UIAnchor.cs" />
      <Compile Include="Assets\NGUI\Scripts\UI\UIAtlas.cs" />
      <Compile Include="Assets\NGUI\Scripts\UI\UICamera.cs" />
-     <Compile Include="Assets\NGUI\Scripts\UI\UIColorPicker.cs" />
      <Compile Include="Assets\NGUI\Scripts\UI\UIFont.cs" />
      <Compile Include="Assets\NGUI\Scripts\UI\UIInput.cs" />
      <Compile Include="Assets\NGUI\Scripts\UI\UIInputOnGUI.cs" />
@@ -184,8 +182,9 @@
      <Compile Include="Assets\NGUI\Scripts\UI\UIViewport.cs" />
      <Compile Include="Assets\Scripts\CameraWindow.cs" />
      <Compile Include="Assets\Scripts\FixedWindows.cs" />
+     <Compile Include="Assets\Scripts\UICameraAdjustor.cs" />
      <None Include="Assets\NGUI\Examples\Shaders\Unlit - Depth Cutout.shader" />
-     <None Include="Assets\NGUI\ReadMe - 3.9.4.txt" />
+     <None Include="Assets\NGUI\ReadMe - 3.8.2.txt" />
      <None Include="Assets\NGUI\Resources\Shaders\Unlit - Transparent Masked 1.shader" />
      <None Include="Assets\NGUI\Resources\Shaders\Unlit - Text 2.shader" />
      <None Include="Assets\NGUI\Resources\Shaders\Unlit - Transparent Masked 2.shader" />

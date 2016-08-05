@@ -8,8 +8,8 @@ public class FixedWindows : MonoBehaviour
 	public List<CameraWindow> cameraWindowsList;
 	public bool render = true;
 
-	private Rect windowPosition;//儲存不可被拖曳的window的位置
-    private Rect buttonPosition;//儲存button在window內的位置
+	public Rect windowPosition;//儲存不可被拖曳的window的位置
+	public Rect buttonPosition;//儲存button在window內的位置
 	private float buttonWidth = 20f;//按鈕的寬度
 	private float buttonHeight = 20f;//按鈕的高度
 	public GUISkin customSkin;
@@ -25,7 +25,7 @@ public class FixedWindows : MonoBehaviour
 		{
 			ShowAllWindow();
 		}
-		if (chooseObj)
+		/*if (chooseObj)
 		{
 			if (Input.GetMouseButtonUp(0))
 			{
@@ -53,16 +53,16 @@ public class FixedWindows : MonoBehaviour
 					}
 				}
 			}
-		}
+		}*/
 	}
     void Start()
     {
 		cameraWindowsList.Clear();
-
+		setFixedWindowPosition();
+		setButtonPosition();
+		
 		initMoveWindowsSetting();
 		ShowAllWindow();
-        setFixedWindowPosition();
-		setButtonPosition();
 
     }
 	private void initMoveWindowsSetting()

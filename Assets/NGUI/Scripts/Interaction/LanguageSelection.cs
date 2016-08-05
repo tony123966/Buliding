@@ -4,6 +4,7 @@
 //----------------------------------------------
 
 using UnityEngine;
+using System.Collections.Generic;
 
 /// <summary>
 /// Turns the popup list it's attached to into a language selection list.
@@ -31,7 +32,7 @@ public class LanguageSelection : MonoBehaviour
 	{
 		if (mList != null && Localization.knownLanguages != null)
 		{
-			mList.Clear();
+			mList.items.Clear();
 
 			for (int i = 0, imax = Localization.knownLanguages.Length; i < imax; ++i)
 				mList.items.Add(Localization.knownLanguages[i]);

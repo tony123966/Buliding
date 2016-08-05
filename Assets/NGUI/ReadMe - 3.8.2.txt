@@ -1,7 +1,7 @@
 ----------------------------------------------
             NGUI: Next-Gen UI kit
  Copyright © 2011-2015 Tasharen Entertainment
-            Version 3.9.4
+            Version 3.8.2
     http://www.tasharen.com/?page_id=197
             support@tasharen.com
 ----------------------------------------------
@@ -54,67 +54,6 @@ and it will not be included in the build of your game. It's only used in the edi
 -----------------
  Version History
 -----------------
-
-3.9.4
-- FIX: Work-around for a bug in Unity crashing when dynamic fonts are used (Unity also fixed it in 5.2.1p2).
-- FIX: Fix for caret appearing in the wrong place for a split second when typing past the end of the label.
-- FIX: Multi-line UIInput will now do a submit via Ctrl+Return by default.
-
-3.9.3
-- NEW: Toggle is now capable of triggering tweens in addition to animations.
-- FIX: UITextList should now wrap colors properly.
-- FIX: UIKeyNavigation will now highlight elements properly with Tab.
-- FIX: Keyboard input can now be used in Example 4.
-- FIX: More tweaks to dynamic fonts. Oh how I hate that particular "feature"...
-- FIX: Work-arounds for some new oddities in Unity 5.2.
-- FIX: Fix for an old bug that would sometimes cause items inside a tweened scroll view to be offset visually.
-- FIX: Minor tweaks related to ensuring that anchors get called properly on start only once.
-
-3.9.2
-- NEW: Added an option to UICamera to automatically hide the cursor when controller or touch input is used.
-- NEW: Added ellipsis overflow support by Jason Nollan.
-- NEW: Added an option to the Popup List to automatically create its popup on a separate panel, ensuring that it's always on top.
-- NEW: Added UICamera.first referencing the active NGUI event system.
-- FIX: Alpha should now work as expected with Linear lighting.
-- FIX: UICamera.isOverUI should now work properly for all types of input.
-- FIX: NGUIEditorTools.DrawProperty can now draw arrays.
-- FIX: Added mdeletrain's broken dynamic font fix.
-- FIX: Drag operation now cancels tooltips properly.
-- FIX: UITextList should now wrap colors properly.
-- FIX: Flash compilation fixes.
-
-3.9.1
-- NEW: NGUI will now automatically disable controller input on stand-alone builds if the game starts up with some joystick axis reporting non-zero.
-- NEW: Added command-line arguments that can enable/disable control types, such as -noJoystick.
-- NEW: Scene view UI focus is now bound to ALT+F.
-- FIX: Unity 5 dynamic font work-around.
-- FIX: Panels moving should no longer cause widgets to get marked as moving.
-- FIX: UICamera now uses the GetAnyKeyDown delegate.
-- FIX: Dragging a window should now be much faster.
-- FIX: UICamera.disableController should now report the correct value after a popup list has been closed.
-- FIX: UIPopupList will now again trigger callbacks on start when setting the default value.
-
-3.9.0
-- NEW: Completely redesigned how controller-based input was handled. It's now much more robust and handless seamless transitions from one method of input to another.
-- NEW: New OnNavigate and OnPan events. OnPan events require Pan axes to be set on the UICamera.
-- NEW: Scroll views are now scrollable via controller if Pan axes are set.
-- NEW: Sliders can now be adjusted via controller by using Pan axes.
-- NEW: OnKey event will now send all key press events to the targeted object.
-- NEW: Added UICamera.controllerNavigationObject that explicitly tracks controller-based selection.
-- NEW: NGUI now automatically finds and focuses on an appropriate UIKeyNavigation object if none has focus while receiving controller-based input.
-- NEW: Added a Color Picker.
-- NEW: Added a Tab option to the Key Navigation script (visible when it's attached to a UIInput).
-- NEW: Added a new "replacement key" feature to localization that lets you replace localization values without changing the localization itself. Useful for user-defined "overrides".
-- NEW: Added a proper editor class for the TypewriterEffect.
-- NEW: UIViewport will now automatically disable itself if the corner object has been disabled.
-- FIX: Various fixes and improvements for controller-based input support.
-- FIX: UITextList now properly line-wraps embedded colors.
-- FIX: UICenterOnChild should now respect paging through sorted lists.
-- FIX: Popup list's "ensure it's visible" code has been redesigned.
-- FIX: Optimized code related to widget change detection / buffer rebuilding.
-- FIX: Dynamic font labels will now automatically invalidate themselves when the application regains focus.
-- FIX: Unity 5 compatibility tweaks.
-- DEL: Removed the Keyboard scheme, since it's always Keyboard+Mouse.
 
 3.8.2
 - NEW: Localization will now automatically pull mobile version of keys if the current control scheme is touch.

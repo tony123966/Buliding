@@ -10,17 +10,14 @@ public class CameraWindow : MonoBehaviour{
 	private string title;
 	private int windowsId;
 
-
-	public float windowWidth;
-	public float windowHeight;
-	public float windowWidthDrag;
-	public float windowHeightDrag;
-	public float buttonWidthClose;//按鈕的寬度
-	public float buttonHeightClose;//按鈕的高度
-	public float buttonWidthScale;//按鈕的寬度
-	public float buttonHeightScale;//按鈕的高度
-
-
+	public float windowWidth=100f;
+	public float windowHeight = 250f;
+	public float buttonWidthClose = 20f;//按鈕的寬度
+	public float buttonHeightClose = 20f;//按鈕的高度
+	public float buttonWidthScale= 5f;//按鈕的寬度
+	public float buttonHeightScale =5f;//按鈕的高度
+	float [] dragBorderoffsetX= new float[]{5,5};
+	float cameraBorderSize = 10f;
 	public GUISkin customSkin;
 	
 	public bool render = true;
@@ -36,59 +33,33 @@ public class CameraWindow : MonoBehaviour{
 	public GameObject TranslateControlPoint;
 	void initSetting() 
 	{
-		windowWidth = 200f;
-		windowHeight = 250f;
-		windowWidthDrag = windowWidth;
-		windowHeightDrag = windowHeight*0.1f;
-		buttonWidthClose = 20f;//按鈕的寬度
-		buttonHeightClose = 20f;//按鈕的高度
-		buttonWidthScale = 5f;//按鈕的寬度
-		buttonHeightScale = 5f;//按鈕的高度
 
 		fixedWindows = GameObject.Find("Main Camera").GetComponent<FixedWindows>();
 		camera = GameObject.Find(cameraName).GetComponent<Camera>();
-
-		windowPositionDrag = new Rect(0, 0, windowWidthDrag, windowHeightDrag); 
-	}
-	public void Create(float PosX, float PosY, string Title, int WindowsID)
-	{
-		title = Title;
-		windowsId = WindowsID;
-		
-
-		GameObject obj= new GameObject("Camera");
-		camera = obj.AddComponent<Camera>();
-		camera.gameObject.AddComponent<GUILayer>();
-		cameraName = camera.name;
-		
-		initSetting();
-		ShowWindow();
-		setMoveWindowPosition(PosX, PosY);
-		setButtonPosition();
-
-		GUI.BringWindowToFront(windowsId);
 	}
 
 	public void Create(float PosX, float PosY, string Title, int WindowsID, string CameraName)
 	{
 		title = Title;
 		windowsId = WindowsID;
-			
 		cameraName = CameraName;
 		
 		initSetting();
-		ShowWindow();
+
 		setMoveWindowPosition(PosX, PosY);
 		setButtonPosition();
-
+		
+		ShowWindow();
+		SetCamera();
 		GUI.BringWindowToFront(windowsId);
-		DrawQuidHouse(new Vector3(1,1,0),new Vector3(10,30,0), Color.red);
 	}
 	public void setMoveWindowPosition(float PosX, float PosY)//設定window的位置
 	{
-		float windowLeft = PosX - windowWidth * 0.5f;//window和Game左邊的距離，目前設定的值會讓window顯示在螢幕正中央
-		float windowTop = PosY - windowHeight * 0.5f;//window和Game上面的距離，目前設定的值會讓window顯示在螢幕正中央
-		windowPosition = new Rect(windowLeft, windowTop, windowWidth, windowHeight);//將可被拖曳的視窗設定在Game中央
+		windowPosition.width = windowWidth;
+		windowPosition.height = windowHeight;
+		float windowLeft = PosX - windowPosition.width * 0.5f;//window和Game左邊的距離，目前設定的值會讓window顯示在螢幕正中央
+		float windowTop = PosY - windowPosition.height * 0.5f;//window和Game上面的距離，目前設定的值會讓window顯示在螢幕正中央
+		windowPosition = new Rect(windowLeft, windowTop, windowPosition.width, windowPosition.height);//將可被拖曳的視窗設定在Game中央
 	}
 	public void setButtonPosition()//設定windows內的button位置
 	{
@@ -103,6 +74,20 @@ public class CameraWindow : MonoBehaviour{
 
 		buttonPositionScale = new Rect(buttonLeft, buttonTop, buttonWidthScale, buttonHeightScale);
 	}
+	public void SetCamera()
+	{
+	// viewport adjustment code:
+				float w = Screen.width;
+				float h = Screen.height;
+				// make a copy of the window rect...
+				cameraRect = windowPosition;
+				cameraRect.y += windowPositionDrag.height + cameraBorderSize; // add the top margin...
+				cameraRect.x += cameraBorderSize; // add the left margin...
+				cameraRect.width -= cameraBorderSize * 2; // adjust width to include left + right margins...
+				cameraRect.height -= (cameraBorderSize * 2 + windowPositionDrag.height); // adjust height to include top + down margins... 
+				// set the camera viewport size:
+				camera.rect = new Rect(cameraRect.x / w, (h - cameraRect.y - cameraRect.height) / h, cameraRect.width / w, cameraRect.height / h);
+	}
 	private void OnGUI()
 	{
 		if (render)
@@ -110,19 +95,6 @@ public class CameraWindow : MonoBehaviour{
 			GUI.skin = customSkin;
 			//顯示window，可以被拖曳
 			windowPosition = GUI.Window(windowsId, windowPosition, windowEvent, title);
-			// viewport adjustment code:
-			float w = Screen.width;
-			float h = Screen.height;
-			float border=10f;
-			// make a copy of the window rect...
-			cameraRect = windowPosition;
-			cameraRect.y += windowHeightDrag + border; // add the top margin...
-			cameraRect.x += border; // add the left margin...
-			cameraRect.width -= border*2; // adjust width to include left + right margins...
-			cameraRect.height -= (border*2 + windowHeightDrag); // adjust height to include top + down margins... 
-			// set the camera viewport size:
-			camera.rect = new Rect(cameraRect.x / w, (h - cameraRect.y - cameraRect.height) / h, cameraRect.width / w, cameraRect.height / h);
-
 		}
 	}
 	public void ShowWindow()
@@ -150,45 +122,20 @@ public class CameraWindow : MonoBehaviour{
 		if (id == windowsId)
 		{
 			GUI.BringWindowToFront(windowsId);
-			windowPositionDrag = new Rect(0, 0, windowWidthDrag, windowHeightDrag); 
-			GUI.DragWindow(windowPositionDrag);
+			windowPositionDrag.width = windowWidth;
+			windowPositionDrag.height = windowHeight* 0.1f;
+			windowPositionDrag = new Rect(0, 0, windowPositionDrag.width, windowPositionDrag.height); 
+			//GUI.DragWindow(windowPositionDrag);
 			Vector3 Pos = new Vector3(Input.mousePosition.x,Screen.height-Input.mousePosition.y,0);
+			SetCamera();
 			if (windowPosition.Contains(Pos) && fixedWindows.chooseObj == null)
 			{
-				float offsetX = windowPosition.width * 0.05f;
-				float offsetY = windowPosition.height * 0.05f;
 				fixedWindows.chooseCamera = camera;
-				fixedWindows.choosewindowRect = new Rect(windowPosition.x + offsetX, windowPosition.y + offsetY + windowHeightDrag, windowPosition.width - 2 * offsetX, windowPosition.height - 2 * offsetY - windowHeightDrag);
+				fixedWindows.choosewindowRect = new Rect(windowPosition.x + dragBorderoffsetX[0], windowPosition.y + dragBorderoffsetX[1] + windowPositionDrag.height, windowPosition.width - 2 * dragBorderoffsetX[0], windowPosition.height - 2 * dragBorderoffsetX[1] - windowPositionDrag.height);
+	
 			}
 		}
 
-	}
-	public void DrawQuidHouse(Vector3 start,Vector3 end, Color color)
-	{
-		float scaleX = cameraRect.width / Screen.width;
-		float scaleY = cameraRect.height / Screen.height;
-		Vector3 []conrolPoint=new Vector3[]
-		{
-			new Vector3(start.x,start.y,0)+new Vector3(cameraRect.x,cameraRect.y,0),	
-			new Vector3(end.x,start.y,0)+new Vector3(cameraRect.x,cameraRect.y,0),	
-			new Vector3(start.x,end.y,0)+new Vector3(cameraRect.x,cameraRect.y,0),	
-			new Vector3(end.x,end.y,0)+new Vector3(cameraRect.x,cameraRect.y,0),	
-		};
-		for(int i=0;i<conrolPoint.Length;i++){
-
-			Vector3 newPos = Camera.main.ScreenToViewportPoint(conrolPoint[i]);
-			newPos = camera.ScreenToWorldPoint(newPos) + new Vector3(camera.transform.position.x, camera.transform.position.y, 0);
-			newPos.z = 0;
-			Debug.Log("newPos:" + newPos);
-			GameObject clone = Instantiate(TranslateControlPoint, newPos, TranslateControlPoint.transform.rotation)as GameObject;
-		}
-	}
-	public Vector3 WorldToGuiPoint(Vector3 position)
-	{
-		Vector3 guiPosition = camera.WorldToScreenPoint(position);
-		guiPosition.y = Screen.height - guiPosition.y;
-
-		return guiPosition;
 	}
 
 /*

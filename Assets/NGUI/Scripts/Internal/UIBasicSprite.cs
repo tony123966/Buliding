@@ -297,7 +297,6 @@ public abstract class UIBasicSprite : UIWidget
 				colF.r = Mathf.GammaToLinearSpace(colF.r);
 				colF.g = Mathf.GammaToLinearSpace(colF.g);
 				colF.b = Mathf.GammaToLinearSpace(colF.b);
-				colF.a = Mathf.GammaToLinearSpace(colF.a);
 			}
 			return colF;
 		}

@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/Scenes/Buliding.unity
+- path: Assets/Scenes/Buliding2.unity
   isLoaded: 1
   isActive: 1
