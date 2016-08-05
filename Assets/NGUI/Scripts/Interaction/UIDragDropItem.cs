@@ -62,6 +62,7 @@ public class UIDragDropItem : MonoBehaviour
 	[System.NonSerialized] protected bool mDragging = false;
 	[System.NonSerialized] protected UICamera.MouseOrTouch mTouch;
 
+	[System.NonSerialized]protected DragItemController dragItemController;
 	/// <summary>
 	/// Cache the transform.
 	/// </summary>
@@ -272,6 +273,12 @@ public class UIDragDropItem : MonoBehaviour
 
 		if (mTable != null) mTable.repositionNow = true;
 		if (mGrid != null) mGrid.repositionNow = true;
+
+		if(GameObject.Find("DragItemController"))
+		{
+			DragItemController item = GameObject.Find("DragItemController").GetComponent<DragItemController>();
+			item.chooseGameObject = gameObject;
+		}
 	}
 
 	/// <summary>
@@ -329,6 +336,14 @@ public class UIDragDropItem : MonoBehaviour
 			if (mTable != null) mTable.repositionNow = true;
 			if (mGrid != null) mGrid.repositionNow = true;
 
+			if(GameObject.Find("DragItemController"))
+			{
+				DragItemController item = GameObject.Find("DragItemController").GetComponent<DragItemController>();
+				item.chooseGameObject = null;
+				Vector3 mousePos = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0);
+				item.PrintPos(mousePos);
+			}
+	
 			// We're now done
 			OnDragDropEnd();
 		}
