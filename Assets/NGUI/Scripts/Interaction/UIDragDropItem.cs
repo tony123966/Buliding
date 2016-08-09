@@ -277,7 +277,7 @@ public class UIDragDropItem : MonoBehaviour
 		if(GameObject.Find("DragItemController"))
 		{
 			DragItemController item = GameObject.Find("DragItemController").GetComponent<DragItemController>();
-			item.chooseGameObject = gameObject;
+			item.chooseDragObject = gameObject;
 		}
 	}
 
@@ -339,9 +339,9 @@ public class UIDragDropItem : MonoBehaviour
 			if(GameObject.Find("DragItemController"))
 			{
 				DragItemController item = GameObject.Find("DragItemController").GetComponent<DragItemController>();
-				item.chooseGameObject = null;
-				Vector3 mousePos = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0);
-				item.PrintPos(mousePos);
+				item.SetMouseInWiindow();
+
+				item.chooseDragObject = null;
 			}
 	
 			// We're now done
