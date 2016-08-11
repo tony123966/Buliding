@@ -72,7 +72,7 @@ public class FixedWindows : MonoBehaviour
 		cameraWindowsList.Add(clone.GetComponent<CameraWindow>());
 
 		clone = Instantiate(cameraWindows, cameraWindows.transform.position, cameraWindows.transform.rotation) as GameObject;
-		clone.GetComponent<CameraWindow>().Create(Screen.width * 0.9f, Screen.height * 0.9f, "FrontView", cameraWindowsList.Count + 1, "FrontViewCamera");
+		clone.GetComponent<CameraWindow>().Create(Screen.width * 0.2f, Screen.height * 0.9f, "FrontView", cameraWindowsList.Count + 1, "FrontViewCamera");
 		cameraWindowsList.Add(clone.GetComponent<CameraWindow>());
 
 		clone = Instantiate(cameraWindows, cameraWindows.transform.position, cameraWindows.transform.rotation) as GameObject;

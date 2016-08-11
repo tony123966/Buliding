@@ -5,34 +5,52 @@ public class DragItemController : MonoBehaviour
 {
 
 	public GameObject chooseDragObject = null;
-	public GameObject chooseWindow = null;
+	public GameObject chooseWindow ;
+	public GameObject chooseGrid;
 	public GameObject chooseObj = null;
-	public Camera UICamera;
-	private bool setCloneObj = false;
+	private Camera chooseCamera;
+
+	public Camera uICamera;
 	public List<GameObject> windowsList = new List<GameObject>();
+	public List<GameObject> gridList = new List<GameObject>();
 	public List<Camera> cameraList = new List<Camera>();
 
 	public GameObject quadItem;
 
 
-	private Camera sectionCamera;
+	private bool isDropInChooseWindow=false;
 	void Start()
 	{
-
-		UICamera = GameObject.Find("UICamera").GetComponent<Camera>();
+		uICamera = GameObject.Find("UICamera").GetComponent<Camera>();
 	}
 	void Update()
+	{
+		RayCastToChooseObj();
+	}
+	void RayCastToChooseObj() 
 	{
 		if (chooseObj)
 		{
 			if (Input.GetMouseButtonUp(0))
 			{
+				chooseObj.GetComponent<Collider>().enabled = true;
 				chooseObj = null;
 				return;
 			}
 			else
 			{
 
+				Vector2 mousePos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+				Vector2 mousePosToWorld = uICamera.ScreenToWorldPoint(mousePos);
+				Ray ray = uICamera.ScreenPointToRay(mousePos);
+				RaycastHit hit;
+				if (Physics.Raycast(ray, out hit))
+				{
+					if (hit.collider.gameObject == chooseWindow)
+					{
+						chooseObj.transform.position = new Vector3(mousePosToWorld.x, mousePosToWorld.y, chooseObj.transform.position.z);
+					}
+				}
 			}
 		}
 		else
@@ -40,90 +58,86 @@ public class DragItemController : MonoBehaviour
 			if (Input.GetMouseButtonDown(0))
 			{
 				ChooseWindow();
-				/*Vector3 mousePos = new Vector3(UICamera.ScreenToViewportPoint(Input.mousePosition).x, UICamera.ScreenToViewportPoint(Input.mousePosition).y, 0);
-				mousePos = sectionCamera.ViewportToScreenPoint(mousePos);*/
-				if (sectionCamera != null)
+				if (chooseWindow != null)
 				{
-		/*			Vector2 mousePos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
-					Vector3 pos = sectionCamera.ViewportToScreenPoint(new Vector3(UICamera.ScreenToViewportPoint(mousePos).x, UICamera.ScreenToViewportPoint(mousePos).y));*/
-					Vector2 mousePos = new Vector2(Input.mousePosition.x - Screen.width / 2.0f, Input.mousePosition.y - Screen.height / 2.0f);
-					Ray ray = sectionCamera.ScreenPointToRay(mousePos);
+					Vector2 mousePos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+					Ray ray = uICamera.ScreenPointToRay(mousePos);
 					RaycastHit hit;
+					/*
+										Vector2 mousePos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+										Ray ray = sectionCamera.ScreenPointToRay(mousePos);
+										Debug.Log("PP:"+sectionCamera.ScreenToWorldPoint(mousePos));
+										RaycastHit hit;
+
+										Debug.DrawLine(mousePos, Vector3.forward, Color.green);*/
+
+
 					if (Physics.Raycast(ray, out hit))
 					{
 						if (hit.collider.gameObject)
 						{
-							if (hit.collider.gameObject.tag == "ControlPoint") chooseObj = hit.collider.gameObject;
+							if (hit.collider.gameObject.tag == "ControlPoint")
+							{
+								chooseObj = hit.collider.gameObject;
+								chooseObj.GetComponent<Collider>().enabled = false;
+							}
 						}
 					}
 				}
 			}
 		}
 	}
-	void ChooseWindow()
+	bool ChooseWindow()
 	{
 		RaycastHit[] hits;
-		Ray ray = UICamera.ScreenPointToRay(Input.mousePosition);
+		Ray ray = uICamera.ScreenPointToRay(Input.mousePosition);
 		hits = Physics.RaycastAll(ray);
 
 		foreach (RaycastHit item in hits)
 		{
-			foreach (GameObject windowRec in windowsList)
+			for (int i = 0; i < windowsList.Count; i++)
 			{
-				if (windowRec == item.collider.gameObject)
+				if (windowsList[i] == item.collider.gameObject)
 				{
-					chooseWindow = windowRec;
-					switch (chooseWindow.name)
-					{
-						case "FormFractorWindowRect":
-							sectionCamera = GameObject.Find("FormFactorViewCamera").GetComponent<Camera>();
-							break;
-						case "RoofWindowRect":
-							sectionCamera = GameObject.Find("RoofViewCamera").GetComponent<Camera>();
-							break;
-						case "BodyWindowRect":
-							sectionCamera = GameObject.Find("BodyViewCamera").GetComponent<Camera>();
-							break;
-						case "PlatformWindowRect":
-							sectionCamera = GameObject.Find("PlatformViewCamera").GetComponent<Camera>();
-							break;
-					}
+					if (windowsList[i] == chooseWindow) isDropInChooseWindow = true;
+					
+					chooseWindow = windowsList[i];
+					chooseCamera = cameraList[i].GetComponent<Camera>();
+
+					
+					chooseGrid.SetActive(false);
+					chooseGrid=gridList[i];
+					chooseGrid.SetActive(true);
+					
+
+					return true;
 				}
+
 			}
 		}
+		return false;
 	}
-	public void SetMouseInWiindow()
+	public bool SetObjInWiindow()
 	{
 
 		ChooseWindow();
-		if (sectionCamera != null)
+		if (chooseWindow != null && isDropInChooseWindow)
 		{
-			Debug.Log(sectionCamera.name);
+			Debug.Log(chooseWindow.name);
 
+			Vector3 pos = chooseWindow.transform.position;
+			pos.z -= 1.0f;
+			Instantiate(quadItem, pos, quadItem.transform.rotation);
+
+			isDropInChooseWindow=false;
 /*
-							Vector2 mousePos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
-							Vector3 pos = sectionCamera.transform.position;
-							pos.z = sectionCamera.farClipPlane / 2.0f;
-							Instantiate(quadItem, pos, quadItem.transform.rotation);*/
-
-
-			Vector2 mousePos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
-			Vector3 pos = sectionCamera.ViewportToWorldPoint(new Vector3(UICamera.ScreenToViewportPoint(mousePos).x, UICamera.ScreenToViewportPoint(mousePos).y));
+			Vector2 mousePos = new Vector2(Input.mousePosition.x ,Input.mousePosition.y);
+			Vector3 pos = sectionCamera.ViewportToWorldPoint(new Vector3(uICamera.ScreenToViewportPoint(mousePos).x, uICamera.ScreenToViewportPoint(mousePos).y));
 			pos.z = sectionCamera.farClipPlane / 2.0f;
 			Debug.Log("pos:"+pos);
 			Instantiate(quadItem, pos, quadItem.transform.rotation);
-
-
-			/*
-
-								ray = sectionCamera.ScreenPointToRay(Input.mousePosition);
-								RaycastHit hit;
-								if (Physics.Raycast(ray, out hit)) 
-									if (hit.collider.tag=="CollisionPlane")
-									{
-										Instantiate(quadItem, hit.point, quadItem.transform.rotation);
-									}
-							}*/
+*/			return true;
 		}
+		return false;
 	}
 }

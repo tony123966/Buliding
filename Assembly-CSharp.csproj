@@ -183,8 +183,7 @@
      <Compile Include="Assets\Scripts\CameraWindow.cs" />
      <Compile Include="Assets\Scripts\DragItemController.cs" />
      <Compile Include="Assets\Scripts\FixedWindows.cs" />
-     <Compile Include="Assets\Scripts\QuadItem.cs" />
-     <Compile Include="Assets\Scripts\UICameraAdjustor.cs" />
+     <Compile Include="Assets\Scripts\MeshObj.cs" />
      <None Include="Assets\NGUI\Examples\Shaders\Unlit - Depth Cutout.shader" />
      <None Include="Assets\NGUI\ReadMe - 3.8.2.txt" />
      <None Include="Assets\NGUI\Resources\Shaders\Unlit - Transparent Masked 1.shader" />

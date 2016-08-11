@@ -339,7 +339,7 @@ public class UIDragDropItem : MonoBehaviour
 			if(GameObject.Find("DragItemController"))
 			{
 				DragItemController item = GameObject.Find("DragItemController").GetComponent<DragItemController>();
-				item.SetMouseInWiindow();
+				item.SetObjInWiindow();
 
 				item.chooseDragObject = null;
 			}
