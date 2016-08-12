@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
-
+using System.Collections;
 public class DragItemController : MonoBehaviour
 {
 
@@ -15,17 +15,59 @@ public class DragItemController : MonoBehaviour
 	public List<GameObject> gridList = new List<GameObject>();
 	public List<Camera> cameraList = new List<Camera>();
 
-	public GameObject quadItem;
-
 
 	private bool isDropInChooseWindow=false;
+
+	public List<GameObject> MainComponentInWindowsList = new List<GameObject>();
+	public List<GameObject>[] ChildComponentInWindowsList;
+	class ComponentInWindowsList<T>
+	{
+		public FormFactorComponent formFactorComponent = new FormFactorComponent();
+		public RoofComponent roofComponent = new RoofComponent();
+		public BodyComponent bodyComponent = new BodyComponent();
+		public PlatformComponent platformComponent = new PlatformComponent();
+
+
+	}
+
+	struct FormFactorComponent
+	{
+		public GameObject MainComponent;
+	}
+	struct RoofComponent
+	{
+		public GameObject MainComponent ;
+	}
+	struct BodyComponent
+	{
+		public GameObject MainComponent ;
+		public List<GameObject> door ;
+	}
+	struct PlatformComponent
+	{
+		public GameObject MainComponent ;
+	}
+	
 	void Start()
 	{
 		uICamera = GameObject.Find("UICamera").GetComponent<Camera>();
+		InitWindowListSetting();
 	}
 	void Update()
 	{
 		RayCastToChooseObj();
+	}
+	void InitWindowListSetting() 
+	{ 
+		for(int i=0;i<windowsList.Count;i++)
+		{
+			MainComponentInWindowsList.Add(null);
+		}
+		ChildComponentInWindowsList = new List<GameObject>[MainComponentInWindowsList.Count];
+		for(int i=0;i<windowsList.Count;i++)
+		{
+			ChildComponentInWindowsList[i] = new List<GameObject>();
+		}
 	}
 	void RayCastToChooseObj() 
 	{
@@ -64,12 +106,12 @@ public class DragItemController : MonoBehaviour
 					Ray ray = uICamera.ScreenPointToRay(mousePos);
 					RaycastHit hit;
 					/*
-										Vector2 mousePos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
-										Ray ray = sectionCamera.ScreenPointToRay(mousePos);
-										Debug.Log("PP:"+sectionCamera.ScreenToWorldPoint(mousePos));
-										RaycastHit hit;
+						Vector2 mousePos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+						Ray ray = sectionCamera.ScreenPointToRay(mousePos);
+						Debug.Log("PP:"+sectionCamera.ScreenToWorldPoint(mousePos));
+						RaycastHit hit;
 
-										Debug.DrawLine(mousePos, Vector3.forward, Color.green);*/
+						Debug.DrawLine(mousePos, Vector3.forward, Color.green);*/
 
 
 					if (Physics.Raycast(ray, out hit))
@@ -87,7 +129,7 @@ public class DragItemController : MonoBehaviour
 			}
 		}
 	}
-	bool ChooseWindow()
+	int ChooseWindow()
 	{
 		RaycastHit[] hits;
 		Ray ray = uICamera.ScreenPointToRay(Input.mousePosition);
@@ -95,47 +137,76 @@ public class DragItemController : MonoBehaviour
 
 		foreach (RaycastHit item in hits)
 		{
-			for (int i = 0; i < windowsList.Count; i++)
+			for (int index = 0; index < windowsList.Count; index++)
 			{
-				if (windowsList[i] == item.collider.gameObject)
+				if (windowsList[index] == item.collider.gameObject)//滑鼠所在的視窗
 				{
-					if (windowsList[i] == chooseWindow) isDropInChooseWindow = true;
+					if (chooseDragObject)
+					{ 
+						if(windowsList[index] == chooseWindow)
+						{
+							if(chooseDragObject.tag=="MainComponent")
+							{
+								if (MainComponentInWindowsList[index] == null)//如果有拖曳物件 且在選擇的視窗內 且視窗內物件為空
+									isDropInChooseWindow = true;
+							}
+							else if (chooseDragObject.tag == "DecorateComponent")
+							{
+								if (MainComponentInWindowsList[index] != null)//如果有拖曳物件 且在選擇的視窗內 且視窗內物件為空
+									isDropInChooseWindow = true;
+							}
+						}
+					}
 					
-					chooseWindow = windowsList[i];
-					chooseCamera = cameraList[i].GetComponent<Camera>();
+					//選擇視窗
+					chooseWindow = windowsList[index];
+					//選擇鏡頭
+					chooseCamera = cameraList[index].GetComponent<Camera>();
 
-					
+					//選擇Grid
 					chooseGrid.SetActive(false);
-					chooseGrid=gridList[i];
+					chooseGrid = gridList[index];
 					chooseGrid.SetActive(true);
-					
 
-					return true;
+
+					return index;
 				}
 
 			}
 		}
-		return false;
+		return -1;
 	}
 	public bool SetObjInWiindow()
 	{
 
-		ChooseWindow();
+		int windowIndex=ChooseWindow();
 		if (chooseWindow != null && isDropInChooseWindow)
-		{
-			Debug.Log(chooseWindow.name);
-
+		{		
 			Vector3 pos = chooseWindow.transform.position;
-			pos.z -= 1.0f;
-			Instantiate(quadItem, pos, quadItem.transform.rotation);
+			pos.z -= 0.01f;
 
-			isDropInChooseWindow=false;
+			GameObject cloneCorrespondingObj=chooseDragObject.GetComponent<CorespondingDragItem>().corespondingDragItem;
+			if(cloneCorrespondingObj)
+			{
+				if (chooseDragObject.tag == "MainComponent")
+				{
+					GameObject clone = Instantiate(cloneCorrespondingObj, pos, cloneCorrespondingObj.transform.rotation) as GameObject;
+					MainComponentInWindowsList[windowIndex] = clone;
+				}
+				else if (chooseDragObject.tag == "DecorateComponent")
+				{
+					GameObject clone = Instantiate(cloneCorrespondingObj, pos, cloneCorrespondingObj.transform.rotation) as GameObject;
+					ChildComponentInWindowsList[windowIndex].Add(clone);
+				}
+			}
+			isDropInChooseWindow = false;
 /*
 			Vector2 mousePos = new Vector2(Input.mousePosition.x ,Input.mousePosition.y);
 			Vector3 pos = sectionCamera.ViewportToWorldPoint(new Vector3(uICamera.ScreenToViewportPoint(mousePos).x, uICamera.ScreenToViewportPoint(mousePos).y));
 			pos.z = sectionCamera.farClipPlane / 2.0f;
 			Debug.Log("pos:"+pos);
 			Instantiate(quadItem, pos, quadItem.transform.rotation);
+ * 			isDropInChooseWindow = false;
 */			return true;
 		}
 		return false;
