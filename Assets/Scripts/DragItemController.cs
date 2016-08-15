@@ -1,52 +1,50 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
+public class Windows : DragItemController
+{
+	public GameObject mainComponent = null;
+	public Dictionary<string, List<GameObject>> childComponent;
+
+	public void GetAllComponentCount()
+	{
+		foreach (KeyValuePair<string, List<GameObject>> kvp in childComponent)
+		{
+			Debug.Log(kvp.Key + kvp.Value.Count);
+		}
+	}
+	public void DeleteAllComponent()
+	{
+		Destroy(mainComponent);
+		foreach (KeyValuePair<string, List<GameObject>> kvp in childComponent)
+		{
+			for(int i=0;i<kvp.Value.Count;i++)
+			{
+				Destroy(kvp.Value[i]);
+			}
+		}
+	}
+}
 public class DragItemController : MonoBehaviour
 {
-
+	enum WINDOWS { FormFactor, Roof, Body, Platform };
+	//選定的物件
 	public GameObject chooseDragObject = null;
-	public GameObject chooseWindow ;
+	public GameObject chooseWindow;
 	public GameObject chooseGrid;
 	public GameObject chooseObj = null;
 	private Camera chooseCamera;
-
+	//UICamera
 	public Camera uICamera;
+	//四大視窗
 	public List<GameObject> windowsList = new List<GameObject>();
 	public List<GameObject> gridList = new List<GameObject>();
 	public List<Camera> cameraList = new List<Camera>();
 
-
-	private bool isDropInChooseWindow=false;
-
-	public List<GameObject> MainComponentInWindowsList = new List<GameObject>();
-	public List<GameObject>[] ChildComponentInWindowsList;
-	class ComponentInWindowsList<T>
-	{
-		public FormFactorComponent formFactorComponent = new FormFactorComponent();
-		public RoofComponent roofComponent = new RoofComponent();
-		public BodyComponent bodyComponent = new BodyComponent();
-		public PlatformComponent platformComponent = new PlatformComponent();
-
-
-	}
-
-	struct FormFactorComponent
-	{
-		public GameObject MainComponent;
-	}
-	struct RoofComponent
-	{
-		public GameObject MainComponent ;
-	}
-	struct BodyComponent
-	{
-		public GameObject MainComponent ;
-		public List<GameObject> door ;
-	}
-	struct PlatformComponent
-	{
-		public GameObject MainComponent ;
-	}
+	//是否滑鼠在選定的視窗中放開
+	private bool isDropInChooseWindow = false;
+	//四個視窗中的物件集合
+	public Windows[] AllwindowsComponent;
 	
 	void Start()
 	{
@@ -56,20 +54,25 @@ public class DragItemController : MonoBehaviour
 	void Update()
 	{
 		RayCastToChooseObj();
-	}
-	void InitWindowListSetting() 
-	{ 
-		for(int i=0;i<windowsList.Count;i++)
+		if(Input.GetKeyDown(KeyCode.R))
 		{
-			MainComponentInWindowsList.Add(null);
-		}
-		ChildComponentInWindowsList = new List<GameObject>[MainComponentInWindowsList.Count];
-		for(int i=0;i<windowsList.Count;i++)
-		{
-			ChildComponentInWindowsList[i] = new List<GameObject>();
+			for(int i=0;i<windowsList.Count;i++){
+				if(chooseWindow==windowsList[i]){
+					AllwindowsComponent[i].GetAllComponentCount();
+				}
+			}
 		}
 	}
-	void RayCastToChooseObj() 
+	void InitWindowListSetting()
+	{
+		AllwindowsComponent = new Windows[windowsList.Count];
+		for (int i = 0; i < windowsList.Count; i++)
+		{
+			AllwindowsComponent[i] = new Windows();
+			AllwindowsComponent[i].childComponent = new Dictionary<string, List<GameObject>>();
+		}
+	}
+	void RayCastToChooseObj()
 	{
 		if (chooseObj)
 		{
@@ -142,22 +145,31 @@ public class DragItemController : MonoBehaviour
 				if (windowsList[index] == item.collider.gameObject)//滑鼠所在的視窗
 				{
 					if (chooseDragObject)
-					{ 
-						if(windowsList[index] == chooseWindow)
+					{
+						if (windowsList[index] == chooseWindow)
 						{
-							if(chooseDragObject.tag=="MainComponent")
+							if (chooseDragObject.tag == "MainComponent")
 							{
-								if (MainComponentInWindowsList[index] == null)//如果有拖曳物件 且在選擇的視窗內 且視窗內物件為空
+								if (AllwindowsComponent[index].mainComponent == null)//如果有拖曳物件 且在選擇的視窗內 且視窗內物件為空
+								{
 									isDropInChooseWindow = true;
+								}
+								else//如果有拖曳物件 且在選擇的視窗內 且視窗內物件為不為空 刪除原物件
+								{
+									AllwindowsComponent[index].DeleteAllComponent();
+									isDropInChooseWindow = true;
+								}
 							}
 							else if (chooseDragObject.tag == "DecorateComponent")
 							{
-								if (MainComponentInWindowsList[index] != null)//如果有拖曳物件 且在選擇的視窗內 且視窗內物件為空
+								if (AllwindowsComponent[index].mainComponent != null)//如果有拖曳物件 且在選擇的視窗內 且視窗內物件為空
+								{
 									isDropInChooseWindow = true;
+								}
 							}
 						}
 					}
-					
+
 					//選擇視窗
 					chooseWindow = windowsList[index];
 					//選擇鏡頭
@@ -179,35 +191,51 @@ public class DragItemController : MonoBehaviour
 	public bool SetObjInWiindow()
 	{
 
-		int windowIndex=ChooseWindow();
+		int windowIndex = ChooseWindow();
 		if (chooseWindow != null && isDropInChooseWindow)
-		{		
+		{
 			Vector3 pos = chooseWindow.transform.position;
 			pos.z -= 0.01f;
 
-			GameObject cloneCorrespondingObj=chooseDragObject.GetComponent<CorespondingDragItem>().corespondingDragItem;
-			if(cloneCorrespondingObj)
+			GameObject cloneCorrespondingObj = chooseDragObject.GetComponent<CorespondingDragItem>().corespondingDragItem;
+			int correspondingDragItemMaxCount = chooseDragObject.GetComponent<CorespondingDragItem>().correspondingDragItemMaxCount;
+			if (cloneCorrespondingObj)
 			{
 				if (chooseDragObject.tag == "MainComponent")
 				{
 					GameObject clone = Instantiate(cloneCorrespondingObj, pos, cloneCorrespondingObj.transform.rotation) as GameObject;
-					MainComponentInWindowsList[windowIndex] = clone;
+					AllwindowsComponent[windowIndex].mainComponent = clone;
 				}
 				else if (chooseDragObject.tag == "DecorateComponent")
 				{
 					GameObject clone = Instantiate(cloneCorrespondingObj, pos, cloneCorrespondingObj.transform.rotation) as GameObject;
-					ChildComponentInWindowsList[windowIndex].Add(clone);
+					if (AllwindowsComponent[windowIndex].childComponent.ContainsKey(chooseDragObject.name))
+					{
+						if (AllwindowsComponent[windowIndex].childComponent[chooseDragObject.name].Count < correspondingDragItemMaxCount)
+							AllwindowsComponent[windowIndex].childComponent[chooseDragObject.name].Add(clone);
+						else
+							Debug.Log(chooseDragObject.name+"    Count over MaxCount");
+					}
+					else
+					{
+						List<GameObject> newList = new List<GameObject>();
+						newList.Clear();
+						newList.Add(clone);
+						AllwindowsComponent[windowIndex].childComponent.Add(chooseDragObject.name, newList);
+					}
+
 				}
 			}
 			isDropInChooseWindow = false;
-/*
-			Vector2 mousePos = new Vector2(Input.mousePosition.x ,Input.mousePosition.y);
-			Vector3 pos = sectionCamera.ViewportToWorldPoint(new Vector3(uICamera.ScreenToViewportPoint(mousePos).x, uICamera.ScreenToViewportPoint(mousePos).y));
-			pos.z = sectionCamera.farClipPlane / 2.0f;
-			Debug.Log("pos:"+pos);
-			Instantiate(quadItem, pos, quadItem.transform.rotation);
- * 			isDropInChooseWindow = false;
-*/			return true;
+			/*
+						Vector2 mousePos = new Vector2(Input.mousePosition.x ,Input.mousePosition.y);
+						Vector3 pos = sectionCamera.ViewportToWorldPoint(new Vector3(uICamera.ScreenToViewportPoint(mousePos).x, uICamera.ScreenToViewportPoint(mousePos).y));
+						pos.z = sectionCamera.farClipPlane / 2.0f;
+						Debug.Log("pos:"+pos);
+						Instantiate(quadItem, pos, quadItem.transform.rotation);
+			 * 			isDropInChooseWindow = false;
+			*/
+			return true;
 		}
 		return false;
 	}
