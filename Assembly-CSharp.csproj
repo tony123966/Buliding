@@ -182,6 +182,7 @@
      <Compile Include="Assets\NGUI\Scripts\UI\UIViewport.cs" />
      <Compile Include="Assets\Scripts\CameraWindow.cs" />
      <Compile Include="Assets\Scripts\CorespondingDragItem.cs" />
+     <Compile Include="Assets\Scripts\CreateIconFormfactor.cs" />
      <Compile Include="Assets\Scripts\DragItemController.cs" />
      <Compile Include="Assets\Scripts\FixedWindows.cs" />
      <Compile Include="Assets\Scripts\MeshObj.cs" />
