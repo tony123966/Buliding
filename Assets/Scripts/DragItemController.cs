@@ -426,6 +426,7 @@ public class DragItemController : MonoBehaviour
 		{
 			if (Input.GetMouseButtonUp(0))
 			{
+				if (chooseObj.transform.parent.GetComponent<CreateIconFormfactor>()) chooseObj.transform.parent.GetComponent<CreateIconFormfactor>().SetControlPointListPos();
 				chooseObj.GetComponent<Collider>().enabled = true;
 				chooseObj = null;
 				return;
@@ -442,6 +443,7 @@ public class DragItemController : MonoBehaviour
 					if (hit.collider.gameObject == chooseWindow)
 					{
 						chooseObj.transform.position = new Vector3(mousePosToWorld.x, mousePosToWorld.y, chooseObj.transform.position.z);
+						if (chooseObj.transform.parent.GetComponent<CreateIconFormfactor>()) chooseObj.transform.parent.GetComponent<CreateIconFormfactor>().SetControlPointListRatioPos();
 					}
 				}
 			}
@@ -450,7 +452,10 @@ public class DragItemController : MonoBehaviour
 		{
 			if (Input.GetMouseButtonDown(0))
 			{
-				int windowsIndex = ChooseWindow();
+				int index = ChooseWindow();
+
+				if (index != -1) SetCameraAndGrid(index);
+
 				if (chooseWindow != null)
 				{
 					Vector2 mousePos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
@@ -484,27 +489,28 @@ public class DragItemController : MonoBehaviour
 			{
 				if (windowsList[index] == item.collider.gameObject)//滑鼠所在的視窗
 				{
-					//選擇鏡頭
-					chooseCamera = cameraList[index].GetComponent<Camera>();
-
-					//選擇Grid
-					chooseGrid.SetActive(false);
-					chooseGrid = gridList[index];
-					chooseGrid.SetActive(true);
-
-
 					return index;
 				}
 			}
 		}
 		return -1;
 	}
+	void SetCameraAndGrid(int index)
+	{
+		//選擇鏡頭
+		chooseCamera = cameraList[index].GetComponent<Camera>();
+
+		//選擇Grid
+		chooseGrid.SetActive(false);
+		chooseGrid = gridList[index];
+		chooseGrid.SetActive(true);
+	}
 	public void SetObjInWiindows()//暫時先在攝影機前產生
 	{
 		int index = ChooseWindow();
-
 		if (index != -1 && chooseDragObject)
 		{
+			SetCameraAndGrid(index);
 			if (windowsList[index] == chooseWindow)
 			{
 				if (AllwindowsComponent[index].lastChooseMainDragObject)
@@ -596,6 +602,7 @@ public class DragItemController : MonoBehaviour
 			if (AllwindowsComponent[index].allComponent[chooseDragObject.name].Count < correspondingDragItemMaxCount)
 			{
 				GameObject clone = Instantiate(cloneCorrespondingObj, pos, cloneCorrespondingObj.transform.rotation) as GameObject;
+				clone.transform.parent = chooseWindow.transform;
 				AllwindowsComponent[index].allComponent[chooseDragObject.name].Add(clone);
 			}
 			else
@@ -604,6 +611,7 @@ public class DragItemController : MonoBehaviour
 		else
 		{
 			GameObject clone = Instantiate(cloneCorrespondingObj, pos, cloneCorrespondingObj.transform.rotation) as GameObject;
+			clone.transform.parent = chooseWindow.transform;
 			List<GameObject> newList = new List<GameObject>();
 			newList.Clear();
 			newList.Add(clone);
