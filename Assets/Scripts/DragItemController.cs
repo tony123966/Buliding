@@ -73,12 +73,7 @@ public class DragItemController : MonoBehaviour
 	public GameObject chooseGrid;
 	public GameObject chooseObj = null;
 	private Camera chooseCamera;
-<<<<<<< Updated upstream
 	//UICamera
-=======
-	public MeshObj meshobj;
-
->>>>>>> Stashed changes
 	public Camera uICamera;
 	//四大視窗
 	public List<GameObject> windowsList = new List<GameObject>();
@@ -146,9 +141,6 @@ public class DragItemController : MonoBehaviour
 					if (hit.collider.gameObject == chooseWindow)
 					{
 						chooseObj.transform.position = new Vector3(mousePosToWorld.x, mousePosToWorld.y, chooseObj.transform.position.z);
-						chooseObj.transform.parent.GetComponent<MeshObj> ().adjPos ();
-
-
 					}
 				}
 			}
@@ -338,7 +330,6 @@ public class WindowsList : DragItemController
 	public Dictionary<string, Dictionary<string, List<GameObject>>> temporateComponent;
 	public GameObject lastChooseMainDragObject = null;
 
-
 	public void PrintAllComponentCount()
 	{
 		foreach (KeyValuePair<string, List<GameObject>> kvp in allComponent)
@@ -394,11 +385,9 @@ public class DragItemController : MonoBehaviour
 	public List<GameObject> windowsList = new List<GameObject>();
 	public List<GameObject> gridList = new List<GameObject>();
 	public List<Camera> cameraList = new List<Camera>();
-	public bool xy;
 
 	//四個視窗中的物件集合
 	public WindowsList[] AllwindowsComponent;
-
 
 	void Start()
 	{
@@ -407,7 +396,6 @@ public class DragItemController : MonoBehaviour
 	}
 	void Update()
 	{
-
 		RayCastToChooseObj();
 		if (Input.GetKeyDown(KeyCode.R))
 		{
@@ -434,81 +422,28 @@ public class DragItemController : MonoBehaviour
 	}
 	void RayCastToChooseObj()
 	{
-		if (chooseObj) {
-			if (Input.GetMouseButtonUp (0)) {
-				if (chooseObj.transform.parent.GetComponent<MeshObj> ())
-					chooseObj.transform.parent.GetComponent<MeshObj> ().adjPos ();
-				chooseObj.GetComponent<Collider> ().enabled = true;
+		if (chooseObj)
+		{
+			if (Input.GetMouseButtonUp(0))
+			{
+				if (chooseObj.transform.parent.GetComponent<CreateIconFormfactor>()) chooseObj.transform.parent.GetComponent<CreateIconFormfactor>().SetControlPointListPos();
+				chooseObj.GetComponent<Collider>().enabled = true;
 				chooseObj = null;
 				return;
-			} else {
+			}
+			else
+			{
 
-				Vector2 mousePos = new Vector2 (Input.mousePosition.x, Input.mousePosition.y);
-				Vector2 mousePosToWorld = uICamera.ScreenToWorldPoint (mousePos);
-				Ray ray = uICamera.ScreenPointToRay (mousePos);
+				Vector2 mousePos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+				Vector2 mousePosToWorld = uICamera.ScreenToWorldPoint(mousePos);
+				Ray ray = uICamera.ScreenPointToRay(mousePos);
 				RaycastHit hit;
-				if (Physics.Raycast (ray, out hit)) {
-					if (hit.collider.gameObject == chooseWindow) {
-
-						if (chooseObj.transform.parent.GetComponent<MeshObj> ()) {
-							if (chooseObj.transform.parent.GetComponent<MeshObj> ().controlPointList.Count == 6) {
-
-
-								if (chooseObj.name == "_Horizontalcp" || chooseObj.name == "_Horizontalcp2") {
-
-									Vector3 _mousepos = new Vector3 (mousePosToWorld.x, chooseObj.transform.position.y, chooseObj.transform.position.z);
-
-									//這邊沒用誒不知道為啥 0.0 限制範圍用
-									float min, max;
-									min = chooseObj.transform.parent.GetComponent<MeshObj> ().controlPointList [0].transform.position.x;
-									max = chooseObj.transform.parent.GetComponent<MeshObj> ().controlPointList [1].transform.position.x;
-
-									Mathf.Clamp (_mousepos.x, max, min);
-									chooseObj.transform.position = _mousepos;
-//									print ("min : " + min);
-//									print ("max : " + max);
-//									print ("_mousepos.x :" + _mousepos.x);
-									chooseObj.transform.parent.GetComponent<MeshObj> ().adjPos ();
-								
-								
-								} else {
-									chooseObj.transform.position = new Vector3 (mousePosToWorld.x, mousePosToWorld.y, chooseObj.transform.position.z);
-									chooseObj.transform.parent.GetComponent<MeshObj> ().adjPos ();
-								}
-
-
-
-
-
-
-
-
-//								float lengh_x = obj_mouse.x - chooseObj.transform.position.x;
-//								float lengh_y = obj_mouse.y - chooseObj.transform.position.y;
-//								Mathf.Abs (lengh_x);
-//								Mathf.Abs (lengh_y);
-//
-//								if (lengh_x > threshold) {
-//									xy = true;
-//									chooseObj.transform.position =  new Vector3 (mousePosToWorld.x, chooseObj.transform.position.y, chooseObj.transform.position.z);
-//									chooseObj.transform.parent.GetComponent<MeshObj> ().adjPos ();
-//
-//
-//	
-//								} else if (lengh_y > threshold) {
-//									xy = false;
-//									chooseObj.transform.position =  new Vector3 (chooseObj.transform.position.x, mousePosToWorld.y, chooseObj.transform.position.z);
-//									chooseObj.transform.parent.GetComponent<MeshObj> ().adjPos ();
-//	
-//								}
-//									
-//							} else {
-//								chooseObj.transform.position = new Vector3(mousePosToWorld.x, mousePosToWorld.y, chooseObj.transform.position.z);
-//								if (chooseObj.transform.parent.GetComponent<MeshObj> ())
-//									chooseObj.transform.parent.GetComponent<MeshObj> ().adjPos ();
-//							}
-							}
-						}
+				if (Physics.Raycast(ray, out hit))
+				{
+					if (hit.collider.gameObject == chooseWindow)
+					{
+						chooseObj.transform.position = new Vector3(mousePosToWorld.x, mousePosToWorld.y, chooseObj.transform.position.z);
+						if (chooseObj.transform.parent.GetComponent<CreateIconFormfactor>()) chooseObj.transform.parent.GetComponent<CreateIconFormfactor>().SetControlPointListRatioPos();
 					}
 				}
 			}
