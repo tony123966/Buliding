@@ -422,11 +422,9 @@ public class DragItemController : MonoBehaviour
 	}
 	void RayCastToChooseObj()
 	{
-		if (chooseObj)
-		{
+		if (chooseObj){
 			if (Input.GetMouseButtonUp(0))
 			{
-				if (chooseObj.transform.parent.GetComponent<CreateIconFormfactor>()) chooseObj.transform.parent.GetComponent<CreateIconFormfactor>().SetControlPointListPos();
 				chooseObj.GetComponent<Collider>().enabled = true;
 				chooseObj = null;
 				return;
@@ -438,15 +436,35 @@ public class DragItemController : MonoBehaviour
 				Vector2 mousePosToWorld = uICamera.ScreenToWorldPoint(mousePos);
 				Ray ray = uICamera.ScreenPointToRay(mousePos);
 				RaycastHit hit;
-				if (Physics.Raycast(ray, out hit))
-				{
-					if (hit.collider.gameObject == chooseWindow)
-					{
+				if (Physics.Raycast(ray, out hit)){
+					if (hit.collider.gameObject == chooseWindow){
+						if (chooseObj.transform.parent.GetComponent<MeshObj> ()) {
+							if (chooseObj.transform.parent.GetComponent<MeshObj>().name == "rectangle_Obj"){
+								if (chooseObj.name == "_Horizontalcp" || chooseObj.name == "_Horizontalcp2"){
+									Vector3 _mousepos = new Vector3(mousePosToWorld.x, chooseObj.transform.position.y, chooseObj.transform.position.z);
+								}
+								else{
+								         chooseObj.transform.position = new Vector3 (mousePosToWorld.x, mousePosToWorld.y, chooseObj.transform.position.z);
+										 chooseObj.transform.parent.GetComponent<MeshObj> ().adjPos();	
+								}
+							}
+							else{
+								chooseObj.transform.position = new Vector3(mousePosToWorld.x, mousePosToWorld.y, chooseObj.transform.position.z);
+								chooseObj.transform.parent.GetComponent<MeshObj>().adjPos();	
+							}
+						}
+						else { 
 						chooseObj.transform.position = new Vector3(mousePosToWorld.x, mousePosToWorld.y, chooseObj.transform.position.z);
-						if (chooseObj.transform.parent.GetComponent<CreateIconFormfactor>()) chooseObj.transform.parent.GetComponent<CreateIconFormfactor>().SetControlPointListRatioPos();
+						if (chooseObj.GetComponent<ooficonmidcontrolpointr>())
+						{
+							chooseObj.GetComponent<ooficonmidcontrolpointr>().ControlPoint22.GetComponent<fourmove>().reset();
+							chooseObj.GetComponent<ooficonmidcontrolpointr>().meshreset.GetComponent<rooficon>().reset();
+						}
+						}
+					}
+	
 					}
 				}
-			}
 		}
 		else
 		{

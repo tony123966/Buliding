@@ -45,6 +45,18 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\Curvy\Editor\CurvyConstraintsWin.cs" />
+     <Compile Include="Assets\Curvy\Editor\CurvyEditorUtility.cs" />
+     <Compile Include="Assets\Curvy\Editor\CurvyPreferences.cs" />
+     <Compile Include="Assets\Curvy\Editor\CurvySplineAlignWizard.cs" />
+     <Compile Include="Assets\Curvy\Editor\CurvySplineExportWizard.cs" />
+     <Compile Include="Assets\Curvy\Editor\CurvySplineGroupInspector.cs" />
+     <Compile Include="Assets\Curvy\Editor\CurvySplineInspector.cs" />
+     <Compile Include="Assets\Curvy\Editor\CurvySplinePathCloneBuilderInspector.cs" />
+     <Compile Include="Assets\Curvy\Editor\CurvySplinePathMeshBuilderInspector.cs" />
+     <Compile Include="Assets\Curvy\Editor\CurvySplineSegmentInspector.cs" />
+     <Compile Include="Assets\Curvy\Editor\CurvySplineShaperInspector.cs" />
+     <Compile Include="Assets\Editor\customEditorDemo.cs" />
      <Compile Include="Assets\NGUI\Examples\Scripts\InventorySystem\Editor\InvDatabaseInspector.cs" />
      <Compile Include="Assets\NGUI\Examples\Scripts\InventorySystem\Editor\InvFindItem.cs" />
      <Compile Include="Assets\NGUI\Scripts\Editor\ActiveAnimationEditor.cs" />
@@ -128,6 +140,16 @@
      <Compile Include="Assets\NGUI\Scripts\Editor\UIWidgetContainerEditor.cs" />
      <Compile Include="Assets\NGUI\Scripts\Editor\UIWidgetInspector.cs" />
      <Compile Include="Assets\NGUI\Scripts\Editor\UIWrapContentEditor.cs" />
+     <Compile Include="Assets\Tingmodel\SuperSplinesPro\Scripts\Design\Editor\SplineAutoAlignInspector.cs" />
+     <Compile Include="Assets\Tingmodel\SuperSplinesPro\SuperSplines\Editor\BranchingSplineInspector.cs" />
+     <Compile Include="Assets\Tingmodel\SuperSplinesPro\SuperSplines\Editor\SplineEditor.cs" />
+     <Compile Include="Assets\Tingmodel\SuperSplinesPro\SuperSplines\Editor\SplineEditorInspector.cs" />
+     <Compile Include="Assets\Tingmodel\SuperSplinesPro\SuperSplines\Editor\SplineEditorScene.cs" />
+     <Compile Include="Assets\Tingmodel\SuperSplinesPro\SuperSplines\Editor\SplineMeshInspector.cs" />
+     <Compile Include="Assets\Tingmodel\SuperSplinesPro\SuperSplines\Editor\SplineNodeInspector.cs" />
+     <Compile Include="Assets\Tingmodel\SuperSplinesPro\SuperSplines\Editor\_CustomDrawers\CustomArrayDrawer.cs" />
+     <Compile Include="Assets\Tingmodel\SuperSplinesPro\SuperSplines\Editor\_EditorUtilities\EditorGUILayoutUtilities.cs" />
+     <Compile Include="Assets\Tingmodel\SuperSplinesPro\SuperSplines\Editor\_EditorUtilities\InstantInspector.cs" />
      <None Include="Assets\NGUI\Examples\Shaders\Unlit - Depth Cutout.shader" />
      <None Include="Assets\NGUI\ReadMe - 3.8.2.txt" />
      <None Include="Assets\NGUI\Resources\Shaders\Unlit - Transparent Masked 1.shader" />
@@ -136,6 +158,7 @@
      <None Include="Assets\NGUI\Examples\Models\Orc\Orc Skin.shader" />
      <None Include="Assets\NGUI\Examples\Atlases\Wooden\Arimo20.txt" />
      <None Include="Assets\NGUI\Examples\Atlases\Wooden\Arimo14.txt" />
+     <None Include="Assets\Tingmodel\SuperSplinesPro\SuperSplinesSamples\SampleAssets\Models\ridge_tail_low.txt" />
      <None Include="Assets\NGUI\Resources\Shaders\Unlit - Text 1.shader" />
      <None Include="Assets\NGUI\Resources\Shaders\Unlit - Premultiplied Colored (TextureClip).shader" />
      <None Include="Assets\NGUI\Resources\Shaders\Unlit - Transparent Colored (Packed) (TextureClip).shader" />
@@ -145,6 +168,8 @@
      <None Include="Assets\NGUI\Examples\Atlases\Wooden\Arimo18.txt" />
      <None Include="Assets\NGUI\Resources\Shaders\Unlit - Transparent Colored (TextureClip).shader" />
      <None Include="Assets\NGUI\Examples\Atlases\SciFi\SciFi Font - Header.txt" />
+     <None Include="Assets\Tingmodel\SuperSplinesPro\SuperSplinesSamples\SampleAssets\Models\ridge_low.txt" />
+     <None Include="Assets\Tingmodel\SuperSplinesPro\SuperSplinesSamples\SampleAssets\Models\ridge_tail.txt" />
      <None Include="Assets\NGUI\Resources\Shaders\Unlit - Transparent Masked 3.shader" />
      <None Include="Assets\NGUI\Resources\Shaders\Unlit - Transparent Colored 1.shader" />
      <None Include="Assets\NGUI\Examples\Atlases\Fantasy\Fantasy Font - Normal.txt" />
@@ -157,13 +182,16 @@
      <None Include="Assets\NGUI\Resources\Shaders\Unlit - Premultiplied Colored 1.shader" />
      <None Include="Assets\NGUI\Resources\Shaders\Unlit - Premultiplied Colored.shader" />
      <None Include="Assets\NGUI\Resources\Shaders\Unlit - Transparent Colored.shader" />
+     <None Include="Assets\Tingmodel\SuperSplinesPro\ReadMe.txt" />
      <None Include="Assets\NGUI\Resources\Shaders\Unlit - Text.shader" />
      <None Include="Assets\NGUI\Resources\Shaders\Unlit - Transparent Packed.shader" />
      <None Include="Assets\NGUI\Resources\Shaders\Unlit - Transparent Packed 3.shader" />
+     <None Include="Assets\Tingmodel\SuperSplinesPro\SuperSplinesSamples\SampleAssets\Models\ridge.txt" />
      <None Include="Assets\NGUI\Examples\Shaders\Unlit - Additive Colored.shader" />
      <None Include="Assets\NGUI\Resources\Shaders\Unlit - Transparent Masked.shader" />
      <None Include="Assets\NGUI\Examples\Atlases\Refractive\Refractive Font - Header.txt" />
      <None Include="Assets\NGUI\Examples\Shaders\Refractive.shader" />
+     <None Include="Assets\Curvy\ReadMe.txt" />
      <None Include="Assets\NGUI\Resources\Shaders\Unlit - Text (TextureClip).shader" />
      <None Include="Assets\NGUI\Examples\Shaders\Unlit - Depth.shader" />
      <None Include="Assets\NGUI\Examples\Atlases\SciFi\SciFi Font - Normal.txt" />

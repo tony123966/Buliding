@@ -46,28 +46,42 @@ public class UIDragDropItem : MonoBehaviour
 
 	public bool interactable = true;
 
-#region Common functionality
+	#region Common functionality
 
-	[System.NonSerialized] protected Transform mTrans;
-	[System.NonSerialized] protected Transform mParent;
-	[System.NonSerialized] protected Collider mCollider;
-	[System.NonSerialized] protected Collider2D mCollider2D;
-	[System.NonSerialized] protected UIButton mButton;
-	[System.NonSerialized] protected UIRoot mRoot;
-	[System.NonSerialized] protected UIGrid mGrid;
-	[System.NonSerialized] protected UITable mTable;
-	[System.NonSerialized] protected float mDragStartTime = 0f;
-	[System.NonSerialized] protected UIDragScrollView mDragScrollView = null;
-	[System.NonSerialized] protected bool mPressed = false;
-	[System.NonSerialized] protected bool mDragging = false;
-	[System.NonSerialized] protected UICamera.MouseOrTouch mTouch;
+	[System.NonSerialized]
+	protected Transform mTrans;
+	[System.NonSerialized]
+	protected Transform mParent;
+	[System.NonSerialized]
+	protected Collider mCollider;
+	[System.NonSerialized]
+	protected Collider2D mCollider2D;
+	[System.NonSerialized]
+	protected UIButton mButton;
+	[System.NonSerialized]
+	protected UIRoot mRoot;
+	[System.NonSerialized]
+	protected UIGrid mGrid;
+	[System.NonSerialized]
+	protected UITable mTable;
+	[System.NonSerialized]
+	protected float mDragStartTime = 0f;
+	[System.NonSerialized]
+	protected UIDragScrollView mDragScrollView = null;
+	[System.NonSerialized]
+	protected bool mPressed = false;
+	[System.NonSerialized]
+	protected bool mDragging = false;
+	[System.NonSerialized]
+	protected UICamera.MouseOrTouch mTouch;
 
-	[System.NonSerialized]protected DragItemController dragItemController;
+	[System.NonSerialized]
+	protected DragItemController dragItemController;
 	/// <summary>
 	/// Cache the transform.
 	/// </summary>
 
-	protected virtual void Start ()
+	protected virtual void Start()
 	{
 		mTrans = transform;
 #if UNITY_4_3 || UNITY_4_5 || UNITY_4_6
@@ -85,7 +99,7 @@ public class UIDragDropItem : MonoBehaviour
 	/// Record the time the item was pressed on.
 	/// </summary>
 
-	protected virtual void OnPress (bool isPressed)
+	protected virtual void OnPress(bool isPressed)
 	{
 		if (!interactable) return;
 
@@ -106,7 +120,7 @@ public class UIDragDropItem : MonoBehaviour
 	/// Start the dragging operation after the item was held for a while.
 	/// </summary>
 
-	protected virtual void Update ()
+	protected virtual void Update()
 	{
 		if (restriction == Restriction.PressAndHold)
 		{
@@ -119,7 +133,7 @@ public class UIDragDropItem : MonoBehaviour
 	/// Start the dragging operation.
 	/// </summary>
 
-	protected virtual void OnDragStart ()
+	protected virtual void OnDragStart()
 	{
 		if (!interactable) return;
 		if (!enabled || mTouch != UICamera.currentTouch) return;
@@ -150,7 +164,7 @@ public class UIDragDropItem : MonoBehaviour
 	/// Start the dragging operation.
 	/// </summary>
 
-	protected virtual void StartDragging ()
+	protected virtual void StartDragging()
 	{
 		if (!interactable) return;
 
@@ -202,7 +216,7 @@ public class UIDragDropItem : MonoBehaviour
 	/// Perform the dragging.
 	/// </summary>
 
-	protected virtual void OnDrag (Vector2 delta)
+	protected virtual void OnDrag(Vector2 delta)
 	{
 		if (!interactable) return;
 		if (!mDragging || !enabled || mTouch != UICamera.currentTouch) return;
@@ -213,7 +227,7 @@ public class UIDragDropItem : MonoBehaviour
 	/// Notification sent when the drag event has ended.
 	/// </summary>
 
-	protected virtual void OnDragEnd ()
+	protected virtual void OnDragEnd()
 	{
 		if (!interactable) return;
 		if (!enabled || mTouch != UICamera.currentTouch) return;
@@ -224,7 +238,7 @@ public class UIDragDropItem : MonoBehaviour
 	/// Drop the dragged item.
 	/// </summary>
 
-	public void StopDragging (GameObject go)
+	public void StopDragging(GameObject go)
 	{
 		if (mDragging)
 		{
@@ -233,13 +247,13 @@ public class UIDragDropItem : MonoBehaviour
 		}
 	}
 
-#endregion
+	#endregion
 
 	/// <summary>
 	/// Perform any logic related to starting the drag & drop operation.
 	/// </summary>
 
-	protected virtual void OnDragDropStart ()
+	protected virtual void OnDragDropStart()
 	{
 		// Automatically disable the scroll view
 		if (mDragScrollView != null) mDragScrollView.enabled = false;
@@ -274,7 +288,7 @@ public class UIDragDropItem : MonoBehaviour
 		if (mTable != null) mTable.repositionNow = true;
 		if (mGrid != null) mGrid.repositionNow = true;
 
-		if(GameObject.Find("DragItemController"))
+		if (GameObject.Find("DragItemController"))
 		{
 			DragItemController item = GameObject.Find("DragItemController").GetComponent<DragItemController>();
 			item.chooseDragObject = gameObject;
@@ -285,7 +299,7 @@ public class UIDragDropItem : MonoBehaviour
 	/// Adjust the dragged object's position.
 	/// </summary>
 
-	protected virtual void OnDragDropMove (Vector2 delta)
+	protected virtual void OnDragDropMove(Vector2 delta)
 	{
 		mTrans.localPosition += (Vector3)delta;
 	}
@@ -294,7 +308,7 @@ public class UIDragDropItem : MonoBehaviour
 	/// Drop the item onto the specified object.
 	/// </summary>
 
-	protected virtual void OnDragDropRelease (GameObject surface)
+	protected virtual void OnDragDropRelease(GameObject surface)
 	{
 		if (!cloneOnDrag)
 		{
@@ -336,14 +350,13 @@ public class UIDragDropItem : MonoBehaviour
 			if (mTable != null) mTable.repositionNow = true;
 			if (mGrid != null) mGrid.repositionNow = true;
 
-			if(GameObject.Find("DragItemController"))
+			if (GameObject.Find("DragItemController"))
 			{
 				DragItemController item = GameObject.Find("DragItemController").GetComponent<DragItemController>();
 				item.SetObjInWiindows();
-
 				item.chooseDragObject = null;
 			}
-	
+
 			// We're now done
 			OnDragDropEnd();
 		}
@@ -354,14 +367,14 @@ public class UIDragDropItem : MonoBehaviour
 	/// Function called when the object gets reparented after the drop operation finishes.
 	/// </summary>
 
-	protected virtual void OnDragDropEnd () { }
+	protected virtual void OnDragDropEnd() { }
 
 	/// <summary>
 	/// Re-enable the drag scroll view script at the end of the frame.
 	/// Reason: http://www.tasharen.com/forum/index.php?topic=10203.0
 	/// </summary>
 
-	protected IEnumerator EnableDragScrollView ()
+	protected IEnumerator EnableDragScrollView()
 	{
 		yield return new WaitForEndOfFrame();
 		if (mDragScrollView != null) mDragScrollView.enabled = true;
