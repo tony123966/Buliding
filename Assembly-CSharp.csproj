@@ -180,13 +180,16 @@
      <Compile Include="Assets\NGUI\Scripts\UI\UITexture.cs" />
      <Compile Include="Assets\NGUI\Scripts\UI\UITooltip.cs" />
      <Compile Include="Assets\NGUI\Scripts\UI\UIViewport.cs" />
+     <Compile Include="Assets\Scripts\BodyIcon.cs" />
      <Compile Include="Assets\Scripts\CameraWindow.cs" />
+     <Compile Include="Assets\Scripts\Catline.cs" />
      <Compile Include="Assets\Scripts\CorespondingDragItem.cs" />
      <Compile Include="Assets\Scripts\CreateIconFormfactor.cs" />
-     <Compile Include="Assets\Scripts\CreateIconRectangle.cs" />
      <Compile Include="Assets\Scripts\DragItemController.cs" />
      <Compile Include="Assets\Scripts\FixedWindows.cs" />
      <Compile Include="Assets\Scripts\MeshObj.cs" />
+     <Compile Include="Assets\cat\Circlecut.cs" />
+     <Compile Include="Assets\icon-formfractor\RoofIcon.cs" />
      <None Include="Assets\NGUI\Examples\Shaders\Unlit - Depth Cutout.shader" />
      <None Include="Assets\NGUI\ReadMe - 3.8.2.txt" />
      <None Include="Assets\NGUI\Resources\Shaders\Unlit - Transparent Masked 1.shader" />

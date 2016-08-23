@@ -454,7 +454,11 @@ public class DragItemController : MonoBehaviour
 			{
 				int index = ChooseWindow();
 
-				if (index != -1) SetCameraAndGrid(index);
+				if (index != -1) {
+					SetCameraAndGrid(index);
+					//選擇視窗
+					chooseWindow = windowsList[index];
+				}
 
 				if (chooseWindow != null)
 				{
@@ -567,7 +571,7 @@ public class DragItemController : MonoBehaviour
 				}
 				else if (chooseDragObject.tag == DECORATECOMPONENT)
 				{
-					if (AllwindowsComponent[index].allComponent[MAINCOMPONENT] != null)//如果有拖曳物件 且在選擇的視窗內 且視窗內物件為空
+					if (AllwindowsComponent[index].allComponent.ContainsKey(MAINCOMPONENT))//如果有拖曳物件 且在選擇的視窗內 且視窗內物件為空
 					{
 						CreateDecorateComponent(index);
 					}
