@@ -20,21 +20,17 @@ public class CreateIconFormfactor : MonoBehaviour
 	{
 		dragItemController = GameObject.Find("DragItemController").GetComponent<DragItemController>();
 		CreatePoint();
-		SetMesh();
+		//SetMesh();
 	}
 
 	void CreatePoint()
 	{
 		controlPointList.Add(controlPoint);
-		for (int i = 1; i < edgeNum; i++)
-		{
+		for (int i = 1; i < edgeNum; i++){
 			GameObject clone = Instantiate(controlPoint);
 			clone.transform.position = controlPoint.transform.position;
-
 			clone.transform.RotateAround(transform.position, Vector3.forward, 360.0f / edgeNum * i);
-
 			clone.transform.parent = transform;
-
 			controlPointList.Add(clone);
 
 		}
@@ -109,30 +105,26 @@ public class CreateIconFormfactor : MonoBehaviour
 		mesh.normals = nL;
 		mesh.uv = uvL;
 
-		verts=mesh.vertices;
+		verts = mesh.vertices;
 	}
 	public void SetControlPointListPos() 
 	{
-		for (int i = 0; i < controlPointList.Count; i++)
-		{
-			verts[i] = controlPointList[i].transform.localPosition;
-
-		}
+//		for (int i = 0; i < controlPointList.Count; i++){
+//			verts[i] = controlPointList[i].transform.localPosition;
+//		}
+//		print ("Update verts array");
 	}
 	public void SetControlPointListRatioPos()
 	{
 		Vector3 middle = Vector3.zero;
 		Vector3[] eachToMiddle = new Vector3[controlPointList.Count];
-
-		for (int i = 0; i < controlPointList.Count; i++)
-		{
+//
+		for (int i = 0; i < controlPointList.Count; i++){
 			eachToMiddle[i] = verts[i] - middle;
 		}
-
-		for (int i = 0; i < controlPointList.Count; i++)
-		{
-			if (dragItemController.chooseObj == controlPointList[i])
-			{
+//
+		for (int i = 0; i < controlPointList.Count; i++)	{
+			if (dragItemController.chooseObj == controlPointList[i]){
 				float aa, bb, cc;
 				Vector3 a = dragItemController.chooseObj.transform.localPosition - middle;//after
 				Vector3 b = verts[i] - middle;//before
@@ -140,30 +132,29 @@ public class CreateIconFormfactor : MonoBehaviour
 				aa = a.magnitude;
 				bb = b.magnitude;
 				cc = aa / bb;     //ratio
-
-				for (int j = 0; j < controlPointList.Count; j++)
-				{
-					controlPointList[j].transform.localPosition = eachToMiddle[j] * cc;
-				}
-
+				Debug.Log("a:"+aa);
+				Debug.Log("b:"+bb);
+				Debug.Log("c:"+cc);
+//				for (int j = 0; j < controlPointList.Count; j++){
+//					controlPointList[j].transform.localPosition = eachToMiddle[j] * cc;
+//				}
 			}
 		}
-		for (int i = 0; i < controlPointList.Count; i++)
-		{
-			verts[i] = controlPointList[i].transform.localPosition;
-
-		}
+//		for (int i = 0; i < controlPointList.Count; i++){
+//			verts[i] = controlPointList[i].transform.localPosition;
+//		}
 		AdjustMesh();
 	}
 	void AdjustMesh()
 	{
-		for (int i = 0; i < controlPointList.Count; i++)
-		{
-			verts[i] = controlPointList[i].transform.localPosition;
-		}
+//		for (int i = 0; i < controlPointList.Count; i++)
+//		{
+//			verts[i] = controlPointList[i].transform.localPosition;
+//		}
 		mesh.vertices = verts;
-		mesh.RecalculateBounds();
-		mesh.RecalculateNormals();
+		SetMesh();
+		//mesh.RecalculateBounds();
+		//mesh.RecalculateNormals();
 
 	}
 }
