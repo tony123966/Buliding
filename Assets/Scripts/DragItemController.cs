@@ -389,9 +389,13 @@ public class DragItemController : MonoBehaviour
 	//四個視窗中的物件集合
 	public WindowsList[] AllwindowsComponent;
 
+	//
+	public Movement movement;
+
 	void Start()
 	{
 		uICamera = GameObject.Find("UICamera").GetComponent<Camera>();
+		movement = GameObject.Find ("Movement").GetComponent<Movement> ();
 		InitWindowListSetting();
 	}
 	void Update()
@@ -423,48 +427,48 @@ public class DragItemController : MonoBehaviour
 	void RayCastToChooseObj()
 	{
 		if (chooseObj){
-			if (Input.GetMouseButtonUp(0))
-			{
-				chooseObj.GetComponent<Collider>().enabled = true;
+			if (Input.GetMouseButtonUp (0)) {
+				chooseObj.GetComponent<Collider> ().enabled = true;
 				chooseObj = null;
 				return;
-			}
-			else
-			{
+			} else {
 
-				Vector2 mousePos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
-				Vector2 mousePosToWorld = uICamera.ScreenToWorldPoint(mousePos);
-				Ray ray = uICamera.ScreenPointToRay(mousePos);
+				Vector2 mousePos = new Vector2 (Input.mousePosition.x, Input.mousePosition.y);
+				Vector2 mousePosToWorld = uICamera.ScreenToWorldPoint (mousePos);
+				Ray ray = uICamera.ScreenPointToRay (mousePos);
 				RaycastHit hit;
-				if (Physics.Raycast(ray, out hit)){
-					if (hit.collider.gameObject == chooseWindow){
-						if (chooseObj.transform.parent.GetComponent<MeshObj> ()) {
-							if (chooseObj.transform.parent.GetComponent<MeshObj>().name == "rectangle_Obj"){
-								if (chooseObj.name == "_Horizontalcp" || chooseObj.name == "_Horizontalcp2"){
-									Vector3 _mousepos = new Vector3(mousePosToWorld.x, chooseObj.transform.position.y, chooseObj.transform.position.z);
-								}
-								else{
-								         chooseObj.transform.position = new Vector3 (mousePosToWorld.x, mousePosToWorld.y, chooseObj.transform.position.z);
-										 chooseObj.transform.parent.GetComponent<MeshObj> ().adjPos();	
-								}
-							}
-							else{
-								chooseObj.transform.position = new Vector3(mousePosToWorld.x, mousePosToWorld.y, chooseObj.transform.position.z);
-								chooseObj.transform.parent.GetComponent<MeshObj>().adjPos();	
-							}
+				if (Physics.Raycast (ray, out hit)) {
+					if (hit.collider.gameObject == chooseWindow) {
+
+
+						//if (chooseObj.transform.parent.GetComponent<MeshObj> ()) { ??????????
+						movement.move (mousePosToWorld);
+						//chooseObj.transform.parent.GetComponent<MeshObj>().adjPos();
+//							if (chooseObj.transform.parent.GetComponent<MeshObj>().name == "rectangle_Obj"){
+//								if (chooseObj.name == "_Horizontalcp" || chooseObj.name == "_Horizontalcp2"){
+//									Vector3 _mousepos = new Vector3(mousePosToWorld.x, chooseObj.transform.position.y, chooseObj.transform.position.z);
+//								}
+//								else{
+//								         chooseObj.transform.position = new Vector3 (mousePosToWorld.x, mousePosToWorld.y, chooseObj.transform.position.z);
+//										 chooseObj.transform.parent.GetComponent<MeshObj> ().adjPos();	
+//								}
+//							}
+//							else{
+//								chooseObj.transform.position = new Vector3(mousePosToWorld.x, mousePosToWorld.y, chooseObj.transform.position.z);
+//								chooseObj.transform.parent.GetComponent<MeshObj>().adjPos();	
+//							}
+//						}
+//						else { 
+//						chooseObj.transform.position = new Vector3(mousePosToWorld.x, mousePosToWorld.y, chooseObj.transform.position.z);
+						if (chooseObj.GetComponent<ooficonmidcontrolpointr> ()) {
+							chooseObj.GetComponent<ooficonmidcontrolpointr> ().ControlPoint22.GetComponent<fourmove> ().reset ();
+							chooseObj.GetComponent<ooficonmidcontrolpointr> ().meshreset.GetComponent<rooficon> ().reset ();
 						}
-						else { 
-						chooseObj.transform.position = new Vector3(mousePosToWorld.x, mousePosToWorld.y, chooseObj.transform.position.z);
-						if (chooseObj.GetComponent<ooficonmidcontrolpointr>())
-						{
-							chooseObj.GetComponent<ooficonmidcontrolpointr>().ControlPoint22.GetComponent<fourmove>().reset();
-							chooseObj.GetComponent<ooficonmidcontrolpointr>().meshreset.GetComponent<rooficon>().reset();
-						}
-						}
+
 					}
 	
-					}
 				}
+			}
 		}
 		else
 		{
@@ -552,6 +556,9 @@ public class DragItemController : MonoBehaviour
 				}
 				if (chooseDragObject.tag == MAINCOMPONENT)
 				{
+					movement.freelist.Clear ();
+					movement.horlist.Clear ();
+					movement.verlist.Clear ();
 					if (AllwindowsComponent[index].allComponent.ContainsKey(MAINCOMPONENT) == false)//在選擇的視窗內 且視窗內物件為空
 					{
 						CreateMainComponent(index);

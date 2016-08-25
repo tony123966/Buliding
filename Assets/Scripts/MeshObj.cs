@@ -3,8 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 public class MeshObj : MonoBehaviour
 {
-	public List<GameObject> controlPointList;
+	public List<GameObject> controlPointList = new List<GameObject> ();
 	public List<GameObject> horizontal_List = new List<GameObject> ();
+	public List<GameObject> testlist = new List<GameObject> ();
 	// Use this for initialization
 	public GameObject chooseOBJ = null;
 	Mesh mesh;
@@ -14,6 +15,7 @@ public class MeshObj : MonoBehaviour
 	Vector3 FirstPos;
 
 	public DragItemController dragitemcontroller;
+	public Movement movement;
 	public Material lineMat;
 //	public GameObject cp1;
 //	public GameObject cp2;
@@ -28,16 +30,20 @@ public class MeshObj : MonoBehaviour
 	void Start(){
 
 		dragitemcontroller = GameObject.Find ("DragItemController").GetComponent<DragItemController> ();
-		lineRenderer = GetComponent<LineRenderer> ();
+		//lineRenderer = GetComponent<LineRenderer> ();
 
 	}
 
 	void Awake () 
 	{
+		
 		mesh = GetComponent<MeshFilter>().mesh;
+		movement = GameObject.Find ("Movement").GetComponent<Movement> ();
+
+
 		if (!gameObject.GetComponent<MeshFilter>()) gameObject.AddComponent<MeshFilter>();
 		if (!gameObject.GetComponent<MeshRenderer>()) gameObject.AddComponent<MeshRenderer>();
-        mesh.Clear();
+        //mesh.Clear();
 
 
 		//rectangle 
@@ -57,15 +63,17 @@ public class MeshObj : MonoBehaviour
 //				new Vector2 (0, 0),
 //				new Vector2 (1, 0) };
 
-			horizontal_List.Add (controlPointList [4]);
-			horizontal_List.Add (controlPointList [5]);
 
-//			for (int i = 0; i < horizontal_List.Count; i++) {
-//				Debug.Log (horizontal_List [i].transform.localPosition);
-//			}
+
 
 			mesh.triangles =  new int[]{0, 1, 2,0,2,3}; 
 			verts = mesh.vertices;
+			for (int i = 0; i < controlPointList.Count-2; i++) {
+				movement.freelist.Add (controlPointList [i]);
+			}
+			movement.horlist.Add(controlPointList[4]);
+			movement.horlist.Add(controlPointList[5]);
+
 			//store first 
 		}
 
@@ -77,10 +85,13 @@ public class MeshObj : MonoBehaviour
 				controlPointList [2].transform.localPosition,
 				controlPointList [3].transform.localPosition,
 			};
+
 			//mesh.uv = new Vector2[] {new Vector2 (0, 0),  new Vector2 (0, 1), new Vector2 (1, 1)};
 			mesh.triangles =  new int[]{0, 1, 2,0,3,1}; 
 			verts = mesh.vertices;
 			//store first 
+			movement.freelist = controlPointList;
+
 		}
 		else if (controlPointList.Count ==  6)
 		{
@@ -96,7 +107,11 @@ public class MeshObj : MonoBehaviour
 			mesh.triangles =  new int[]{0,1,2,0,2,3,0,3,4,0,4,5}; 
 			verts = mesh.vertices;
 			//store first 
+			movement.freelist = controlPointList;
+
 		}
+
+		//還有五
 
 
 	}
@@ -141,7 +156,7 @@ public class MeshObj : MonoBehaviour
 		for (int i = 0; i < controlPointList.Count; i++) {
 			if (dragitemcontroller.chooseObj == controlPointList [i]) { 
 				
-				if (controlPointList.Count == 6 && i < 4 && this.tag == "Rectangle") {
+				if (controlPointList.Count == 6  && this.tag == "Rectangle") {
 					//regtangle and its not middle point
 
 					//1. find offset_x, offset_y of mouse position and original position. 
@@ -203,31 +218,7 @@ public class MeshObj : MonoBehaviour
 //							if (b.y == controlPointList [j].transform.localPosition.y) {
 //								controlPointList [j].transform.localPosition = new Vector3 (controlPointList [j].transform.localPosition.x, a.y, controlPointList [j].transform.localPosition.z);
 //							}
-//						}
-					//}
-				} else if(controlPointList.Count == 6 && i > 3){
-					//middle point
-					print("adjust middle point");
-
-					Vector3 mouse_pos = dragitemcontroller.chooseObj.transform.localPosition;
-
-					Vector3 h0 = horizontal_List [0].transform.localPosition;
-					Vector3 h1 = horizontal_List [1].transform.localPosition;
-
-					for (int x = 0; x < horizontal_List.Count; x++) {
-						if (horizontal_List [0] == controlPointList [i]) { //right
-						
-							float offset = (mouse_pos.x - h0.x);
-							controlPointList [5].transform.localPosition = new Vector3 (horizontal_List [1].transform.localPosition.x - (offset), horizontal_List [1].transform.localPosition.y, horizontal_List [1].transform.localPosition.z);
-						} else {
-							float offset = (mouse_pos.x - h1.x);
-							controlPointList [4].transform.localPosition = new Vector3 (horizontal_List [0].transform.localPosition.x - (offset), horizontal_List [0].transform.localPosition.y, horizontal_List [0].transform.localPosition.z);
-						
-						
-						}
-
-
-					}
+//				}
 
 				} else {
 					Vector3 a = dragitemcontroller.chooseObj.transform.localPosition;//after
