@@ -229,6 +229,7 @@
      <Compile Include="Assets\Scripts\MeshObj.cs" />
      <Compile Include="Assets\Scripts\Movement.cs" />
      <Compile Include="Assets\Scripts\creaticonforfractor.cs" />
+     <Compile Include="Assets\Scripts\platform2icon.cs" />
      <Compile Include="Assets\TRIDEMO\map.cs" />
      <Compile Include="Assets\TRIDEMO\triangle.cs" />
      <Compile Include="Assets\TRIDEMO\ttt.cs" />
@@ -310,6 +311,7 @@
      <Compile Include="Assets\Tingmodel\upridgemidpoint2.cs" />
      <Compile Include="Assets\Tingmodel\upridgetile.cs" />
      <Compile Include="Assets\Tingmodel\worldmouse.cs" />
+     <Compile Include="Assets\body2icon.cs" />
      <Compile Include="Assets\cat\Balustrade.cs" />
      <Compile Include="Assets\cat\Balustrademesh.cs" />
      <Compile Include="Assets\cat\Frieze.cs" />

@@ -5,7 +5,6 @@ public class MeshObj : MonoBehaviour
 {
 	public List<GameObject> controlPointList = new List<GameObject> ();
 	public List<GameObject> horizontal_List = new List<GameObject> ();
-	public List<GameObject> testlist = new List<GameObject> ();
 	// Use this for initialization
 	public GameObject chooseOBJ = null;
 	Mesh mesh;
@@ -47,8 +46,7 @@ public class MeshObj : MonoBehaviour
 
 
 		//rectangle 
-		if (controlPointList.Count ==  6 && this.tag == "Rectangle")
-		{
+		if (controlPointList.Count == 6 && this.tag == "Rectangle") {
 			mesh.vertices = new Vector3[] {
 				controlPointList [0].transform.localPosition,
 				controlPointList [1].transform.localPosition,
@@ -57,29 +55,18 @@ public class MeshObj : MonoBehaviour
 				controlPointList [4].transform.localPosition,
 				controlPointList [5].transform.localPosition
 			};
-//			mesh.uv = new Vector2[] {
-//				new Vector2 (0, 1),
-//				new Vector2 (1, 1),
-//				new Vector2 (0, 0),
-//				new Vector2 (1, 0) };
 
-
-
-
-			mesh.triangles =  new int[]{0, 1, 2,0,2,3}; 
+			mesh.triangles = new int[]{ 0, 1, 2, 0, 2, 3 }; 
 			verts = mesh.vertices;
-			for (int i = 0; i < controlPointList.Count-2; i++) {
+			for (int i = 0; i < controlPointList.Count - 2; i++) {
 				movement.freelist.Add (controlPointList [i]);
 			}
-			movement.horlist.Add(controlPointList[4]);
-			movement.horlist.Add(controlPointList[5]);
+			movement.horlist.Add (controlPointList [4]);
+			movement.horlist.Add (controlPointList [5]);
 
 			//store first 
-		}
-
-		else if (controlPointList.Count ==  4)
-		{
-				mesh.vertices = new Vector3[] {
+		} else if (controlPointList.Count == 4) {
+			mesh.vertices = new Vector3[] {
 				controlPointList [0].transform.localPosition,
 				controlPointList [1].transform.localPosition,
 				controlPointList [2].transform.localPosition,
@@ -87,14 +74,12 @@ public class MeshObj : MonoBehaviour
 			};
 
 			//mesh.uv = new Vector2[] {new Vector2 (0, 0),  new Vector2 (0, 1), new Vector2 (1, 1)};
-			mesh.triangles =  new int[]{0, 1, 2,0,3,1}; 
+			mesh.triangles = new int[]{ 0, 1, 2, 0, 3, 1 }; 
 			verts = mesh.vertices;
 			//store first 
 			movement.freelist = controlPointList;
 
-		}
-		else if (controlPointList.Count ==  6)
-		{
+		} else if (controlPointList.Count == 6) {
 			mesh.vertices = new Vector3[] {
 				controlPointList [0].transform.localPosition,
 				controlPointList [1].transform.localPosition,
@@ -104,18 +89,25 @@ public class MeshObj : MonoBehaviour
 				controlPointList [5].transform.localPosition
 			};
 			//mesh.uv = new Vector2[] {new Vector2 (0, 0),  new Vector2 (0, 1), new Vector2 (1, 1)};
-			mesh.triangles =  new int[]{0,1,2,0,2,3,0,3,4,0,4,5}; 
+			mesh.triangles = new int[]{ 0, 1, 2, 0, 2, 3, 0, 3, 4, 0, 4, 5 }; 
 			verts = mesh.vertices;
 			//store first 
 			movement.freelist = controlPointList;
 
+		} else if (controlPointList.Count == 5) {
+		
+			mesh.vertices = new Vector3[] {
+				controlPointList [0].transform.localPosition,
+				controlPointList [1].transform.localPosition,
+				controlPointList [2].transform.localPosition,
+				controlPointList [3].transform.localPosition,
+				controlPointList [4].transform.localPosition,
+			};
+			mesh.triangles = new int[]{ 0, 1, 2, 0, 2, 3, 0, 3, 4 }; 
+			verts = mesh.vertices;
+			movement.freelist = controlPointList;
 		}
-
-		//還有五
-
-
 	}
-
 	void Update () {
 		 
 
@@ -155,71 +147,45 @@ public class MeshObj : MonoBehaviour
 		}	
 		for (int i = 0; i < controlPointList.Count; i++) {
 			if (dragitemcontroller.chooseObj == controlPointList [i]) { 
-				
-				if (controlPointList.Count == 6  && this.tag == "Rectangle") {
-					//regtangle and its not middle point
-
-					//1. find offset_x, offset_y of mouse position and original position. 
-					float offset_x, offset_y;
-
-					Vector3 mouse_pos = dragitemcontroller.chooseObj.transform.localPosition;	
-					Vector3 ori_mouse_pos = verts [i]; //找x和他一樣的
-
-					offset_x = mouse_pos.x - ori_mouse_pos.x;
-					offset_y = mouse_pos.y - ori_mouse_pos.y;
-//					print ("offset_x:" + offset_x);
-//					print ("offset_y:" + offset_y);
-
-//					offset_x = Mathf.Abs (offset_x);
-//					offset_y = Mathf.Abs (offset_y);
-//					print ("a__offset_x:" + offset_x);
-//					print ("a__offset_y:" + offset_y);
-
-//					2.adjust other point.
-					for (int j = 0; j < controlPointList.Count-2; j++) {
-						if ((ori_mouse_pos.x == controlPointList [j].transform.localPosition.x) && (i!=j)) { //* i->choose obj *//
-							
-							//print (j +" x thesame");
-							controlPointList [j].transform.localPosition =
+				if (controlPointList.Count == 6 && this.tag == "Rectangle") {					
+					if (i < 4) {//1. find offset_x, offset_y of mouse position and original position. 
+						float offset_x, offset_y;
+						Vector3 mouse_pos = dragitemcontroller.chooseObj.transform.localPosition;	
+						Vector3 ori_mouse_pos = verts [i]; //找x和他一樣的
+						offset_x = mouse_pos.x - ori_mouse_pos.x;
+						offset_y = mouse_pos.y - ori_mouse_pos.y;
+						for (int j = 0; j < controlPointList.Count - 2; j++) {
+							if ((ori_mouse_pos.x == controlPointList [j].transform.localPosition.x) && (i != j)) { //* i->choose obj *////2.adjust other point.
+								controlPointList [j].transform.localPosition =
 								new Vector3 (mouse_pos.x, 
 									verts [j].y - (offset_y), 
 									verts [j].z);
-						} else if ((ori_mouse_pos.y == controlPointList [j].transform.localPosition.y) && (i!=j)) {
-							//print (j +" y thesame");
-							controlPointList [j].transform.localPosition =
+							} else if ((ori_mouse_pos.y == controlPointList [j].transform.localPosition.y) && (i != j)) {
+								controlPointList [j].transform.localPosition =
 							new Vector3 (verts [j].x - (offset_x), 
-								mouse_pos.y, 
-								verts [j].z);
-						} else if((i!=j) && (i < 4)){
-							//print (j +" no thesame");
-							controlPointList [j].transform.localPosition = 
+									mouse_pos.y, 
+									verts [j].z);
+							} else if ((i != j) && (i < 4)) {
+								controlPointList [j].transform.localPosition = 
 								new Vector3 (verts [j].x - (offset_x),
 									verts [j].y - (offset_y),
 									verts [j].z);
+							}
+						}
+					} else {
+						float offset_x;
+						Vector3 mouse_pos = dragitemcontroller.chooseObj.transform.localPosition;	
+						Vector3 ori_mouse_pos = verts [i]; //找x和他一樣的
+						offset_x = mouse_pos.x - ori_mouse_pos.x;
+						if (i == 4) {
+							float a = Mathf.Clamp (verts [5].x - (offset_x), controlPointList [0].transform.localPosition.x, controlPointList [1].transform.localPosition.x);
+							controlPointList [5].transform.localPosition =	new Vector3 (a, verts [5].y, verts [5].z);
+						} else {
+							float b = Mathf.Clamp (verts [4].x - (offset_x), controlPointList [0].transform.localPosition.x, controlPointList [1].transform.localPosition.x);
+							controlPointList [4].transform.localPosition = new Vector3 (b, verts [4].y, verts [4].z);
 
 						}
-					}
-
-
-					//move horizontal point and right point first
-					//float width = Vector3.Distance(controlPointList[0].transform.localPosition,controlPointList[1].transform.localPosition);
-					//float height = Vector3.Distance(controlPointList[0].transform.localPosition,controlPointList[2].transform.localPosition);
-					//print ("width:" + width);
-					//print ("height: " + height);
-
-
-//					horizontal_List [0].transform.localPosition = new Vector3 (controlPointList [0].transform.localPosition.x, controlPointList [0].transform.localPosition.y - height / 2, controlPointList [0].transform.localPosition.z);
-//					horizontal_List [1].transform.localPosition = new Vector3 (controlPointList [1].transform.localPosition.x, controlPointList [1].transform.localPosition.y - height / 2, controlPointList [1].transform.localPosition.z);
-//						}
-//					} else {
-//						Vector3 a = dragitemcontroller.chooseObj.transform.localPosition;
-//						Vector3 b = verts [i]; //找x和他一樣的
-//						for (int j = 0; j < controlPointList.Count; j++) {
-//							if (b.y == controlPointList [j].transform.localPosition.y) {
-//								controlPointList [j].transform.localPosition = new Vector3 (controlPointList [j].transform.localPosition.x, a.y, controlPointList [j].transform.localPosition.z);
-//							}
-//				}
-
+					}//rectangle end
 				} else {
 					Vector3 a = dragitemcontroller.chooseObj.transform.localPosition;//after
 					a = a - middle;
@@ -228,9 +194,8 @@ public class MeshObj : MonoBehaviour
 					bb = b.magnitude;
 					cc = aa / bb;     //ratio
 					for (int j = 0; j < controlPointList.Count; j++) {
-						controlPointList[j].transform.localPosition = each_tomiddle [j] * cc;
+						controlPointList [j].transform.localPosition = each_tomiddle [j] * cc;
 					}
-
 				}
 			}
 		}
@@ -238,22 +203,13 @@ public class MeshObj : MonoBehaviour
 			verts [x] = controlPointList [x].transform.localPosition;
 		}
 
-
 //		horizontal_List[0] = controlPointList [4];
 //		horizontal_List[1] = controlPointList [5];
-
 		adjMesh ();
 	}
-
-	public void Drawline(){
-
-		lineRenderer.SetVertexCount (controlPointList.Count);
-		lineRenderer.SetWidth (0.01f, 0.01f);
-		for (int i = 0; i < 5; i++) {
-			lineRenderer.SetPosition (i, controlPointList [i].transform.localPosition);			
-		}
-	}
 }
+
+
 
 
 
