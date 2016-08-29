@@ -36,6 +36,7 @@ public class Movement : MonoBehaviour {
 		GameObject obj = dragitemcontroller.chooseObj;
 
 
+
 		for (int h = 0; h < horlist.Count; h++) {
 			if (obj == horlist [h]) {
 				horizontal (mospos_,obj);
@@ -50,6 +51,7 @@ public class Movement : MonoBehaviour {
 			if (obj == verlist [v]) {
 				obj.transform.position = new Vector3 (obj.transform.position.x, mospos_.y, obj.transform.position.z);
 			}
+			//print ("choose in verlist");
 		}
 		//free
 		for (int f = 0; f < freelist.Count; f++) {
@@ -57,6 +59,7 @@ public class Movement : MonoBehaviour {
 				obj.transform.position = new Vector3 (mospos_.x, mospos_.y,obj.transform.position.z);
 			}
 		}
+
 		if (obj.transform.parent.GetComponent<MeshObj> ()) {
 			obj.transform.parent.GetComponent<MeshObj> ().adjPos ();
 		}
@@ -64,9 +67,8 @@ public class Movement : MonoBehaviour {
 			obj.transform.parent.GetComponent<platform2icon> ().adjPos ();
 		}
 		if (obj.transform.parent.GetComponent<body2icon> ()) {
-			obj.transform.parent.GetComponent<body2icon> ().adjPos ();
+			obj.transform.parent.GetComponent<body2icon> ().adjPos (mospos_);
 		}
-
 
 		// free
 		//2.limit movement
@@ -76,13 +78,18 @@ public class Movement : MonoBehaviour {
 	
 	}
 	void horizontal(Vector2 mospos_, GameObject obj){
-		
-		meshobj = GameObject.FindWithTag ("Rectangle").GetComponent<MeshObj> ();
-		//meshobj = GameObject.Find("RectangleObj()").GetComponent<MeshObj> ();
-		float min = meshobj.controlPointList [0].transform.position.x;
-		float max = meshobj.controlPointList [1].transform.position.x;
-		float b = Mathf.Clamp (mospos_.x,min,max);
-		obj.transform.position = new Vector3 (b, obj.transform.position.y, obj.transform.position.z);
+
+		if (GameObject.FindWithTag ("Rectangle")) {
+			meshobj = GameObject.FindWithTag ("Rectangle").GetComponent<MeshObj> ();
+			//meshobj = GameObject.Find("RectangleObj()").GetComponent<MeshObj> ();
+			float min = meshobj.controlPointList [0].transform.position.x;
+			float max = meshobj.controlPointList [1].transform.position.x;
+			float b = Mathf.Clamp (mospos_.x, min, max);
+			obj.transform.position = new Vector3 (b, obj.transform.position.y, obj.transform.position.z);
+		} else {
+			obj.transform.position = new Vector3 (mospos_.x, obj.transform.position.y, obj.transform.position.z);
+		}
+
 
 	}
 }

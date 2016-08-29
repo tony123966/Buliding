@@ -372,6 +372,9 @@ public class DragItemController : MonoBehaviour
 {
 	const string MAINCOMPONENT = "MainComponent";
 	const string CONTROLPOINT = "ControlPoint";
+	const string CYLINDER = "Cylinder";
+
+
 	const string DECORATECOMPONENT = "DecorateComponent";
 	//選定的物件
 	public GameObject chooseDragObject = null;
@@ -492,7 +495,7 @@ public class DragItemController : MonoBehaviour
 					{
 						if (hit.collider.gameObject)
 						{
-							if (hit.collider.gameObject.tag == CONTROLPOINT)
+							if (hit.collider.gameObject.tag == CONTROLPOINT || hit.collider.gameObject.tag == CYLINDER)
 							{
 								chooseObj = hit.collider.gameObject;
 								chooseObj.GetComponent<Collider>().enabled = false;

@@ -138,6 +138,21 @@ public class MeshObj : MonoBehaviour
 	
 	}
 	public void adjPos(){
+
+		float count = controlPointList.Count;
+		if (this.tag == "Rectangle") {
+			for (int i = 0; i < controlPointList.Count - 2; i++) {
+				movement.freelist.Add (controlPointList [i]);
+			}
+			movement.horlist.Add (controlPointList [4]);
+			movement.horlist.Add (controlPointList [5]);
+		} else {
+			movement.freelist = controlPointList;
+
+		}
+
+
+
 		Vector3 middle = Vector3.zero;
 		float aa, bb, cc;
 		each_tomiddle = new Vector3[6];
