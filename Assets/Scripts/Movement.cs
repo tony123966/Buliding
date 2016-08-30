@@ -10,6 +10,8 @@ public class Movement : MonoBehaviour {
 	// Use this for initialization
 	public DragItemController dragitemcontroller;
 	public MeshObj meshobj;
+	public body2icon body2icon;
+	public platform2icon platform2icon;
 	void Start () {
 		dragitemcontroller = GameObject.Find ("DragItemController").GetComponent<DragItemController> ();
 
@@ -17,7 +19,14 @@ public class Movement : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-	}
+		if(Input.GetKey("space")){
+			print ("space");
+			freelist.Clear ();
+
+			}
+		}
+
+
 
 	void Awake(){
 		
@@ -31,7 +40,10 @@ public class Movement : MonoBehaviour {
 	
 	}
 	public void move(Vector2 mospos_){
-		
+
+
+
+
 		//1.找自己在哪個list ver or hor
 		GameObject obj = dragitemcontroller.chooseObj;
 
@@ -92,4 +104,34 @@ public class Movement : MonoBehaviour {
 
 
 	}
+	public void checkrepeat(){
+
+		freelist.Clear ();
+		verlist.Clear ();
+		horlist.Clear ();
+		GameObject obj = dragitemcontroller.chooseObj;
+
+		if (obj.transform.parent.GetComponent<MeshObj> ()) {
+			obj.transform.parent.GetComponent<MeshObj> ().addpoint ();
+			print("meshobj.addpoint");
+		}
+		if (obj.transform.parent.GetComponent<platform2icon> ()) {
+			obj.transform.parent.GetComponent<platform2icon> ().addpoint ();
+			print("platform.addpoint");
+
+		}
+		if (obj.transform.parent.GetComponent<body2icon> ()) {
+			obj.transform.parent.GetComponent<body2icon> ().addpoint ();
+			print("bodyicon.addpoint");
+
+		}
+
+	
+
+
+
+	}
+
+
+
 }

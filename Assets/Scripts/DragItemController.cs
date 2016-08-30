@@ -496,8 +496,10 @@ public class DragItemController : MonoBehaviour
 						if (hit.collider.gameObject)
 						{
 							if (hit.collider.gameObject.tag == CONTROLPOINT || hit.collider.gameObject.tag == CYLINDER)
-							{
+							{	
+								
 								chooseObj = hit.collider.gameObject;
+								movement.checkrepeat ();
 								chooseObj.GetComponent<Collider>().enabled = false;
 							}
 						}

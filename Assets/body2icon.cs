@@ -37,7 +37,7 @@ public class body2icon : MonoBehaviour {
 	void Awake(){
 
 		movement = GameObject.Find ("Movement").GetComponent<Movement> ();
-		movement.verlist = cp2body;
+		movement.verlist.AddRange (cp2body);
 //
 //		GameObject ringOffsetCylinderMeshObject = new GameObject ();
 //
@@ -64,7 +64,7 @@ public class body2icon : MonoBehaviour {
 
 		cloum2body.Add (R_cylinder);
 		cloum2body.Add (L_cylinder);
-		movement.horlist = cloum2body;
+		movement.horlist.AddRange (cloum2body);
 
 		R_cylinder.tag = "Cylinder";
 		L_cylinder.tag = "Cylinder";
@@ -106,8 +106,7 @@ public class body2icon : MonoBehaviour {
  	}
 
 	public void adjPos(Vector2 mospos_){
-		movement.verlist = cp2body;
-		movement.horlist = cloum2body;
+
 
 
 		if (dragitemcontroller.chooseObj.name == "RU" || dragitemcontroller.chooseObj.name == "LU") {
@@ -171,4 +170,9 @@ public class body2icon : MonoBehaviour {
 		//L_cylinder.transform.position = new Vector3 (L_up_point.transform.position.x, L_up_point.transform.position.y - dis, L_up_point.transform.position.z);
 		//print ("2134");
 	}
+	public void addpoint(){
+		movement.verlist.AddRange (cp2body);
+		movement.horlist.AddRange (cloum2body);
+	}
+
 }

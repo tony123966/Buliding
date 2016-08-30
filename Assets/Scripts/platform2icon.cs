@@ -39,7 +39,7 @@ public class platform2icon : MonoBehaviour {
 			};
 			mesh.triangles = new int[]{ 0, 1, 2, 0, 2, 3 };
 			verts = mesh.vertices;
-			movement.freelist = pf_cplist;
+			movement.freelist.AddRange (pf_cplist);
 
 		}
 
@@ -73,6 +73,8 @@ public class platform2icon : MonoBehaviour {
 
 	}
 	public void adjPos(){
+		
+
 		for (int i = 0; i < pf_cplist.Count; i++) {
 			if (dragitemcontroller.chooseObj == pf_cplist [i]) { 
 				if (pf_cplist.Count == 4) {					
@@ -107,6 +109,12 @@ public class platform2icon : MonoBehaviour {
 			verts [x] = pf_cplist [x].transform.localPosition;
 		}
 		adjMesh ();
+	}
+	public void addpoint(){
+	
+		movement.freelist.AddRange (pf_cplist);
+		
+	
 	}
 }
 

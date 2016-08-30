@@ -22,6 +22,8 @@ public class MeshObj : MonoBehaviour
 
 	public int lengthOfLineRenderer = 6;
 	LineRenderer lineRenderer;
+	//for ting model
+	public int ting_model;
 
 
 
@@ -47,6 +49,7 @@ public class MeshObj : MonoBehaviour
 
 		//rectangle 
 		if (controlPointList.Count == 6 && this.tag == "Rectangle") {
+			ting_model = 1;
 			mesh.vertices = new Vector3[] {
 				controlPointList [0].transform.localPosition,
 				controlPointList [1].transform.localPosition,
@@ -66,6 +69,7 @@ public class MeshObj : MonoBehaviour
 
 			//store first 
 		} else if (controlPointList.Count == 4) {
+			ting_model = 2;
 			mesh.vertices = new Vector3[] {
 				controlPointList [0].transform.localPosition,
 				controlPointList [1].transform.localPosition,
@@ -77,9 +81,10 @@ public class MeshObj : MonoBehaviour
 			mesh.triangles = new int[]{ 0, 1, 2, 0, 3, 1 }; 
 			verts = mesh.vertices;
 			//store first 
-			movement.freelist = controlPointList;
+			movement.freelist.AddRange(controlPointList);
 
 		} else if (controlPointList.Count == 6) {
+			ting_model = 4;
 			mesh.vertices = new Vector3[] {
 				controlPointList [0].transform.localPosition,
 				controlPointList [1].transform.localPosition,
@@ -92,10 +97,10 @@ public class MeshObj : MonoBehaviour
 			mesh.triangles = new int[]{ 0, 1, 2, 0, 2, 3, 0, 3, 4, 0, 4, 5 }; 
 			verts = mesh.vertices;
 			//store first 
-			movement.freelist = controlPointList;
+			movement.freelist.AddRange(controlPointList);
 
 		} else if (controlPointList.Count == 5) {
-		
+			ting_model = 3;
 			mesh.vertices = new Vector3[] {
 				controlPointList [0].transform.localPosition,
 				controlPointList [1].transform.localPosition,
@@ -105,7 +110,7 @@ public class MeshObj : MonoBehaviour
 			};
 			mesh.triangles = new int[]{ 0, 1, 2, 0, 2, 3, 0, 3, 4 }; 
 			verts = mesh.vertices;
-			movement.freelist = controlPointList;
+			movement.freelist.AddRange(controlPointList);
 		}
 	}
 	void Update () {
@@ -139,17 +144,7 @@ public class MeshObj : MonoBehaviour
 	}
 	public void adjPos(){
 
-		float count = controlPointList.Count;
-		if (this.tag == "Rectangle") {
-			for (int i = 0; i < controlPointList.Count - 2; i++) {
-				movement.freelist.Add (controlPointList [i]);
-			}
-			movement.horlist.Add (controlPointList [4]);
-			movement.horlist.Add (controlPointList [5]);
-		} else {
-			movement.freelist = controlPointList;
 
-		}
 
 
 
@@ -222,44 +217,21 @@ public class MeshObj : MonoBehaviour
 //		horizontal_List[1] = controlPointList [5];
 		adjMesh ();
 	}
+
+
+
+	public void addpoint(){
+		float count = controlPointList.Count;
+		if (this.tag == "Rectangle") {
+			for (int i = 0; i < controlPointList.Count - 2; i++) {
+				movement.freelist.Add (controlPointList [i]);
+			}
+			movement.horlist.Add (controlPointList [4]);
+			movement.horlist.Add (controlPointList [5]);
+		} else {
+			movement.freelist.AddRange(controlPointList);
+
+		}
+	}
 }
 
-
-
-
-
-		//Debug.Log ("FirstPos:" + FirstPos.ToString("f2"));
-
-		//update controller maybe not
-		//for (int i = 0; i < controlPointList.Count; i++) {
-		//	verts [i] = controlPointList [i].transform.localPosition;
-		//	//Debug.Log ("verts:" + i + verts [i]);
-		//}
-		//for (int i = 0; i < verts.Length; i++) {
-		//	each_tomiddle [i] = verts [i] - middle;
-
-		//}
-	
-
-
-
-		//Drawline ();
-
-
-
-		//Debug.Log ("FirstPos:" + FirstPos.ToString("f2"));
-
-		//update controller maybe not
-		//for (int i = 0; i < controlPointList.Count; i++) {
-		//	verts [i] = controlPointList [i].transform.localPosition;
-		//	//Debug.Log ("verts:" + i + verts [i]);
-		//}
-		//for (int i = 0; i < verts.Length; i++) {
-		//	each_tomiddle [i] = verts [i] - middle;
-
-		//}
-	
-	
-
-
-		
