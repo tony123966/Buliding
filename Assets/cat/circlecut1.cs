@@ -6,7 +6,7 @@ public class circlecut1 : MonoBehaviour {
 
     public catline catline;
 
-    public static float tiledlength = 0.05f;
+    public static float tiledlength = 0.5f;
     public List<Vector3> anchorpointlist = new List<Vector3>();
    
     // Use this for initialization

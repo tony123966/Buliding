@@ -23,10 +23,9 @@ public class MeshObj : MonoBehaviour
 	public int lengthOfLineRenderer = 6;
 	LineRenderer lineRenderer;
 	//for ting model
-	public int ting_model;
+	//public int ting_model;
 
-
-
+	public int edgeIndex;
 
 	void Start(){
 
@@ -41,7 +40,6 @@ public class MeshObj : MonoBehaviour
 		mesh = GetComponent<MeshFilter>().mesh;
 		movement = GameObject.Find ("Movement").GetComponent<Movement> ();
 
-
 		if (!gameObject.GetComponent<MeshFilter>()) gameObject.AddComponent<MeshFilter>();
 		if (!gameObject.GetComponent<MeshRenderer>()) gameObject.AddComponent<MeshRenderer>();
         //mesh.Clear();
@@ -49,7 +47,7 @@ public class MeshObj : MonoBehaviour
 
 		//rectangle 
 		if (controlPointList.Count == 6 && this.tag == "Rectangle") {
-			ting_model = 1;
+			//ting_model = 1;
 			mesh.vertices = new Vector3[] {
 				controlPointList [0].transform.localPosition,
 				controlPointList [1].transform.localPosition,
@@ -66,10 +64,10 @@ public class MeshObj : MonoBehaviour
 			}
 			movement.horlist.Add (controlPointList [4]);
 			movement.horlist.Add (controlPointList [5]);
-
+			edgeIndex = 4;
 			//store first 
 		} else if (controlPointList.Count == 4) {
-			ting_model = 2;
+			//ting_model = 2;
 			mesh.vertices = new Vector3[] {
 				controlPointList [0].transform.localPosition,
 				controlPointList [1].transform.localPosition,
@@ -82,9 +80,10 @@ public class MeshObj : MonoBehaviour
 			verts = mesh.vertices;
 			//store first 
 			movement.freelist.AddRange(controlPointList);
+			edgeIndex=4;
 
 		} else if (controlPointList.Count == 6) {
-			ting_model = 4;
+			//ting_model = 4;
 			mesh.vertices = new Vector3[] {
 				controlPointList [0].transform.localPosition,
 				controlPointList [1].transform.localPosition,
@@ -98,9 +97,10 @@ public class MeshObj : MonoBehaviour
 			verts = mesh.vertices;
 			//store first 
 			movement.freelist.AddRange(controlPointList);
+			edgeIndex=6;
 
 		} else if (controlPointList.Count == 5) {
-			ting_model = 3;
+			//ting_model = 3;
 			mesh.vertices = new Vector3[] {
 				controlPointList [0].transform.localPosition,
 				controlPointList [1].transform.localPosition,
@@ -111,6 +111,19 @@ public class MeshObj : MonoBehaviour
 			mesh.triangles = new int[]{ 0, 1, 2, 0, 2, 3, 0, 3, 4 }; 
 			verts = mesh.vertices;
 			movement.freelist.AddRange(controlPointList);
+			edgeIndex=5;
+		}else if (controlPointList.Count == 3) {
+			//ting_model = 5;
+			mesh.vertices = new Vector3[] {
+				controlPointList [0].transform.localPosition,
+				controlPointList [1].transform.localPosition,
+				controlPointList [2].transform.localPosition,
+
+			};
+			mesh.triangles = new int[]{ 0, 1, 2}; 
+			verts = mesh.vertices;
+			movement.freelist.AddRange(controlPointList);
+			edgeIndex=3;
 		}
 	}
 	void Update () {

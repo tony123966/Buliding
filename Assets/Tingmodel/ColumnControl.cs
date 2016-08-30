@@ -12,8 +12,8 @@ public class ColumnControl : MonoBehaviour {
     public BC bc;
     public PlatForm pf;
 
-
-
+    public Vector3 top;
+    public Vector3 down;
 
 	void Start () 
     {

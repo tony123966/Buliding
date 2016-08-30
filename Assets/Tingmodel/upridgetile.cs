@@ -67,6 +67,7 @@ public class upridgetile : MonoBehaviour
                 GameObject haha = GameObject.Find("main_ridge");
                 GameObject tile = Instantiate(haha, (ori + letter) / 2, Quaternion.identity) as GameObject;
 
+                tile.tag = ("PIG");
                 tile.transform.parent = this.transform;
                 int angle = r2.upridgemanage.IndexOf(this.transform.gameObject);
 
@@ -96,6 +97,7 @@ public class upridgetile : MonoBehaviour
             {
                 GameObject haha = GameObject.Find("main_ridge");
                 GameObject tile = Instantiate(haha, (ori + letter) / 2, Quaternion.identity) as GameObject;
+                tile.tag = ("PIG");
                 tile.transform.parent = this.transform;
                 int angle = r2.upridgemanage.IndexOf(this.transform.gameObject);
 
@@ -125,6 +127,7 @@ public class upridgetile : MonoBehaviour
             {
                 GameObject haha = GameObject.Find("main_ridge");
                 GameObject tile = Instantiate(haha, (ori + letter) / 2, Quaternion.identity) as GameObject;
+                tile.tag = ("PIG");
                 tile.transform.parent = this.transform;
                 int angle = r2.upridgemanage.IndexOf(this.transform.gameObject);
 

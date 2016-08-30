@@ -39,6 +39,7 @@ public class tiled : MonoBehaviour {
             {
                 GameObject haha = GameObject.Find("roundtile-eaveR");
                 GameObject tile = Instantiate(haha, (ori + letter) / 2, Quaternion.identity) as GameObject;
+                tile.tag = ("PIG");
                 tile.transform.parent = neew.transform;
                 string angle = neew.transform.name.Substring(14, 1);
                 
@@ -64,6 +65,7 @@ public class tiled : MonoBehaviour {
             {
                 GameObject haha = GameObject.Find("roundtileREE");
                 GameObject tile = Instantiate(haha, (ori + letter) / 2, Quaternion.identity) as GameObject;
+                tile.tag = ("PIG");
                 tile.transform.parent = neew.transform;
                 string angle = neew.transform.name.Substring(14, 1);
 
@@ -91,6 +93,7 @@ public class tiled : MonoBehaviour {
             {
                 GameObject haha = GameObject.Find("roundtileR");
                 GameObject tile = Instantiate(haha, (ori + letter) / 2, Quaternion.identity) as GameObject;
+                tile.tag = ("PIG");
                 tile.transform.parent = neew.transform;
                 string angle = neew.transform.name.Substring(14, 1);
 

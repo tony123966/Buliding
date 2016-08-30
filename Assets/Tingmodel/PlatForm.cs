@@ -35,7 +35,7 @@ public class PlatForm : MonoBehaviour {
         {
             GameObject haha = GameObject.Find("0" + angle + "_platform");
 
-            Vector3 v0 =transform.parent.GetChild(10).transform.position;
+            Vector3 v0 =transform.parent.GetChild(3).transform.position;
             Vector3 v3 = transform.parent.parent.GetChild(0).transform.position;
             v0.y = clc.columnmanage[0].transform.GetChild(3).transform.position.y-2f;
 
@@ -100,7 +100,7 @@ public class PlatForm : MonoBehaviour {
         {
             
             GameObject haha = GameObject.Find("0" + angle + "_platform");
-            Vector3 v0 = transform.parent.GetChild(10).transform.position;
+            Vector3 v0 = transform.parent.GetChild(3).transform.position;
             Vector3 v3 = transform.parent.parent.GetChild(0).transform.position;
             v0.y = clc.columnmanage[0].transform.GetChild(3).transform.position.y - 2f;
 
@@ -114,7 +114,7 @@ public class PlatForm : MonoBehaviour {
             Vector3 v1 = clc.columnmanage[0].transform.GetChild(3).transform.position;
             Vector3 v2 = v1 - v3;
 
-            float ssize = Vector3.Magnitude(v2)*2;
+            float ssize = Vector3.Magnitude(v2)*1.0f;
 
 
             float xxb = plat.transform.GetChild(0).GetComponent<MeshRenderer>().bounds.size.x;
@@ -135,7 +135,7 @@ public class PlatForm : MonoBehaviour {
         {
 
             GameObject haha = GameObject.Find("10_platform");
-            Vector3 v0 = transform.parent.GetChild(10).transform.position;
+            Vector3 v0 = transform.parent.GetChild(3).transform.position;
             Vector3 v3 = transform.parent.parent.GetChild(0).transform.position;
             v0.y = clc.columnmanage[0].transform.GetChild(3).transform.position.y - 2f;
 
@@ -149,7 +149,7 @@ public class PlatForm : MonoBehaviour {
             Vector3 v1 = clc.columnmanage[0].transform.GetChild(3).transform.position;
             Vector3 v2 = v1 - v3;
 
-            float ssize = Vector3.Magnitude(v2)*2.5f;
+            float ssize = Vector3.Magnitude(v2)*1f;
 
 
             float xxb = plat.transform.GetChild(0).GetComponent<MeshRenderer>().bounds.size.x;
@@ -272,7 +272,7 @@ public class PlatForm : MonoBehaviour {
 
 
 
-            float ssize = Vector3.Magnitude(v2)*2 ;
+            float ssize = Vector3.Magnitude(v2)*1 ;
 
             float xxb = plat.transform.GetChild(0).GetComponent<MeshRenderer>().bounds.size.x;
             float yyb = plat.transform.GetChild(0).GetComponent<MeshRenderer>().bounds.size.y;
@@ -335,7 +335,7 @@ public class PlatForm : MonoBehaviour {
             Vector3 v1 = clc.columnmanage[0].transform.GetChild(3).transform.position;
             Vector3 v2 = new Vector3(dot.x - v3.x, 0, dot.z - v3.z);
 
-            float ssize = Vector3.Magnitude(v2)*1.5f;
+            float ssize = Vector3.Magnitude(v2)*2.5f;
 
 
             float xxb = plat.transform.GetChild(0).GetComponent<MeshRenderer>().bounds.size.x;
@@ -380,7 +380,7 @@ public class PlatForm : MonoBehaviour {
             Vector3 v1 = clc.columnmanage[0].transform.GetChild(3).transform.position;
             Vector3 v2 = new Vector3(dot.x - v3.x, 0, dot.z - v3.z);
 
-            float ssize = Vector3.Magnitude(v2) * 1.5f;
+            float ssize = Vector3.Magnitude(v2) * 1f;
 
 
             float xxb = plat.transform.GetChild(0).GetComponent<MeshRenderer>().bounds.size.x;
@@ -406,7 +406,7 @@ public class PlatForm : MonoBehaviour {
         {
 
             GameObject haha = GameObject.Find("10_platform");
-            Vector3 v0 = transform.parent.GetChild(10).transform.position;
+            Vector3 v0 = transform.parent.GetChild(3).transform.position;
             Vector3 v3 = transform.parent.parent.GetChild(0).transform.position;
             v0.y = clc.columnmanage[0].transform.GetChild(3).transform.position.y - 2f;
 

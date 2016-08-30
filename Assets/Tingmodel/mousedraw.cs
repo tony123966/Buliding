@@ -144,8 +144,8 @@ public class mousedraw : MonoBehaviour {
                     {
                         Destroy(trace[i]);
                     }
-
                     */
+                    
 
 
                     trace.Clear();

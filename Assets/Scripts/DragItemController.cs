@@ -394,11 +394,13 @@ public class DragItemController : MonoBehaviour
 
 	//
 	public Movement movement;
-
+	public AllInOne building;
+	public MeshObj meshObj;//??????
 	void Start()
 	{
 		uICamera = GameObject.Find("UICamera").GetComponent<Camera>();
 		movement = GameObject.Find ("Movement").GetComponent<Movement> ();
+		building=GameObject.Find("build").GetComponent<AllInOne>();
 		InitWindowListSetting();
 	}
 	void Update()
@@ -580,6 +582,7 @@ public class DragItemController : MonoBehaviour
 								AllwindowsComponent[index].allComponent = AllwindowsComponent[index].temporateComponent[chooseDragObject.name];
 								AllwindowsComponent[index].ShowAllComponent();
 								Debug.Log("1111");
+					
 							}
 							else //沒有編輯過此視窗
 							{
@@ -598,6 +601,7 @@ public class DragItemController : MonoBehaviour
 						}
 					}
 					AllwindowsComponent[index].lastChooseMainDragObject = chooseDragObject;
+					building.UpdateAll(AllwindowsComponent[index].allComponent[MAINCOMPONENT][0].GetComponent<MeshObj>().edgeIndex);
 				}
 				else if (chooseDragObject.tag == DECORATECOMPONENT)
 				{

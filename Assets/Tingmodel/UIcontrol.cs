@@ -5,21 +5,27 @@ using UnityEngine.EventSystems;
 
 public class UIcontrol : MonoBehaviour 
 {
-
+    /*
     public RidgeControl ridgecontrol;
-    public ColumnControl columncontrol;
+   
     public EaveControl eavecontrol;
     public roofsurcontrol roofcontrol;
     public roofsurcon2control roofcontrol2;
     public roofsurcontrol2 roofcontrolS;
+
+    public RidgetailControl rtc;
+    
+    */
+
+    public ColumnControl columncontrol;
     public BC bc;
     public FC fc;
     public PlatForm plat;
-    public RidgetailControl rtc;
+   // public RidgetailControl rtc;
 
-    public upridge up;
+   // public upridge up;
 
-    public bool upridge = false;
+   // public bool upridge = false;
 
     public Slider numberslider;
     public Slider tiledwideslider;
@@ -45,6 +51,7 @@ public class UIcontrol : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
     {
+        /*
         if (Input.GetKeyDown(KeyCode.A))
         {
 
@@ -76,11 +83,12 @@ public class UIcontrol : MonoBehaviour
 
 
         }
-
+        */
 	}
 
     public void setnumberslidervalue()
     {
+       
         numberslidervalue = (int)numberslider.value;
 
         
@@ -91,7 +99,7 @@ public class UIcontrol : MonoBehaviour
 
 
 
-
+        /*
         if (transform.parent.GetChild(0).GetChild(0).GetChild(0).GetComponent<catline>())
         {
             transform.parent.GetChild(0).GetChild(0).GetChild(0).GetComponent<catline>().ResetCatmullRom();
@@ -125,6 +133,8 @@ public class UIcontrol : MonoBehaviour
             roofcontrol2.reset();
             roofcontrolS.reset();
         }
+         
+         */
         if (columncontrol)
         {
             columncontrol.reset();
@@ -141,14 +151,27 @@ public class UIcontrol : MonoBehaviour
             }
             
         }
+
+        
         if (plat)
         {
-            if (ridgecontrol)
-            {
+
+
+
+
+            
+            //if (ridgecontrol)
+            //{
                 plat.reset();
-            }
-            else
-            {
+            //}
+             
+            //else
+            //{
+
+
+            
+            plat.reset();
+
 
                 print(plat.parayn);
 
@@ -170,7 +193,7 @@ public class UIcontrol : MonoBehaviour
                 
 
 
-            }
+            //}
            
         }
         
@@ -178,15 +201,24 @@ public class UIcontrol : MonoBehaviour
             
     }
 
+
+
+
+
     public void settwvalue()
     {
+        /*
         twvalue = (int)tiledwideslider.value;
 
         roofcontrol.withoutinireset();
         roofcontrol2.reset();
         roofcontrolS.reset();
+         */ 
 
     }
+
+
+
 
     public void setohohvalue()
     {

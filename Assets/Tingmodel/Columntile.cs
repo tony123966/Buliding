@@ -62,6 +62,7 @@ public class Columntile : MonoBehaviour {
             {
                 GameObject haha = GameObject.Find("cylinder");
                 GameObject tile = Instantiate(haha, (ori + letter) / 2, Quaternion.identity) as GameObject;
+                tile.tag = ("PIG");
                 tile.transform.parent = this.transform;
                 
 
@@ -86,6 +87,7 @@ public class Columntile : MonoBehaviour {
             {
                 GameObject haha = GameObject.Find("cylinder");
                 GameObject tile = Instantiate(haha, (ori + letter) / 2, Quaternion.identity) as GameObject;
+                tile.tag = ("PIG");
                 tile.transform.parent = this.transform;
            
 
@@ -114,6 +116,7 @@ public class Columntile : MonoBehaviour {
             {
                 GameObject haha = GameObject.Find("cylinder");
                 GameObject tile = Instantiate(haha, (ori + letter) / 2, Quaternion.identity) as GameObject;
+                tile.tag = ("PIG");
                 tile.transform.parent = this.transform;
                 
 

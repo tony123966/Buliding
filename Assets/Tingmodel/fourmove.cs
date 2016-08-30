@@ -53,6 +53,7 @@ public class fourmove : MonoBehaviour {
 
         }
 
+        
 
     }
 
@@ -82,6 +83,10 @@ public class fourmove : MonoBehaviour {
         roofcontrol.withoutinireset();
         roofcontrol2.reset();
         roofcontrolS.reset();
+
+
+
+
     }
 
 }

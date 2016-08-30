@@ -4,19 +4,34 @@ using System.Collections.Generic;
 
 public class Ridgetile : MonoBehaviour {
 
-
+   
+    
     public float tilelong = 0.03f;
     public float tilelong2 = 0.0140f;
 
     public List<GameObject> tileds = new List<GameObject>();
 
+    public GameObject mridge;
 
 
+    void Awake()
+    {
 
+
+        mridge = GameObject.Find("main_ridge");
+
+        //mridge = GameObject.Find("main_ridge");
+
+    }
     // Use this for initialization
     void Start()
     {
-        //creat();
+     
+       
+        creat();
+       
+       
+
     }
 
     // Update is called once per frame
@@ -32,7 +47,10 @@ public class Ridgetile : MonoBehaviour {
    public void creat()
     {
 
+       
        // int ui = transform.parent.parent.parent.GetChild(1).GetComponent<UIcontrol>().numberslidervalue;
+
+        //mridge = GameObject.Find("main_ridge");
 
 
         int ui = transform.parent.parent.parent.GetChild(1).GetComponent<roofcontrol>().numberslidervalue;
@@ -63,9 +81,10 @@ public class Ridgetile : MonoBehaviour {
             float zz = 0f;
             if (i == 0)
             {
-                GameObject haha = GameObject.Find("main_ridge");
-                GameObject tile = Instantiate(haha, (ori + letter) / 2, Quaternion.identity) as GameObject;
+                
+                GameObject tile = Instantiate( mridge , (ori + letter) / 2, Quaternion.identity) as GameObject;
                
+              
                 tile.transform.parent = this.transform;
                 int angle = r2.ridgemanage.IndexOf(this.transform.gameObject);
 
@@ -93,8 +112,9 @@ public class Ridgetile : MonoBehaviour {
 
             else if (i == pla.anchorpointlist.Count - 3)
             {
-                GameObject haha = GameObject.Find("main_ridge");
-                GameObject tile = Instantiate(haha, (ori + letter) / 2, Quaternion.identity) as GameObject;
+                
+                GameObject tile = Instantiate(mridge, (ori + letter) / 2, Quaternion.identity) as GameObject;
+                
                 tile.transform.parent = this.transform;
                 int angle = r2.ridgemanage.IndexOf(this.transform.gameObject);
 
@@ -122,9 +142,10 @@ public class Ridgetile : MonoBehaviour {
 
             else
             {
-                GameObject haha = GameObject.Find("main_ridge");
+               
 
-                GameObject tile = Instantiate(haha, (ori + letter) / 2, Quaternion.identity) as GameObject;
+                GameObject tile = Instantiate(mridge, (ori + letter) / 2, Quaternion.identity) as GameObject;
+                
                 tile.transform.parent = this.transform;
                 int angle = r2.ridgemanage.IndexOf(this.transform.gameObject);
 

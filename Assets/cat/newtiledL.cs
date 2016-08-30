@@ -12,12 +12,22 @@ public class newtiledL : MonoBehaviour
 
     public List<GameObject> tileds = new List<GameObject>();
 
-
-
-
+    public GameObject hhaha ;
+    public GameObject hhaha1 ;
+    public GameObject hhaha2 ;
     // Use this for initialization
     void Start()
     {
+
+           hhaha = GameObject.Find("roundtile-eave");
+            hhaha1 = GameObject.Find("roundtileEE");
+            hhaha2 = GameObject.Find("roundtile");
+
+
+
+
+
+
         creat();
     }
 
@@ -57,8 +67,8 @@ public class newtiledL : MonoBehaviour
 
         for (int i = 0; i < pla.anchorpointlist.Count - 2; i++)
         {
-            Vector3 ori = pla.anchorpointlist[i].transform.position;
-            Vector3 letter = pla.anchorpointlist[i + 1].transform.position;
+            Vector3 ori = pla.anchorpointlist[i];
+            Vector3 letter = pla.anchorpointlist[i + 1];
             Vector3 bottomline = new Vector3(ori.x - letter.x, 0, ori.z - letter.z);
             Vector3 slopeline = ori - letter;
 
@@ -73,9 +83,9 @@ public class newtiledL : MonoBehaviour
             float zz = 0f;
             if (i == 0)
             {
-                GameObject haha = GameObject.Find("roundtile-eave");
-				GameObject tile = Instantiate(haha, (ori + letter) / 2, Quaternion.identity) as GameObject;
-	
+                //GameObject haha = GameObject.Find("roundtile-eave");
+                GameObject tile = Instantiate(hhaha, (ori + letter) / 2, Quaternion.identity) as GameObject;
+                tile.tag = ("PIG");
                 tile.transform.parent = neew.transform;
                 int angle = r2.roofsurface2manage.IndexOf(this.transform.parent.gameObject);
 
@@ -102,8 +112,9 @@ public class newtiledL : MonoBehaviour
 
             else if (i == pla.anchorpointlist.Count - 3)
             {
-                GameObject haha = GameObject.Find("roundtileEE");
-                GameObject tile = Instantiate(haha, (ori + letter) / 2, Quaternion.identity) as GameObject;
+                //GameObject haha1 = GameObject.Find("roundtileEE");
+                GameObject tile = Instantiate(hhaha1, (ori + letter) / 2, Quaternion.identity) as GameObject;
+                tile.tag = ("PIG");
                 tile.transform.parent = neew.transform;
                 int angle = r2.roofsurface2manage.IndexOf(this.transform.parent.gameObject);
 
@@ -131,8 +142,9 @@ public class newtiledL : MonoBehaviour
 
             else
             {
-                GameObject haha = GameObject.Find("roundtile");
-                GameObject tile = Instantiate(haha, (ori + letter) / 2, Quaternion.identity) as GameObject;
+                //GameObject haha2 = GameObject.Find("roundtile");
+                GameObject tile = Instantiate(hhaha2, (ori + letter) / 2, Quaternion.identity) as GameObject;
+                tile.tag = ("PIG");
                 tile.transform.parent = neew.transform;
                 int angle = r2.roofsurface2manage.IndexOf(this.transform.parent.gameObject);
 
@@ -169,12 +181,13 @@ public class newtiledL : MonoBehaviour
             Destroy(tileds[i]);
 
         }
+        /*
         if (GameObject.Find(this.name + "-tile"))
         {
             GameObject trash = (GameObject.Find(this.name + "-tile"));
             Destroy(trash);
         }
-
+        */
         tileds.Clear();
         creat();
 

@@ -8,7 +8,7 @@ public class newplanecut : MonoBehaviour {
     public catline catline;
 
     public float tiledlength = 1f;
-    public List<GameObject> anchorpointlist = new List<GameObject>();
+    public List<Vector3> anchorpointlist = new List<Vector3>();
 
    
 
@@ -92,16 +92,19 @@ public class newplanecut : MonoBehaviour {
             {
 
                 //GameObject fi = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                GameObject fi = new GameObject();
+               // GameObject fi = new GameObject();
 
-                fi.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+                //fi.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
                 //fi.transform.position = transform.GetChild(k).position;
-                fi.transform.position = cat.innerPointList[k];
+               // fi.transform.position = cat.innerPointList[k];
                 //sloslopR[m, n] = GameObject.Find("roofcurvylineR" + i + "-" + m + "son").transform.GetChild(k).position;
 
 
                 //fi.GetComponent<MeshRenderer>().material.color = Color.yellow;
-                fi.transform.parent = this.transform;
+                //fi.transform.parent = this.transform;
+
+
+                Vector3 fi = cat.innerPointList[k];
 
                 anchorpointlist.Add(fi);
 
@@ -133,15 +136,18 @@ public class newplanecut : MonoBehaviour {
 
             //GameObject rtson1 = GameObject.CreatePrimitive(PrimitiveType.Sphere);
 
-            GameObject rtson1 = new GameObject();
+            //GameObject rtson1 = new GameObject();
 
-            rtson1.transform.localScale = new Vector3(0.1f,0.1f, 0.1f);
-            rtson1.transform.position = born;
+            //rtson1.transform.localScale = new Vector3(0.1f,0.1f, 0.1f);
+            //rtson1.transform.position = born;
 
             //sloslopR[m, n] = born;
 
             //rtson1.GetComponent<MeshRenderer>().material.color = Color.yellow;
-            rtson1.transform.parent = this.transform;
+            //rtson1.transform.parent = this.transform;
+
+
+            Vector3 rtson1 = born;
 
             anchorpointlist.Add(rtson1);
 
@@ -155,13 +161,14 @@ public class newplanecut : MonoBehaviour {
     public void reset()
     {
 
-
+        /*
         for (int i = 0; i < anchorpointlist.Count; i++)
         {
             Destroy(anchorpointlist[i]);
 
 
         }
+         */ 
         anchorpointlist.Clear();
         cutpoint();
 

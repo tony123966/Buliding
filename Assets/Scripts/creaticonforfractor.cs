@@ -22,7 +22,7 @@ public class creaticonforfractor : MonoBehaviour {
 	void Start () 
     
     {
-        stringToEdit = "5";
+        stringToEdit = "4";
        
         
         int angle = int.Parse(stringToEdit);

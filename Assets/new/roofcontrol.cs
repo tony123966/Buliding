@@ -93,6 +93,8 @@ public class roofcontrol : MonoBehaviour
         if (transform.parent.GetChild(0).childCount>2)
         {
             transform.parent.GetChild(0).GetChild(1).GetChild(0).GetComponent<catline>().ResetCatmullRom();
+            print("dgdgdfgdfgdgdfg "+transform.parent.GetChild(0).GetChild(1).GetChild(0).name);
+        
         }
 
 

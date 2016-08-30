@@ -68,6 +68,7 @@ public class rttile : MonoBehaviour {
                 GameObject haha = GameObject.Find("main_ridge");
                 GameObject tile = Instantiate(haha, (ori + letter) / 2, Quaternion.identity) as GameObject;
 
+                tile.tag = ("PIG");
                 tile.transform.parent = this.transform;
                 int angle = r2.ridgetailmanage.IndexOf(this.transform.gameObject);
 
@@ -97,6 +98,7 @@ public class rttile : MonoBehaviour {
             {
                 GameObject haha = GameObject.Find("main_ridge3");
                 GameObject tile = Instantiate(haha, (ori + letter) / 2, Quaternion.identity) as GameObject;
+                tile.tag = ("PIG");
                 tile.transform.parent = this.transform;
                 int angle = r2.ridgetailmanage.IndexOf(this.transform.gameObject);
 
@@ -126,6 +128,7 @@ public class rttile : MonoBehaviour {
             {
                 GameObject haha = GameObject.Find("main_ridge2");
                 GameObject tile = Instantiate(haha, (ori + letter) / 2, Quaternion.identity) as GameObject;
+                tile.tag = ("PIG");
                 tile.transform.parent = this.transform;
                 int angle = r2.ridgetailmanage.IndexOf(this.transform.gameObject);
 

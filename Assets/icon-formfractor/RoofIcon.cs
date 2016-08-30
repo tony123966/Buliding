@@ -23,7 +23,7 @@ public class rooficon : MonoBehaviour {
 	void Start () 
     {
 
-		center=GameObject.Find("eye");
+
         right = transform.GetChild(0).GetChild(0).gameObject;
 
         catline ca= transform.GetChild(0).GetChild(0).gameObject.AddComponent<catline>();
@@ -370,9 +370,9 @@ public class rooficon : MonoBehaviour {
 
 
 
-        Vector3 v1 = right.transform.GetChild(0).transform.position+move;
-        Vector3 v2 = right.transform.GetChild(1).transform.position + move;
-        Vector3 v3 = right.transform.GetChild(2).transform.position + move;
+        Vector3 v1 = (right.transform.GetChild(0).transform.position  + move);
+        Vector3 v2 = (right.transform.GetChild(1).transform.position + move) ;
+        Vector3 v3 = (right.transform.GetChild(2).transform.position + move) ;
 
 
 
@@ -387,17 +387,28 @@ public class rooficon : MonoBehaviour {
 
 
 
-        clone.transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0).transform.position = v1*70;
-		clone.transform.GetChild(0).GetChild(0).GetChild(0).GetChild(1).transform.position = v2 * 70;
-		clone.transform.GetChild(0).GetChild(0).GetChild(0).GetChild(2).transform.position = v3 * 70;
-        /*
+        clone.transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0).transform.position = v1;
+        clone.transform.GetChild(0).GetChild(0).GetChild(0).GetChild(1).transform.position = v2;
+        clone.transform.GetChild(0).GetChild(0).GetChild(0).GetChild(2).transform.position = v3;
+        
         clone.transform.GetChild(0).GetChild(2).GetChild(0).transform.position = new Vector3(v1.x, v1.y + 1f, v1.z);
         clone.transform.GetChild(0).GetChild(2).transform.position = new Vector3(v1.x, v1.y + 1f, v1.z);
-        */
-        /*
+        
+        
         clone.transform.GetChild(0).GetChild(2).GetChild(0).transform.position = new Vector3(v1.x, v1.y , v1.z);
         clone.transform.GetChild(0).GetChild(2).transform.position = new Vector3(v1.x, v1.y , v1.z);
-        */
+        
+        
+        Vector3 tailvec = Vector3.Normalize(v3 - v1);
+
+        clone.transform.GetChild(0).GetChild(1).GetChild(0).GetChild(0).transform.position = v3;
+        clone.transform.GetChild(0).GetChild(1).GetChild(0).GetChild(1).transform.position = v3 + tailvec;
+        clone.transform.GetChild(0).GetChild(1).GetChild(0).GetChild(2).transform.position = v3 + tailvec * 2;
+
+        
+
+
+
 
         clone.transform.GetChild(1).GetComponent<roofcontrol>().setnumberslidervalue();
         clone.transform.GetChild(0).GetChild(2).GetChild(0).GetComponent<uppoint>().selffix(clone.transform.GetChild(0).GetChild(2).GetChild(0).gameObject, clone.transform.GetChild(0).GetChild(0).GetChild(0).GetComponent<RidgeControl>());

@@ -63,7 +63,8 @@ public class ooficonmidcontrolpointr : MonoBehaviour {
 
 
 
-            meshreset.GetComponent<rooficon>().reset();
+           // meshreset.GetComponent<rooficon>().reset();
+        
         }
         else
         {
@@ -83,10 +84,10 @@ public class ooficonmidcontrolpointr : MonoBehaviour {
 
 
         
-        ControlPoint22.GetComponent<fourmove>().reset();
+       
 
         meshreset.GetComponent<rooficon>().reset();
-    
+        ControlPoint22.GetComponent<fourmove>().reset();
     
     
     }
