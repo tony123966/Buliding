@@ -656,4 +656,5 @@ public class DragItemController : MonoBehaviour
 			AllwindowsComponent[index].allComponent.Add(chooseDragObject.name, newList);
 		}
 	}
+
 }

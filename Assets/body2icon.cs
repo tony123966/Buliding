@@ -23,12 +23,19 @@ public class body2icon : MonoBehaviour {
 	public GameObject R_down_point;
 	public GameObject L_up_point;
 	public GameObject L_down_point;
+	GameObject frieze;
+
+	public float ini_bodydis;
+	public float chang_bodydis;
+	public float ratio_bodydis;
 
 
 	public float radius = 0.01f;
 
 	GameObject R_cylinder;
 	GameObject L_cylinder;
+	GameObject frieze_ldpoint;
+	GameObject frieze_rdpoint;
 	Vector3 tmpscale;
 	// Use this for initialization
 	void Start () {
@@ -78,10 +85,13 @@ public class body2icon : MonoBehaviour {
 		Right2body.Add (R_down_point);
 		Right2body.Add (R_up_point);
 
+		Createfrieze (); // mesh製造機
 
-
+		ini_bodydis = R_up_point.transform.position.x - L_up_point.transform.position.x;
+		ini_bodydis = Mathf.Abs (ini_bodydis);
+		ini_bodydis = ini_bodydis / 2;
 		//print ("awake:R_up_point:" + R_up_point.transform.position);
-		//print ("dis1:" + dis);
+		print ("ini:" + ini_bodydis);
 
 
 		//MeshFilter ringMesh = cylinder.AddComponent<MeshFilter>();
@@ -102,13 +112,13 @@ public class body2icon : MonoBehaviour {
 	}
 	// Update is called once per frame
 	void Update () {
-
+		
  	}
 
 	public void adjPos(Vector2 mospos_){
 
 
-
+		//print ("1" + R_up_point.transform.position);
 		if (dragitemcontroller.chooseObj.name == "RU" || dragitemcontroller.chooseObj.name == "LU") {
 			float dis2 = (dragitemcontroller.chooseObj.transform.position.y - R_down_point.transform.position.y);
 			dis2 = dis2 / 2;
@@ -144,8 +154,11 @@ public class body2icon : MonoBehaviour {
 		} else if (dragitemcontroller.chooseObj.name == "Cylinder") {
 
 
+
+			float dis = 0.0f;
+
 			if (dragitemcontroller.chooseObj == R_cylinder) {
-				float dis = (dragitemcontroller.chooseObj.transform.position.x - R_up_point.transform.position.x);
+				dis = (dragitemcontroller.chooseObj.transform.position.x - R_up_point.transform.position.x);
 				for (int i = 0; i < Right2body.Count; i++) {
 					Right2body [i].transform.position = new Vector3 (mospos_.x, Right2body [i].transform.position.y, 0.0f);	
 					Left2body [i].transform.position = new Vector3 (Left2body [i].transform.position.x - (dis), Left2body [i].transform.position.y, 0.0f);			
@@ -153,7 +166,7 @@ public class body2icon : MonoBehaviour {
 				}
 
 			} else {
-				float dis = (dragitemcontroller.chooseObj.transform.position.x - L_up_point.transform.position.x);
+				dis = (dragitemcontroller.chooseObj.transform.position.x - L_up_point.transform.position.x);
 
 				for (int i = 0; i < Left2body.Count; i++) {
 					Left2body [i].transform.position = new Vector3 (mospos_.x, Left2body [i].transform.position.y, 0.0f);	
@@ -162,7 +175,20 @@ public class body2icon : MonoBehaviour {
 				}
 
 			}
+			dis = Mathf.Abs (dis);
+			chang_bodydis = ini_bodydis + dis;
+			ratio_bodydis = chang_bodydis / ini_bodydis;
+
+		} else if(dragitemcontroller.chooseObj.name == "FRD" || dragitemcontroller.chooseObj.name == "FLD"){
+		
+			frieze_ldpoint.transform.position = dragitemcontroller.chooseObj.transform.position;
+			
+			
 		}
+
+
+		//print ("chang" + chang_bodydis);
+		print ("ratio" + ratio_bodydis);
 
 
 
@@ -171,8 +197,67 @@ public class body2icon : MonoBehaviour {
 		//print ("2134");
 	}
 	public void addpoint(){
+
+		movement.verlist.Add (frieze_ldpoint);
+		movement.verlist.Add (frieze_rdpoint);
 		movement.verlist.AddRange (cp2body);
 		movement.horlist.AddRange (cloum2body);
+
+	}
+	void Createfrieze(){
+
+		frieze = new GameObject ("frieze_mesh");
+
+		frieze.transform.parent = this.gameObject.transform;
+		MeshFilter frieze_filter = frieze.AddComponent <MeshFilter>();
+		frieze_filter.mesh = CreatMesh (0.05f);
+
+
+		MeshRenderer renderer = frieze.AddComponent <MeshRenderer> () as MeshRenderer;
+
 	}
 
+	Mesh CreatMesh(float height){
+
+		Mesh m = new Mesh ();
+		Vector3 h = new Vector3(0.0f,height,0.0f);
+
+		Vector3 frieze_ru = R_up_point.transform.position;
+		Vector3 frieze_lu = L_up_point.transform.position;
+		Vector3 frieze_rd = frieze_ru - h;
+    	Vector3 frieze_ld = frieze_lu - h;
+
+		m.vertices = new Vector3[] {
+
+		 frieze_lu,
+         frieze_ru,
+         frieze_rd,
+         frieze_ld
+
+		};
+		m.triangles = new int[] { 0, 1, 2, 0, 2, 3 };
+		m.RecalculateNormals();
+
+
+
+
+		frieze_rdpoint = GameObject.CreatePrimitive (PrimitiveType.Sphere);
+		frieze_rdpoint.tag = "ControlPoint";
+		frieze_rdpoint.name = "FRD";
+		frieze_rdpoint.transform.parent = frieze.gameObject.transform;
+		frieze_rdpoint.transform.localScale = R_down_point.transform.localScale;
+		frieze_rdpoint.transform.position = frieze_rd;
+
+		frieze_ldpoint = GameObject.CreatePrimitive (PrimitiveType.Sphere);
+		frieze_ldpoint.tag = "ControlPoint";
+		frieze_ldpoint.name = "FLD";
+		frieze_ldpoint.transform.parent = frieze.gameObject.transform;
+		frieze_ldpoint.transform.localScale = R_down_point.transform.localScale;
+		frieze_ldpoint.transform.position = frieze_ld;
+
+
+
+
+		return m;
+	}
 }
