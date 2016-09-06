@@ -114,7 +114,7 @@ public class PlatForm : MonoBehaviour {
             Vector3 v1 = clc.columnmanage[0].transform.GetChild(3).transform.position;
             Vector3 v2 = v1 - v3;
 
-            float ssize = Vector3.Magnitude(v2)*1.0f;
+            float ssize = Vector3.Magnitude(v2)*2.0f;
 
 
             float xxb = plat.transform.GetChild(0).GetComponent<MeshRenderer>().bounds.size.x;
@@ -149,7 +149,7 @@ public class PlatForm : MonoBehaviour {
             Vector3 v1 = clc.columnmanage[0].transform.GetChild(3).transform.position;
             Vector3 v2 = v1 - v3;
 
-            float ssize = Vector3.Magnitude(v2)*1f;
+            float ssize = Vector3.Magnitude(v2)*2f;
 
 
             float xxb = plat.transform.GetChild(0).GetComponent<MeshRenderer>().bounds.size.x;

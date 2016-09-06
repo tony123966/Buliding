@@ -18,6 +18,14 @@ public class platform2icon : MonoBehaviour {
 	Mesh mesh;
 	Vector3[] verts;
 
+
+	//for ratio
+	float ini_platdis_h;
+	float ini_platdis_w;
+	public float ratio_platdis_w;
+	public float ratio_platdis_h;
+
+
 	void Awake(){
 
 		mesh = GetComponent<MeshFilter>().mesh;
@@ -41,7 +49,20 @@ public class platform2icon : MonoBehaviour {
 			verts = mesh.vertices;
 			movement.freelist.AddRange (pf_cplist);
 
+			//inidis
+			ini_platdis_h = pf_cplist [1].transform.localPosition.x - pf_cplist [0].transform.localPosition.x;
+			ini_platdis_h = Mathf.Abs (ini_platdis_h);
+			ini_platdis_h = ini_platdis_h / 2;
+
+			ini_platdis_w = pf_cplist [1].transform.localPosition.y - pf_cplist [2].transform.localPosition.y;
+			ini_platdis_w = Mathf.Abs (ini_platdis_w);
+			ini_platdis_w = ini_platdis_w / 2;
+
 		}
+
+
+
+
 
 	}
 
@@ -101,7 +122,10 @@ public class platform2icon : MonoBehaviour {
 								verts [j].z);
 						}
 					}
+					ratio_platdis_h = offset_y / ini_platdis_h;
+					ratio_platdis_w = offset_x / ini_platdis_w;
 				}
+
 			} 
 		}
 		

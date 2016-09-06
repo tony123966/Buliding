@@ -31,8 +31,8 @@ public class roofcontrol : MonoBehaviour
     void Start()
     {
         center = transform.parent.parent.GetChild(0).gameObject;
-        //print(numberslider.name);
-        //print(numberslider.value);
+        print(numberslider.name);
+        print(numberslider.value);
         numberslidervalue = (int)numberslider.value;
         //ohohv = (int)ohoh.value;
 
@@ -93,7 +93,7 @@ public class roofcontrol : MonoBehaviour
         if (transform.parent.GetChild(0).childCount>2)
         {
             transform.parent.GetChild(0).GetChild(1).GetChild(0).GetComponent<catline>().ResetCatmullRom();
-            //print("dgdgdfgdfgdgdfg "+transform.parent.GetChild(0).GetChild(1).GetChild(0).name);
+            print("dgdgdfgdfgdgdfg "+transform.parent.GetChild(0).GetChild(1).GetChild(0).name);
         
         }
 

@@ -173,7 +173,7 @@ public class UIcontrol : MonoBehaviour
             plat.reset();
 
 
-               // print(plat.parayn);
+                print(plat.parayn);
 
 
 
