@@ -488,7 +488,7 @@ public class DragItemController : MonoBehaviour
 					// normalize
 					hitLocalUV.x = (localHit.x - bounds.min.x) / (bounds.size.x);
 					hitLocalUV.y = (localHit.y - bounds.min.y) / (bounds.size.y);
-					float border=0.2f;
+					float border = 0.2f;
 
 					if (hitLocalUV.x >= border && hitLocalUV.x <= (1 - border) && hitLocalUV.y >= border && hitLocalUV.y <= (1 - border))
 					{
@@ -571,7 +571,15 @@ public class DragItemController : MonoBehaviour
 	{
 		//選擇鏡頭
 		chooseCamera = cameraList[index].GetComponent<Camera>();
-
+		if (chooseDragObject) { 
+			float targetAspect = (float)chooseDragObject.GetComponent<UISprite>().width / (float)chooseDragObject.GetComponent<UISprite>().height;
+			chooseCamera.aspect = targetAspect;
+			Debug.Log("targetAspect" + targetAspect);
+		}
+/*
+		float targetAspect = (float)windowsList[index].GetComponent<UITexture>().width / (float)windowsList[index].GetComponent<UITexture>().height;
+		chooseCamera.aspect = targetAspect;
+			Debug.Log("targetAspect" + targetAspect);*/
 		//選擇Grid
 		chooseGrid.SetActive(false);
 		chooseGrid = gridList[index];
@@ -589,13 +597,13 @@ public class DragItemController : MonoBehaviour
 				{
 					if (!AllwindowsComponent[index].temporateComponent.ContainsKey(AllwindowsComponent[index].lastChooseMainDragObject.name))
 					{
-						Debug.Log("First");
+						//Debug.Log("First");
 						Dictionary<string, List<GameObject>> copy = new Dictionary<string, List<GameObject>>(AllwindowsComponent[index].allComponent);
 						AllwindowsComponent[index].temporateComponent.Add(AllwindowsComponent[index].lastChooseMainDragObject.name, copy);
 					}
 					else
 					{
-						Debug.Log("Second");
+						//Debug.Log("Second");
 						Dictionary<string, List<GameObject>> copy = new Dictionary<string, List<GameObject>>(AllwindowsComponent[index].allComponent);
 						AllwindowsComponent[index].temporateComponent[AllwindowsComponent[index].lastChooseMainDragObject.name] = copy;
 					}
@@ -649,8 +657,9 @@ public class DragItemController : MonoBehaviour
 						if (AllwindowsComponent[index].allComponent.ContainsKey(MAINCOMPONENT))//如果有拖曳物件 且在選擇的視窗內 且視窗內物件為空
 						{
 							CreateDecorateComponent(index);
-							if (AllwindowsComponent[index].allComponent[MAINCOMPONENT][0].GetComponent<body2icon>())
-								AllwindowsComponent[index].allComponent[MAINCOMPONENT][0].GetComponent<body2icon>().UpdateFunction(AllwindowsComponent[index].allComponent[chooseDragObject.name].Count);
+
+								if (AllwindowsComponent[index].allComponent[MAINCOMPONENT][0].GetComponent<body2icon>())
+									AllwindowsComponent[index].allComponent[MAINCOMPONENT][0].GetComponent<body2icon>().UpdateFunction(chooseDragObject.name, AllwindowsComponent[index].allComponent[chooseDragObject.name].Count);
 						}
 
 						break;
@@ -662,12 +671,12 @@ public class DragItemController : MonoBehaviour
 	}
 	void CreateMainComponent(int index)
 	{
-		Vector3 pos = chooseCamera.transform.position; pos.z = chooseCamera.farClipPlane/2.0f;
+		Vector3 pos = chooseCamera.transform.position; pos.z = chooseCamera.farClipPlane / 2.0f;
 
 		GameObject cloneCorrespondingObj = chooseDragObject.GetComponent<CorespondingDragItem>().corespondingDragItem;
 
 		GameObject clone = Instantiate(cloneCorrespondingObj, pos, cloneCorrespondingObj.transform.rotation) as GameObject;
-		clone.transform.parent = chooseWindow.transform;
+		clone.transform.parent = this.transform;
 
 		List<GameObject> allComponentList = new List<GameObject>();
 		allComponentList.Add(clone);
@@ -685,7 +694,7 @@ public class DragItemController : MonoBehaviour
 			if (AllwindowsComponent[index].allComponent[chooseDragObject.name].Count < correspondingDragItemMaxCount)
 			{
 				GameObject clone = Instantiate(cloneCorrespondingObj, pos, cloneCorrespondingObj.transform.rotation) as GameObject;
-				clone.transform.parent = chooseWindow.transform;
+				clone.transform.parent = this.transform;
 				AllwindowsComponent[index].allComponent[chooseDragObject.name].Add(clone);
 			}
 			else
@@ -694,7 +703,7 @@ public class DragItemController : MonoBehaviour
 		else
 		{
 			GameObject clone = Instantiate(cloneCorrespondingObj, pos, cloneCorrespondingObj.transform.rotation) as GameObject;
-			clone.transform.parent = chooseWindow.transform;
+			clone.transform.parent = this.transform;
 			List<GameObject> newList = new List<GameObject>();
 			newList.Clear();
 			newList.Add(clone);

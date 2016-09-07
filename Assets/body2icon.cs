@@ -35,7 +35,7 @@ public class body2icon : MonoBehaviour
 	GameObject frieze_rdpoint;
 	MeshFilter frieze_filter;
 	bool isfrieze;
-	int frieze_count=0;
+	int frieze_count = 0;
 	float frieze_height;
 
 
@@ -220,12 +220,16 @@ public class body2icon : MonoBehaviour
 		//L_cylinder.transform.position = new Vector3 (L_up_point.transform.position.x, L_up_point.transform.position.y - dis, L_up_point.transform.position.z);
 
 	}
-	public void  UpdateFunction(int count)
+	public void UpdateFunction(string objName, int count)
 	{
-		if (frieze_count < count) { 
-			Createfrieze(frieze_height); // mesh製造機
+		switch (objName)
+		{
+			case "Frieze":
+				if (frieze_count < count)
+					Createfrieze(frieze_height); // mesh製造機
+				frieze_count++;
+				break;
 
-			frieze_count++;
 		}
 	}
 	public void addpoint()
