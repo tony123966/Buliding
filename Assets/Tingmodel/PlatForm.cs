@@ -3,447 +3,631 @@ using System.Collections;
 using System.Collections.Generic;
 
 
-public class PlatForm : MonoBehaviour {
+public class PlatForm : MonoBehaviour
+{
 
-    public UIcontrol ucit;
-    public ColumnControl clc;
+	public UIcontrol ucit;
+	public ColumnControl clc;
 
-    public List<GameObject> platform = new List<GameObject>();
+	public List<GameObject> platform = new List<GameObject>();
 
-    public bool parayn=false;
+	public bool parayn = false;
 
 
-    public float looog;
-    public Vector3 doot;
-    public Vector3 doot2;
+	public float looog;
+	public Vector3 doot;
+	public Vector3 doot2;
+
+	public float percent;
+
 
 	// Use this for initialization
-	void Start () {
-	
+	void Start()
+	{
+
 	}
-	
+
 	// Update is called once per frame
-	void Update () {
-	
+	void Update()
+	{
+
 	}
 
-    public void build()
-    {
+	public void build()
+	{
 
-        int angle = ucit.numberslidervalue;
-        if (angle != 10&& angle !=4)
-        {
-            GameObject haha = GameObject.Find("0" + angle + "_platform");
+		int angle = ucit.numberslidervalue;
+		if (angle != 10 && angle != 4)
+		{
+			GameObject haha = GameObject.Find("0" + angle + "_platform");
 
-            Vector3 v0 =transform.parent.GetChild(3).transform.position;
-            Vector3 v3 = transform.parent.parent.GetChild(0).transform.position;
-            v0.y = clc.columnmanage[0].transform.GetChild(3).transform.position.y-2f;
+			Vector3 v0 = transform.parent.GetChild(3).transform.position;
+			Vector3 v3 = transform.parent.parent.GetChild(0).transform.position;
+			v0.y = clc.columnmanage[0].transform.GetChild(3).transform.position.y - 2f;
 
-            Vector3 v4=new Vector3(v3.x,v0.y,v3.z);
+			Vector3 v4 = new Vector3(v3.x, v0.y, v3.z);
 
 
-            GameObject plat = Instantiate(haha, v4, Quaternion.identity) as GameObject;
+			GameObject plat = Instantiate(haha, v4, Quaternion.identity) as GameObject;
 
 
-            //plat.name=("xxx");
+			//plat.name=("xxx");
 
-            plat.transform.parent = this.transform;
-            platform.Add(plat);
+			plat.transform.parent = this.transform;
+			platform.Add(plat);
 
-            Vector3 v1 = clc.columnmanage[0].transform.GetChild(3).transform.position;
-            Vector3 v2 = v1 - v3;
+			Vector3 v1 = clc.columnmanage[0].transform.GetChild(3).transform.position;
+			Vector3 v2 = v1 - v3;
 
-            float ssize = Vector3.Magnitude(v2)*2.5f;
+			float ssize = Vector3.Magnitude(v2) * 2.5f;
 
-            float xxb = plat.transform.GetChild(0).GetComponent<MeshRenderer>().bounds.size.x;
-            float yyb = plat.transform.GetChild(0).GetComponent<MeshRenderer>().bounds.size.y;
-            float zzb = plat.transform.GetChild(0).GetComponent<MeshRenderer>().bounds.size.z;
+			percent = Vector3.Magnitude(v2);
 
 
-            Vector3 scale = plat.transform.GetChild(0).transform.localScale;
 
-            scale.x = ssize * scale.x / xxb;
-            scale.y = 2f * scale.y / yyb;
-            scale.z = ssize * scale.z / zzb;
+			float xxb = plat.transform.GetChild(0).GetComponent<MeshRenderer>().bounds.size.x;
+			float yyb = plat.transform.GetChild(0).GetComponent<MeshRenderer>().bounds.size.y;
+			float zzb = plat.transform.GetChild(0).GetComponent<MeshRenderer>().bounds.size.z;
 
-            plat.transform.GetChild(0).transform.localScale = scale;
 
-            if (angle == 3)
-            {
-                plat.transform.Rotate(0, 105, 0);
-            }
-            if (angle == 5)
-            {
-                plat.transform.Rotate(0, 153, 0);
-            }
-            if (angle == 6)
-            {
-                plat.transform.Rotate(0, 45, 0);
-            }
-            if (angle == 7)
-            {
-                plat.transform.Rotate(0, 20, 0);
-            }
-            if (angle == 8)
-            {
-                plat.transform.Rotate(0, 45, 0);
-            }
-            if (angle == 9)
-            {
-                plat.transform.Rotate(0, 25.5f, 0);
-            }
-          
+			Vector3 scale = plat.transform.GetChild(0).transform.localScale;
 
+			scale.x = ssize * scale.x / xxb;
+			scale.y = 2f * scale.y / yyb;
+			scale.z = ssize * scale.z / zzb;
 
-        }
-        else if (angle==4)
-        {
-            
-            GameObject haha = GameObject.Find("0" + angle + "_platform");
-            Vector3 v0 = transform.parent.GetChild(3).transform.position;
-            Vector3 v3 = transform.parent.parent.GetChild(0).transform.position;
-            v0.y = clc.columnmanage[0].transform.GetChild(3).transform.position.y - 2f;
+			plat.transform.GetChild(0).transform.localScale = scale;
 
-            Vector3 v4 = new Vector3(v3.x, v0.y, v3.z);
+			if (angle == 3)
+			{
+				plat.transform.Rotate(0, 105, 0);
+			}
+			if (angle == 5)
+			{
+				plat.transform.Rotate(0, 153, 0);
+			}
+			if (angle == 6)
+			{
+				plat.transform.Rotate(0, 45, 0);
+			}
+			if (angle == 7)
+			{
+				plat.transform.Rotate(0, 20, 0);
+			}
+			if (angle == 8)
+			{
+				plat.transform.Rotate(0, 45, 0);
+			}
+			if (angle == 9)
+			{
+				plat.transform.Rotate(0, 25.5f, 0);
+			}
 
 
-            GameObject plat = Instantiate(haha, v4, Quaternion.identity) as GameObject;
-            plat.transform.parent = this.transform;
-            platform.Add(plat);
 
-            Vector3 v1 = clc.columnmanage[0].transform.GetChild(3).transform.position;
-            Vector3 v2 = v1 - v3;
+		}
+		else if (angle == 4)
+		{
 
-            float ssize = Vector3.Magnitude(v2)*2.0f;
+			GameObject haha = GameObject.Find("0" + angle + "_platform");
+			Vector3 v0 = transform.parent.GetChild(3).transform.position;
+			Vector3 v3 = transform.parent.parent.GetChild(0).transform.position;
+			v0.y = clc.columnmanage[0].transform.GetChild(3).transform.position.y - 2f;
 
+			Vector3 v4 = new Vector3(v3.x, v0.y, v3.z);
 
-            float xxb = plat.transform.GetChild(0).GetComponent<MeshRenderer>().bounds.size.x;
-            float yyb = plat.transform.GetChild(0).GetComponent<MeshRenderer>().bounds.size.y;
-            float zzb = plat.transform.GetChild(0).GetComponent<MeshRenderer>().bounds.size.z;
 
-            Vector3 scale = plat.transform.GetChild(0).transform.localScale;
+			GameObject plat = Instantiate(haha, v4, Quaternion.identity) as GameObject;
+			plat.transform.parent = this.transform;
+			platform.Add(plat);
 
-            scale.x = ssize * scale.x / xxb;
-            scale.y = 2f * scale.y / yyb;
-            scale.z = ssize * scale.z / zzb;
+			Vector3 v1 = clc.columnmanage[0].transform.GetChild(3).transform.position;
+			Vector3 v2 = v1 - v3;
 
-            plat.transform.GetChild(0).transform.localScale = scale;
+			float ssize = Vector3.Magnitude(v2) * 2.0f;
 
-            plat.transform.Rotate(0,45,0);
-        }
-        else
-        {
 
-            GameObject haha = GameObject.Find("10_platform");
-            Vector3 v0 = transform.parent.GetChild(3).transform.position;
-            Vector3 v3 = transform.parent.parent.GetChild(0).transform.position;
-            v0.y = clc.columnmanage[0].transform.GetChild(3).transform.position.y - 2f;
+			float xxb = plat.transform.GetChild(0).GetComponent<MeshRenderer>().bounds.size.x;
+			float yyb = plat.transform.GetChild(0).GetComponent<MeshRenderer>().bounds.size.y;
+			float zzb = plat.transform.GetChild(0).GetComponent<MeshRenderer>().bounds.size.z;
 
-            Vector3 v4 = new Vector3(v3.x, v0.y, v3.z);
+			Vector3 scale = plat.transform.GetChild(0).transform.localScale;
 
+			scale.x = ssize * scale.x / xxb;
+			scale.y = 2f * scale.y / yyb;
+			scale.z = ssize * scale.z / zzb;
 
-            GameObject plat = Instantiate(haha, v4, Quaternion.identity) as GameObject;
-            plat.transform.parent = this.transform;
-            platform.Add(plat);
+			plat.transform.GetChild(0).transform.localScale = scale;
 
-            Vector3 v1 = clc.columnmanage[0].transform.GetChild(3).transform.position;
-            Vector3 v2 = v1 - v3;
+			plat.transform.Rotate(0, 45, 0);
+		}
+		else
+		{
 
-            float ssize = Vector3.Magnitude(v2)*2f;
+			GameObject haha = GameObject.Find("10_platform");
+			Vector3 v0 = transform.parent.GetChild(3).transform.position;
+			Vector3 v3 = transform.parent.parent.GetChild(0).transform.position;
+			v0.y = clc.columnmanage[0].transform.GetChild(3).transform.position.y - 2f;
 
+			Vector3 v4 = new Vector3(v3.x, v0.y, v3.z);
 
-            float xxb = plat.transform.GetChild(0).GetComponent<MeshRenderer>().bounds.size.x;
-            float yyb = plat.transform.GetChild(0).GetComponent<MeshRenderer>().bounds.size.y;
-            float zzb = plat.transform.GetChild(0).GetComponent<MeshRenderer>().bounds.size.z;
 
-            Vector3 scale = plat.transform.GetChild(0).transform.localScale;
+			GameObject plat = Instantiate(haha, v4, Quaternion.identity) as GameObject;
+			plat.transform.parent = this.transform;
+			platform.Add(plat);
 
-            scale.x = ssize * scale.x / xxb;
-            scale.y = 2f * scale.y / yyb;
-            scale.z = ssize * scale.z / zzb;
+			Vector3 v1 = clc.columnmanage[0].transform.GetChild(3).transform.position;
+			Vector3 v2 = v1 - v3;
 
-            plat.transform.GetChild(0).transform.localScale = scale;
+			float ssize = Vector3.Magnitude(v2) * 2f;
 
-            plat.transform.Rotate(0, 45, 0);
-        }
 
+			float xxb = plat.transform.GetChild(0).GetComponent<MeshRenderer>().bounds.size.x;
+			float yyb = plat.transform.GetChild(0).GetComponent<MeshRenderer>().bounds.size.y;
+			float zzb = plat.transform.GetChild(0).GetComponent<MeshRenderer>().bounds.size.z;
 
+			Vector3 scale = plat.transform.GetChild(0).transform.localScale;
 
+			scale.x = ssize * scale.x / xxb;
+			scale.y = 2f * scale.y / yyb;
+			scale.z = ssize * scale.z / zzb;
 
-    }
+			plat.transform.GetChild(0).transform.localScale = scale;
 
-    public void reset()
-    {
-        for (int i = 0;i<platform.Count ;i++ )
-        {
-            Destroy(platform[0]);
-        }
-        platform.Clear();
+			plat.transform.Rotate(0, 45, 0);
+		}
 
-       build();
-    }
 
-    public void parareset(float lonng, Vector3 dot, Vector3 dot2)
-    {
-        
-        parayn = true;
-        
 
-       
 
-        for (int i = 0; i < platform.Count; i++)
-        {
+	}
 
-            Destroy(platform[0]);
-        }
-        platform.Clear();
 
+	public void build2(float a, float b)
+	{
 
+		int angle = ucit.numberslidervalue;
+		if (angle != 10 && angle != 4)
+		{
+			GameObject haha = GameObject.Find("0" + angle + "_platform");
 
-        looog = lonng;
-        doot = dot;
-        doot2 = dot2;
+			Vector3 v0 = transform.parent.GetChild(3).transform.position;
+			Vector3 v3 = transform.parent.parent.GetChild(0).transform.position;
+			v0.y = clc.columnmanage[0].transform.GetChild(3).transform.position.y - 2f;
 
-        parabuild(lonng, dot, dot2);
-    }
+			Vector3 v4 = new Vector3(v3.x, v0.y, v3.z);
 
 
-    public void para2reset()
-    {
-       
-        
-        for (int i = 0; i < platform.Count; i++)
-        {
+			GameObject plat = Instantiate(haha, v4, Quaternion.identity) as GameObject;
 
-            Destroy(platform[0]);
-        }
-        platform.Clear();
 
-        parabuild(looog, doot, doot2);
+			//plat.name=("xxx");
 
-    }
+			plat.transform.parent = this.transform;
+			platform.Add(plat);
 
+			Vector3 v1 = clc.columnmanage[0].transform.GetChild(3).transform.position;
+			Vector3 v2 = v1 - v3;
 
+			float ssize = (percent + b) * 2.5f;
 
+			float xxb = plat.transform.GetChild(0).GetComponent<MeshRenderer>().bounds.size.x;
+			float yyb = plat.transform.GetChild(0).GetComponent<MeshRenderer>().bounds.size.y;
+			float zzb = plat.transform.GetChild(0).GetComponent<MeshRenderer>().bounds.size.z;
 
-    public void parabuild(float lonng, Vector3 dot, Vector3 dot2)
-    {
 
+			Vector3 scale = plat.transform.GetChild(0).transform.localScale;
 
+			scale.x = ssize * scale.x / xxb;
+			scale.y = (2f + a) * scale.y / yyb;
+			scale.z = ssize * scale.z / zzb;
 
-        
+			plat.transform.GetChild(0).transform.localScale = scale;
 
+			if (angle == 3)
+			{
+				plat.transform.Rotate(0, 105, 0);
+			}
+			if (angle == 5)
+			{
+				plat.transform.Rotate(0, 153, 0);
+			}
+			if (angle == 6)
+			{
+				plat.transform.Rotate(0, 45, 0);
+			}
+			if (angle == 7)
+			{
+				plat.transform.Rotate(0, 20, 0);
+			}
+			if (angle == 8)
+			{
+				plat.transform.Rotate(0, 45, 0);
+			}
+			if (angle == 9)
+			{
+				plat.transform.Rotate(0, 25.5f, 0);
+			}
 
-       
 
 
-        int angle = ucit.numberslidervalue;
-        if (angle != 10 && angle != 4 && angle != 3)
-        {
+		}
+		else if (angle == 4)
+		{
 
+			GameObject haha = GameObject.Find("0" + angle + "_platform");
+			Vector3 v0 = transform.parent.GetChild(3).transform.position;
+			Vector3 v3 = transform.parent.parent.GetChild(0).transform.position;
+			v0.y = clc.columnmanage[0].transform.GetChild(3).transform.position.y - 2f;
 
-            print("QQQQQ3");
+			Vector3 v4 = new Vector3(v3.x, v0.y, v3.z);
 
 
+			GameObject plat = Instantiate(haha, v4, Quaternion.identity) as GameObject;
+			plat.transform.parent = this.transform;
+			platform.Add(plat);
 
-            GameObject haha = GameObject.Find("0" + angle + "_platform");
+			Vector3 v1 = clc.columnmanage[0].transform.GetChild(3).transform.position;
+			Vector3 v2 = v1 - v3;
 
-            Vector3 v0 = transform.parent.GetChild(10).transform.position;
-            Vector3 v3 = transform.parent.parent.GetChild(0).transform.position;
-            v0.y = clc.columnmanage[0].transform.GetChild(3).transform.position.y - 2f;
+			float ssize = (percent + b) * 2.0f;
 
-            Vector3 v4 = new Vector3(v3.x, v0.y, v3.z);
 
-            Vector3 pp = new Vector3(v4.x, dot2.y, v4.z);
+			float xxb = plat.transform.GetChild(0).GetComponent<MeshRenderer>().bounds.size.x;
+			float yyb = plat.transform.GetChild(0).GetComponent<MeshRenderer>().bounds.size.y;
+			float zzb = plat.transform.GetChild(0).GetComponent<MeshRenderer>().bounds.size.z;
 
+			Vector3 scale = plat.transform.GetChild(0).transform.localScale;
 
-            //GameObject plat = Instantiate(haha, v4, Quaternion.identity) as GameObject;
-            GameObject plat = Instantiate(haha, pp, Quaternion.identity) as GameObject;
+			scale.x = ssize * scale.x / xxb;
+			scale.y = (2f + a) * scale.y / yyb;
+			scale.z = ssize * scale.z / zzb;
 
+			plat.transform.GetChild(0).transform.localScale = scale;
 
-            plat.name = ("xxxx");
+			plat.transform.Rotate(0, 45, 0);
+		}
+		else
+		{
 
-            plat.transform.parent = this.transform;
-            platform.Add(plat);
+			GameObject haha = GameObject.Find("10_platform");
+			Vector3 v0 = transform.parent.GetChild(3).transform.position;
+			Vector3 v3 = transform.parent.parent.GetChild(0).transform.position;
+			v0.y = clc.columnmanage[0].transform.GetChild(3).transform.position.y - 2f;
 
-            Vector3 v1 = clc.columnmanage[0].transform.GetChild(3).transform.position;
-            //Vector3 v2 = dot - v3;
-            Vector3 v2 = new Vector3(dot.x - v3.x, 0, dot.z - v3.z);
+			Vector3 v4 = new Vector3(v3.x, v0.y, v3.z);
 
 
+			GameObject plat = Instantiate(haha, v4, Quaternion.identity) as GameObject;
+			plat.transform.parent = this.transform;
+			platform.Add(plat);
 
-            float ssize = Vector3.Magnitude(v2)*1 ;
+			Vector3 v1 = clc.columnmanage[0].transform.GetChild(3).transform.position;
+			Vector3 v2 = v1 - v3;
 
-            float xxb = plat.transform.GetChild(0).GetComponent<MeshRenderer>().bounds.size.x;
-            float yyb = plat.transform.GetChild(0).GetComponent<MeshRenderer>().bounds.size.y;
-            float zzb = plat.transform.GetChild(0).GetComponent<MeshRenderer>().bounds.size.z;
+			float ssize = (percent + b) * 2f;
 
 
-            Vector3 scale = plat.transform.GetChild(0).transform.localScale;
+			float xxb = plat.transform.GetChild(0).GetComponent<MeshRenderer>().bounds.size.x;
+			float yyb = plat.transform.GetChild(0).GetComponent<MeshRenderer>().bounds.size.y;
+			float zzb = plat.transform.GetChild(0).GetComponent<MeshRenderer>().bounds.size.z;
 
-            scale.x = ssize  * scale.x / xxb;
-            scale.y = lonng * scale.y / yyb;
-            scale.z = ssize* scale.z / zzb;
+			Vector3 scale = plat.transform.GetChild(0).transform.localScale;
 
-            plat.transform.GetChild(0).transform.localScale = scale;
+			scale.x = ssize * scale.x / xxb;
+			scale.y = (2f + a) * scale.y / yyb;
+			scale.z = ssize * scale.z / zzb;
 
-            
-            if (angle == 5)
-            {
-                plat.transform.Rotate(0, 153, 0);
-            }
-            if (angle == 6)
-            {
-                plat.transform.Rotate(0, 45, 0);
-            }
-            if (angle == 7)
-            {
-                plat.transform.Rotate(0, 20, 0);
-            }
-            if (angle == 8)
-            {
-                plat.transform.Rotate(0, 45, 0);
-            }
-            if (angle == 9)
-            {
-                plat.transform.Rotate(0, 25.5f, 0);
-            }
+			plat.transform.GetChild(0).transform.localScale = scale;
 
+			plat.transform.Rotate(0, 45, 0);
+		}
 
 
-        }
-        else if (angle == 4)
-        {
 
-            GameObject haha = GameObject.Find("0" + angle + "_platform");
-            Vector3 v0 = transform.parent.GetChild(10).transform.position;
-            Vector3 v3 = transform.parent.parent.GetChild(0).transform.position;
-            v0.y = clc.columnmanage[0].transform.GetChild(3).transform.position.y - 2f;
 
-            Vector3 v4 = new Vector3(v3.x, v0.y, v3.z);
-            Vector3 pp = new Vector3(v4.x, dot2.y, v4.z);
+	}
 
 
-            //GameObject plat = Instantiate(haha, v4, Quaternion.identity) as GameObject;
-            GameObject plat = Instantiate(haha, pp, Quaternion.identity) as GameObject;
 
-            plat.name = ("xxxx");
 
-            plat.transform.parent = this.transform;
-            platform.Add(plat);
 
-            Vector3 v1 = clc.columnmanage[0].transform.GetChild(3).transform.position;
-            Vector3 v2 = new Vector3(dot.x - v3.x, 0, dot.z - v3.z);
 
-            float ssize = Vector3.Magnitude(v2)*2.5f;
 
 
-            float xxb = plat.transform.GetChild(0).GetComponent<MeshRenderer>().bounds.size.x;
-            float yyb = plat.transform.GetChild(0).GetComponent<MeshRenderer>().bounds.size.y;
-            float zzb = plat.transform.GetChild(0).GetComponent<MeshRenderer>().bounds.size.z;
 
-            Vector3 scale = plat.transform.GetChild(0).transform.localScale;
 
-            //scale.x = ssize * scale.x / xxb;
-            scale.y = lonng * scale.y / yyb;
-            //scale.z = ssize * scale.z / zzb;
 
-            scale.x = ssize  * scale.x / xxb;
-            scale.z = ssize  * scale.z / zzb;
 
-            plat.transform.GetChild(0).transform.localScale = scale;
 
-            
-           
-            plat.transform.Rotate(0, 45, 0);
-        }
-        else if (angle == 3)
-        {
 
-            GameObject haha = GameObject.Find("0" + angle + "_platform");
-            Vector3 v0 = transform.parent.GetChild(10).transform.position;
-            Vector3 v3 = transform.parent.parent.GetChild(0).transform.position;
-            v0.y = clc.columnmanage[0].transform.GetChild(3).transform.position.y - 2f;
 
-            Vector3 v4 = new Vector3(v3.x, v0.y, v3.z);
-            Vector3 pp = new Vector3(v4.x, dot2.y, v4.z);
+	public void reset()
+	{
+		for (int i = 0; i < platform.Count; i++)
+		{
+			Destroy(platform[0]);
+		}
+		platform.Clear();
 
+		build();
+	}
 
-            //GameObject plat = Instantiate(haha, v4, Quaternion.identity) as GameObject;
-            GameObject plat = Instantiate(haha, pp, Quaternion.identity) as GameObject;
+	public void parareset(float a, float b)
+	{
 
-            plat.name = ("xxxx");
+		//parayn = true;
 
-            plat.transform.parent = this.transform;
-            platform.Add(plat);
 
-            Vector3 v1 = clc.columnmanage[0].transform.GetChild(3).transform.position;
-            Vector3 v2 = new Vector3(dot.x - v3.x, 0, dot.z - v3.z);
 
-            float ssize = Vector3.Magnitude(v2) * 1f;
 
+		for (int i = 0; i < platform.Count; i++)
+		{
 
-            float xxb = plat.transform.GetChild(0).GetComponent<MeshRenderer>().bounds.size.x;
-            float yyb = plat.transform.GetChild(0).GetComponent<MeshRenderer>().bounds.size.y;
-            float zzb = plat.transform.GetChild(0).GetComponent<MeshRenderer>().bounds.size.z;
+			Destroy(platform[0]);
+		}
+		platform.Clear();
 
-            Vector3 scale = plat.transform.GetChild(0).transform.localScale;
 
-            //scale.x = ssize * scale.x / xxb;
-            scale.y = lonng * scale.y / yyb;
-            //scale.z = ssize * scale.z / zzb;
 
-            scale.x = ssize * scale.x / xxb;
-            scale.z = ssize * scale.z / zzb;
 
-            plat.transform.GetChild(0).transform.localScale = scale;
 
+		build2(a, b);
+	}
 
 
-            plat.transform.Rotate(0, 105, 0);
-        }
-        else
-        {
+	public void para2reset()
+	{
 
-            GameObject haha = GameObject.Find("10_platform");
-            Vector3 v0 = transform.parent.GetChild(3).transform.position;
-            Vector3 v3 = transform.parent.parent.GetChild(0).transform.position;
-            v0.y = clc.columnmanage[0].transform.GetChild(3).transform.position.y - 2f;
 
-            Vector3 v4 = new Vector3(v3.x, v0.y, v3.z);
-            Vector3 pp = new Vector3(v4.x, dot2.y, v4.z);
+		for (int i = 0; i < platform.Count; i++)
+		{
 
+			Destroy(platform[0]);
+		}
+		platform.Clear();
 
-            //GameObject plat = Instantiate(haha, v4, Quaternion.identity) as GameObject;
-            GameObject plat = Instantiate(haha, pp, Quaternion.identity) as GameObject;
+		parabuild(looog, doot, doot2);
 
-            plat.name = ("xxxx");
-            
-            plat.transform.parent = this.transform;
-            platform.Add(plat);
+	}
 
-            Vector3 v1 = clc.columnmanage[0].transform.GetChild(3).transform.position;
-            Vector3 v2 = new Vector3(dot.x - v3.x, 0, dot.z - v3.z);
 
-            float ssize = Vector3.Magnitude(v2) * 2f;
 
 
-            float xxb = plat.transform.GetChild(0).GetComponent<MeshRenderer>().bounds.size.x;
-            float yyb = plat.transform.GetChild(0).GetComponent<MeshRenderer>().bounds.size.y;
-            float zzb = plat.transform.GetChild(0).GetComponent<MeshRenderer>().bounds.size.z;
 
-            Vector3 scale = plat.transform.GetChild(0).transform.localScale;
 
-            scale.x = ssize * scale.x / xxb;
-            scale.y = lonng * scale.y / yyb;
-            scale.z = ssize * scale.z / zzb;
 
-            plat.transform.GetChild(0).transform.localScale = scale;
 
-            plat.transform.Rotate(0, 45, 0);
-        }
 
-       
-    }
+
+
+
+
+
+
+
+
+
+
+
+	public void parabuild(float lonng, Vector3 dot, Vector3 dot2)
+	{
+
+
+
+
+
+
+
+
+
+		int angle = ucit.numberslidervalue;
+		if (angle != 10 && angle != 4 && angle != 3)
+		{
+
+
+			print("QQQQQ3");
+
+
+
+			GameObject haha = GameObject.Find("0" + angle + "_platform");
+
+			Vector3 v0 = transform.parent.GetChild(10).transform.position;
+			Vector3 v3 = transform.parent.parent.GetChild(0).transform.position;
+			v0.y = clc.columnmanage[0].transform.GetChild(3).transform.position.y - 2f;
+
+			Vector3 v4 = new Vector3(v3.x, v0.y, v3.z);
+
+			Vector3 pp = new Vector3(v4.x, dot2.y, v4.z);
+
+
+			//GameObject plat = Instantiate(haha, v4, Quaternion.identity) as GameObject;
+			GameObject plat = Instantiate(haha, pp, Quaternion.identity) as GameObject;
+
+
+			plat.name = ("xxxx");
+
+			plat.transform.parent = this.transform;
+			platform.Add(plat);
+
+			Vector3 v1 = clc.columnmanage[0].transform.GetChild(3).transform.position;
+			//Vector3 v2 = dot - v3;
+			Vector3 v2 = new Vector3(dot.x - v3.x, 0, dot.z - v3.z);
+
+
+
+			float ssize = Vector3.Magnitude(v2) * 1;
+
+			float xxb = plat.transform.GetChild(0).GetComponent<MeshRenderer>().bounds.size.x;
+			float yyb = plat.transform.GetChild(0).GetComponent<MeshRenderer>().bounds.size.y;
+			float zzb = plat.transform.GetChild(0).GetComponent<MeshRenderer>().bounds.size.z;
+
+
+			Vector3 scale = plat.transform.GetChild(0).transform.localScale;
+
+			scale.x = ssize * scale.x / xxb;
+			scale.y = lonng * scale.y / yyb;
+			scale.z = ssize * scale.z / zzb;
+
+			plat.transform.GetChild(0).transform.localScale = scale;
+
+
+			if (angle == 5)
+			{
+				plat.transform.Rotate(0, 153, 0);
+			}
+			if (angle == 6)
+			{
+				plat.transform.Rotate(0, 45, 0);
+			}
+			if (angle == 7)
+			{
+				plat.transform.Rotate(0, 20, 0);
+			}
+			if (angle == 8)
+			{
+				plat.transform.Rotate(0, 45, 0);
+			}
+			if (angle == 9)
+			{
+				plat.transform.Rotate(0, 25.5f, 0);
+			}
+
+
+
+		}
+		else if (angle == 4)
+		{
+
+			GameObject haha = GameObject.Find("0" + angle + "_platform");
+			Vector3 v0 = transform.parent.GetChild(10).transform.position;
+			Vector3 v3 = transform.parent.parent.GetChild(0).transform.position;
+			v0.y = clc.columnmanage[0].transform.GetChild(3).transform.position.y - 2f;
+
+			Vector3 v4 = new Vector3(v3.x, v0.y, v3.z);
+			Vector3 pp = new Vector3(v4.x, dot2.y, v4.z);
+
+
+			//GameObject plat = Instantiate(haha, v4, Quaternion.identity) as GameObject;
+			GameObject plat = Instantiate(haha, pp, Quaternion.identity) as GameObject;
+
+			plat.name = ("xxxx");
+
+			plat.transform.parent = this.transform;
+			platform.Add(plat);
+
+			Vector3 v1 = clc.columnmanage[0].transform.GetChild(3).transform.position;
+			Vector3 v2 = new Vector3(dot.x - v3.x, 0, dot.z - v3.z);
+
+			float ssize = Vector3.Magnitude(v2) * 2.5f;
+
+
+			float xxb = plat.transform.GetChild(0).GetComponent<MeshRenderer>().bounds.size.x;
+			float yyb = plat.transform.GetChild(0).GetComponent<MeshRenderer>().bounds.size.y;
+			float zzb = plat.transform.GetChild(0).GetComponent<MeshRenderer>().bounds.size.z;
+
+			Vector3 scale = plat.transform.GetChild(0).transform.localScale;
+
+			//scale.x = ssize * scale.x / xxb;
+			scale.y = lonng * scale.y / yyb;
+			//scale.z = ssize * scale.z / zzb;
+
+			scale.x = ssize * scale.x / xxb;
+			scale.z = ssize * scale.z / zzb;
+
+			plat.transform.GetChild(0).transform.localScale = scale;
+
+
+
+			plat.transform.Rotate(0, 45, 0);
+		}
+		else if (angle == 3)
+		{
+
+			GameObject haha = GameObject.Find("0" + angle + "_platform");
+			Vector3 v0 = transform.parent.GetChild(10).transform.position;
+			Vector3 v3 = transform.parent.parent.GetChild(0).transform.position;
+			v0.y = clc.columnmanage[0].transform.GetChild(3).transform.position.y - 2f;
+
+			Vector3 v4 = new Vector3(v3.x, v0.y, v3.z);
+			Vector3 pp = new Vector3(v4.x, dot2.y, v4.z);
+
+
+			//GameObject plat = Instantiate(haha, v4, Quaternion.identity) as GameObject;
+			GameObject plat = Instantiate(haha, pp, Quaternion.identity) as GameObject;
+
+			plat.name = ("xxxx");
+
+			plat.transform.parent = this.transform;
+			platform.Add(plat);
+
+			Vector3 v1 = clc.columnmanage[0].transform.GetChild(3).transform.position;
+			Vector3 v2 = new Vector3(dot.x - v3.x, 0, dot.z - v3.z);
+
+			float ssize = Vector3.Magnitude(v2) * 1f;
+
+
+			float xxb = plat.transform.GetChild(0).GetComponent<MeshRenderer>().bounds.size.x;
+			float yyb = plat.transform.GetChild(0).GetComponent<MeshRenderer>().bounds.size.y;
+			float zzb = plat.transform.GetChild(0).GetComponent<MeshRenderer>().bounds.size.z;
+
+			Vector3 scale = plat.transform.GetChild(0).transform.localScale;
+
+			//scale.x = ssize * scale.x / xxb;
+			scale.y = lonng * scale.y / yyb;
+			//scale.z = ssize * scale.z / zzb;
+
+			scale.x = ssize * scale.x / xxb;
+			scale.z = ssize * scale.z / zzb;
+
+			plat.transform.GetChild(0).transform.localScale = scale;
+
+
+
+			plat.transform.Rotate(0, 105, 0);
+		}
+		else
+		{
+
+			GameObject haha = GameObject.Find("10_platform");
+			Vector3 v0 = transform.parent.GetChild(3).transform.position;
+			Vector3 v3 = transform.parent.parent.GetChild(0).transform.position;
+			v0.y = clc.columnmanage[0].transform.GetChild(3).transform.position.y - 2f;
+
+			Vector3 v4 = new Vector3(v3.x, v0.y, v3.z);
+			Vector3 pp = new Vector3(v4.x, dot2.y, v4.z);
+
+
+			//GameObject plat = Instantiate(haha, v4, Quaternion.identity) as GameObject;
+			GameObject plat = Instantiate(haha, pp, Quaternion.identity) as GameObject;
+
+			plat.name = ("xxxx");
+
+			plat.transform.parent = this.transform;
+			platform.Add(plat);
+
+			Vector3 v1 = clc.columnmanage[0].transform.GetChild(3).transform.position;
+			Vector3 v2 = new Vector3(dot.x - v3.x, 0, dot.z - v3.z);
+
+			float ssize = Vector3.Magnitude(v2) * 2f;
+
+
+			float xxb = plat.transform.GetChild(0).GetComponent<MeshRenderer>().bounds.size.x;
+			float yyb = plat.transform.GetChild(0).GetComponent<MeshRenderer>().bounds.size.y;
+			float zzb = plat.transform.GetChild(0).GetComponent<MeshRenderer>().bounds.size.z;
+
+			Vector3 scale = plat.transform.GetChild(0).transform.localScale;
+
+			scale.x = ssize * scale.x / xxb;
+			scale.y = lonng * scale.y / yyb;
+			scale.z = ssize * scale.z / zzb;
+
+			plat.transform.GetChild(0).transform.localScale = scale;
+
+			plat.transform.Rotate(0, 45, 0);
+		}
+
+
+	}
 
 }

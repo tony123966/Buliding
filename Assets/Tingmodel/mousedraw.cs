@@ -168,7 +168,7 @@ public class mousedraw : MonoBehaviour {
 
 
 
-                    clone.transform.GetChild(9).GetComponent<PlatForm>().parareset(Mathf.Abs(v1.y - v3.y), v1,v3);
+                    //clone.transform.GetChild(9).GetComponent<PlatForm>().parareset(Mathf.Abs(v1.y - v3.y), v1,v3);
 
                     //clone.transform.GetChild(9).GetChild(0).GetChild(0).transform.position = new Vector3(clone.transform.GetChild(9).GetChild(0).GetChild(0).transform.position.x,(v1.y+v3.y)/2,clone.transform.GetChild(9).GetChild(0).GetChild(0).transform.position.z);
                     clone.transform.GetChild(9).GetChild(0).GetChild(0).transform.position = new Vector3(clone.transform.GetChild(9).GetChild(0).GetChild(0).transform.position.x, v3.y, clone.transform.GetChild(9).GetChild(0).GetChild(0).transform.position.z);
@@ -231,7 +231,7 @@ public class mousedraw : MonoBehaviour {
             
             clone.transform.GetChild(1).GetComponent<UIcontrol>().setnumberslidervalue();
 
-            clone.transform.GetChild(9).GetComponent<PlatForm>().parareset(Mathf.Abs(v1.y - v3.y), v1,v3);
+            //clone.transform.GetChild(3).GetComponent<PlatForm>().parareset(Mathf.Abs(v1.y - v3.y), v1,v3);
           
 
 

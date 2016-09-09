@@ -136,7 +136,6 @@ public class MeshObj : MonoBehaviour
 		//	adjMesh();
 		//
 		if(Input.GetMouseButtonUp(0)){
-			print ("Update verts array");
 			for (int i = 0; i < controlPointList.Count; i++) {
 				verts [i] = controlPointList [i].transform.localPosition;
 			
