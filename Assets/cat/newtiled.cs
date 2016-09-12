@@ -52,7 +52,7 @@ public class newtiled : MonoBehaviour
 
 
 
-        print(transform.parent.parent.parent.GetChild(1).name);
+        //print(transform.parent.parent.parent.GetChild(1).name);
         int ui = transform.parent.parent.parent.GetChild(1).GetComponent<roofcontrol>().numberslidervalue;
         roofsurcontrol2 r2 = transform.parent.parent.GetComponent<roofsurcontrol2>();
 

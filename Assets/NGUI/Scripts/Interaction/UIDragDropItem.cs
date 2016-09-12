@@ -349,25 +349,25 @@ public class UIDragDropItem : MonoBehaviour
 
 			if (mTable != null) mTable.repositionNow = true;
 			if (mGrid != null) mGrid.repositionNow = true;
-
-			if (GameObject.Find("DragItemController"))
-			{
-				DragItemController item = GameObject.Find("DragItemController").GetComponent<DragItemController>();
-				item.SetObjInWiindows();
-				item.chooseDragObject = null;
-			}
-
 			// We're now done
 			OnDragDropEnd();
 		}
 		else NGUITools.Destroy(gameObject);
+		if (GameObject.Find("DragItemController"))
+		{
+			DragItemController item = GameObject.Find("DragItemController").GetComponent<DragItemController>();
+			item.SetObjInWindows();
+			item.chooseDragObject = null;
+		}
 	}
 
 	/// <summary>
 	/// Function called when the object gets reparented after the drop operation finishes.
 	/// </summary>
 
-	protected virtual void OnDragDropEnd() { }
+	protected virtual void OnDragDropEnd() {
+
+	}
 
 	/// <summary>
 	/// Re-enable the drag scroll view script at the end of the frame.

@@ -1,4 +1,5 @@
 ﻿
+/*
 
 using UnityEngine;
 using System.Collections.Generic;
@@ -367,10 +368,11 @@ public class DragItemController : MonoBehaviour
 		}
 	}
 }
+*/
 
 
 
-/*
+
 using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
@@ -378,7 +380,7 @@ public class WindowsList : MonoBehaviour
 {
 	public Dictionary<string, List<GameObject>> allComponent;
 	public Dictionary<string, Dictionary<string, List<GameObject>>> temporateComponent;
-	public GameObject lastChooseMainDragObject = null;
+	public string lastChooseMainDragObject = null;
 
 	public void PrintAllComponentCount()
 	{
@@ -424,35 +426,48 @@ public class DragItemController : MonoBehaviour
 	const string CONTROLPOINT = "ControlPoint";
 	const string CYLINDER = "Cylinder";
 	const string DECORATECOMPONENT = "DecorateComponent";
+
 	//選定的物件
 	public GameObject chooseDragObject = null;
+	public GameObject chooseObj = null;
 	public GameObject chooseWindow;
 	public GameObject chooseGrid;
-	public GameObject chooseObj = null;
 	private Camera chooseCamera;
 	//UICamera
-	public Camera uICamera;
+	private Camera uICamera;
 	//四大視窗
 	public List<GameObject> windowsList = new List<GameObject>();
 	public List<GameObject> gridList = new List<GameObject>();
 	public List<Camera> cameraList = new List<Camera>();
+	//
+	public List<GameObject> windowSet = new List<GameObject>();
+	//
+	public List<GameObject> buttonList = new List<GameObject>();
 
 	//四個視窗中的物件集合
-	public WindowsList[] AllwindowsComponent;
+	private WindowsList[] AllwindowsComponent;
 	//當前使用視窗中的物件集合
+	[HideInInspector]
 	public WindowsList ThisWindowsComponent;
-
 	//
-	public Movement movement;
-	public AllInOne building;
+	private Vector3 scrollViewOriginPos;
+	//
+	public int changeLayoutIndexInWindowsSet = 0;
+	private int inUseIndex = 0;
+	private GameObject mainWindows;
+	//
+	private Movement movement;
+	private AllInOne building;
+	//
 
-	bool changeLayout = false;
 	void Start()
 	{
 		uICamera = GameObject.Find("UICamera").GetComponent<Camera>();
 		movement = GameObject.Find("Movement").GetComponent<Movement>();
 		building = GameObject.Find("build").GetComponent<AllInOne>();
-		InitWindowListSetting();
+		InitWindowListMemorySetting();
+		InitStateSetting();
+		SwitchWindow();
 	}
 	void Update()
 	{
@@ -469,7 +484,7 @@ public class DragItemController : MonoBehaviour
 		}
 
 	}
-	void InitWindowListSetting()
+	void InitWindowListMemorySetting()
 	{
 		AllwindowsComponent = new WindowsList[windowsList.Count];
 		for (int i = 0; i < windowsList.Count; i++)
@@ -478,7 +493,19 @@ public class DragItemController : MonoBehaviour
 			AllwindowsComponent[i].allComponent = new Dictionary<string, List<GameObject>>();
 			AllwindowsComponent[i].temporateComponent = new Dictionary<string, Dictionary<string, List<GameObject>>>();
 		}
+	}
+	void InitStateSetting() 
+	{
+		scrollViewOriginPos = gridList[0].transform.position;
+		chooseGrid = gridList[0];
+		SetCameraAndGrid(0);
 
+		mainWindows=windowsList[4];
+
+		if (changeLayoutIndexInWindowsSet == 0)
+			chooseWindow = windowsList[0];
+		else if (changeLayoutIndexInWindowsSet == 1)
+			chooseWindow = mainWindows;
 	}
 	void RayCastToChooseObj()
 	{
@@ -520,7 +547,9 @@ public class DragItemController : MonoBehaviour
 							building.MoveBody(chooseObj.transform.parent.GetComponent<body2icon>().ratio_bodydis);
 
 						if (chooseObj.transform.parent.GetComponent<platform2icon>())
+						{
 							building.paraplat(chooseObj.transform.parent.GetComponent<platform2icon>().ratio_platdis_h, chooseObj.transform.parent.GetComponent<platform2icon>().ratio_platdis_w);
+						}
 					}
 				}
 			}
@@ -529,13 +558,38 @@ public class DragItemController : MonoBehaviour
 		{
 			if (Input.GetMouseButtonDown(0))
 			{
-				int index = ChooseWindow();
-				if (index != -1)
+				switch (changeLayoutIndexInWindowsSet)
 				{
-					SetCameraAndGrid(index);
-					//選擇視窗
-					chooseWindow = windowsList[index];
+					case 0:
+						int index = ChooseWindow();
+						if (index != -1)
+						{
+							ThisWindowsComponent = AllwindowsComponent[index];
+							SetCameraAndGrid(index);
+							//選擇視窗
+							chooseWindow = windowsList[index];
+						}
+						break;
+					case 1:
+						Vector2 mousePos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+						Vector2 mousePos2World = uICamera.ScreenToWorldPoint(mousePos);
+						for (int i = 0; i < buttonList.Count; i++)
+						{
+							Bounds bounds = NGUIMath.CalculateAbsoluteWidgetBounds(buttonList[i].transform);
+							if (bounds.Contains(mousePos2World))
+							{
+								mainWindows.GetComponent<UITexture>().mainTexture = windowsList[i].GetComponent<UITexture>().mainTexture;
+								ThisWindowsComponent = AllwindowsComponent[i];
+								SetCameraAndGrid(i);
+								SwapButtonToMainWindows(i);
+								break;
+							}
+
+						}
+						break;
+
 				}
+
 
 				if (chooseWindow != null)
 				{
@@ -566,8 +620,26 @@ public class DragItemController : MonoBehaviour
 					}
 
 				}
+
 			}
 		}
+	}
+	void SwapButtonToMainWindows(int index)
+	{ 
+		if(inUseIndex==index) return;
+
+		Vector3 temp=buttonList[index].transform.position;
+
+		buttonList[index].transform.position = buttonList[inUseIndex].transform.position;
+		buttonList[inUseIndex].transform.position = temp;
+
+		inUseIndex = index;
+	
+	}
+	void SortButtonList()
+	{
+
+
 	}
 	int ChooseWindow()
 	{
@@ -581,7 +653,6 @@ public class DragItemController : MonoBehaviour
 			{
 				if (windowsList[index] == item.collider.gameObject)//滑鼠所在的視窗
 				{
-					ThisWindowsComponent = AllwindowsComponent[index];
 					return index;
 				}
 			}
@@ -601,106 +672,134 @@ public class DragItemController : MonoBehaviour
 		chooseGrid.SetActive(false);
 		chooseGrid = gridList[index];
 		chooseGrid.SetActive(true);
+
+		StartCoroutine(RecoverScrollView());
 	}
-	void SetWindowScale(int index) 
+	private IEnumerator RecoverScrollView()
 	{
-		switch (changeLayout)
+		Vector3 scrollViewRefSpeed = Vector3.zero;
+		float scrollViewSmoothTime = 0.3f;
+		while (Vector3.Distance(chooseGrid.transform.position, scrollViewOriginPos) >= 0.01f)
 		{
-			case true:
+			chooseGrid.transform.position = Vector3.SmoothDamp(chooseGrid.transform.position, scrollViewOriginPos, ref scrollViewRefSpeed, scrollViewSmoothTime);
+			yield return null;
+		}
+	}
+	void SwitchWindow()
+	{
+		for (int i = 0; i < windowSet.Count; i++)
+		{
+			windowSet[i].SetActive(false);
+		}
+		if (changeLayoutIndexInWindowsSet < windowSet.Count)
+			windowSet[changeLayoutIndexInWindowsSet].SetActive(true);
+	}
+	public void SetObjInWindows()//暫時先在攝影機前產生
+	{
+		switch (changeLayoutIndexInWindowsSet)
+		{
+			case 0:
+				int index = ChooseWindow();
+				if (index != -1 && chooseDragObject)
+				{
+					SetCameraAndGrid(index);
 
+					if (windowsList[index] == chooseWindow)
+					{
+						ThisWindowsComponent = AllwindowsComponent[index];
+
+						SetWindowsComponent(index);
+					}
+					//選擇視窗
+					chooseWindow = windowsList[index];
+				}
 				break;
+			case 1:
+				index = ChooseWindow();
+				if (index == 4 && chooseDragObject)
+				{
+					SetCameraAndGrid(inUseIndex);
 
-			case false:
-				windowsList[index].GetComponent<UIWidget>().width *= 2;
-				windowsList[index].GetComponent<UIWidget>().height *= 2;
+					ThisWindowsComponent = AllwindowsComponent[inUseIndex];
+
+					SetWindowsComponent(inUseIndex);
+				}
 				break;
 		}
 	}
-	public void SetObjInWiindows()//暫時先在攝影機前產生
+	void SetWindowsComponent(int index)
 	{
-		int index = ChooseWindow();
 
-		SetWindowScale(index);
-
-		if (index != -1 && chooseDragObject)
+		if (AllwindowsComponent[index].lastChooseMainDragObject != null)
 		{
-			SetCameraAndGrid(index);
-			if (windowsList[index] == chooseWindow)
+			if (!AllwindowsComponent[index].temporateComponent.ContainsKey(AllwindowsComponent[index].lastChooseMainDragObject))
 			{
-				if (AllwindowsComponent[index].lastChooseMainDragObject)
-				{
-					if (!AllwindowsComponent[index].temporateComponent.ContainsKey(AllwindowsComponent[index].lastChooseMainDragObject.name))
-					{
-						//Debug.Log("First");
-						Dictionary<string, List<GameObject>> copy = new Dictionary<string, List<GameObject>>(AllwindowsComponent[index].allComponent);
-						AllwindowsComponent[index].temporateComponent.Add(AllwindowsComponent[index].lastChooseMainDragObject.name, copy);
-					}
-					else
-					{
-						//Debug.Log("Second");
-						Dictionary<string, List<GameObject>> copy = new Dictionary<string, List<GameObject>>(AllwindowsComponent[index].allComponent);
-						AllwindowsComponent[index].temporateComponent[AllwindowsComponent[index].lastChooseMainDragObject.name] = copy;
-					}
-				}
-				switch (chooseDragObject.tag)
-				{
-					case MAINCOMPONENT:
-						movement.freelist.Clear();
-						movement.horlist.Clear();
-						movement.verlist.Clear();
-						if (AllwindowsComponent[index].allComponent.ContainsKey(MAINCOMPONENT) == false)//在選擇的視窗內 且視窗內物件為空
-						{
-							CreateMainComponent(index);
-							Debug.Log("000");
-						}
-						else//視窗內物件為不為空
-						{
-							if (AllwindowsComponent[index].lastChooseMainDragObject != chooseDragObject)//如果不是拖曳同一個主物件取代原本的主物物件
-							{
-								//紀錄操作的物件
-								if (AllwindowsComponent[index].temporateComponent.ContainsKey(chooseDragObject.name)) //有編輯過此視窗
-								{
-									AllwindowsComponent[index].HideAllComponent();
-									AllwindowsComponent[index].allComponent = AllwindowsComponent[index].temporateComponent[chooseDragObject.name];
-									AllwindowsComponent[index].ShowAllComponent();
-									Debug.Log("1111");
-
-								}
-								else //沒有編輯過此視窗
-								{
-									AllwindowsComponent[index].HideAllComponent();
-									CreateMainComponent(index);
-									Debug.Log("222");
-								}
-							}
-							else //如果拖曳同一個主物件取代原本的主物物件
-							{
-								//清除此視窗物件
-								AllwindowsComponent[index].ClearAllComponent();
-								AllwindowsComponent[index].temporateComponent[chooseDragObject.name].Clear();
-								CreateMainComponent(index);
-								Debug.Log("333");
-							}
-						}
-						AllwindowsComponent[index].lastChooseMainDragObject = chooseDragObject;
-						if (AllwindowsComponent[index].allComponent[MAINCOMPONENT][0].GetComponent<MeshObj>()) building.UpdateAll(AllwindowsComponent[index].allComponent[MAINCOMPONENT][0].GetComponent<MeshObj>().edgeIndex);
-
-						break;
-					case DECORATECOMPONENT:
-
-						if (AllwindowsComponent[index].allComponent.ContainsKey(MAINCOMPONENT))//如果有拖曳物件 且在選擇的視窗內 且視窗內物件為空
-						{
-							CreateDecorateComponent(index);
-
-							if (AllwindowsComponent[index].allComponent[MAINCOMPONENT][0].GetComponent<body2icon>())
-								AllwindowsComponent[index].allComponent[MAINCOMPONENT][0].GetComponent<body2icon>().UpdateFunction(chooseDragObject.name, AllwindowsComponent[index].allComponent[chooseDragObject.name].Count);
-						}
-
-						break;
-				}
+				Debug.Log("First");
+				Dictionary<string, List<GameObject>> copy = new Dictionary<string, List<GameObject>>(AllwindowsComponent[index].allComponent);
+				AllwindowsComponent[index].temporateComponent.Add(AllwindowsComponent[index].lastChooseMainDragObject, copy);
 			}
-			//選擇視窗
-			chooseWindow = windowsList[index];
+			else
+			{
+				Debug.Log("Second");
+				Dictionary<string, List<GameObject>> copy = new Dictionary<string, List<GameObject>>(AllwindowsComponent[index].allComponent);
+				AllwindowsComponent[index].temporateComponent[AllwindowsComponent[index].lastChooseMainDragObject] = copy;
+			}
+		}
+		switch (chooseDragObject.tag)
+		{
+			case MAINCOMPONENT:
+				movement.freelist.Clear();
+				movement.horlist.Clear();
+				movement.verlist.Clear();
+				if (!AllwindowsComponent[index].allComponent.ContainsKey(MAINCOMPONENT))//在選擇的視窗內 且視窗內物件為空
+				{
+					CreateMainComponent(index);
+					Debug.Log("000");
+				}
+				else//視窗內物件為不為空
+				{
+					if (AllwindowsComponent[index].lastChooseMainDragObject != chooseDragObject.name)//如果不是拖曳同一個主物件取代原本的主物物件
+					{
+						//紀錄操作的物件
+						if (AllwindowsComponent[index].temporateComponent.ContainsKey(chooseDragObject.name)) //有編輯過此視窗
+						{
+							AllwindowsComponent[index].HideAllComponent();
+							AllwindowsComponent[index].allComponent = AllwindowsComponent[index].temporateComponent[chooseDragObject.name];
+							AllwindowsComponent[index].ShowAllComponent();
+							Debug.Log("1111");
+
+						}
+						else //沒有編輯過此視窗
+						{
+							AllwindowsComponent[index].HideAllComponent();
+							CreateMainComponent(index);
+							Debug.Log("222");
+						}
+					}
+					else //如果拖曳同一個主物件取代原本的主物物件
+					{
+						//清除此視窗物件
+						AllwindowsComponent[index].ClearAllComponent();
+						AllwindowsComponent[index].temporateComponent[chooseDragObject.name].Clear();
+						CreateMainComponent(index);
+						Debug.Log("333");
+					}
+				}
+				AllwindowsComponent[index].lastChooseMainDragObject = chooseDragObject.name;
+				if (AllwindowsComponent[index].allComponent[MAINCOMPONENT][0].GetComponent<MeshObj>()) building.UpdateAll(AllwindowsComponent[index].allComponent[MAINCOMPONENT][0].GetComponent<MeshObj>().edgeIndex);
+
+				break;
+			case DECORATECOMPONENT:
+
+				if (AllwindowsComponent[index].allComponent.ContainsKey(MAINCOMPONENT))//如果有拖曳物件 且在選擇的視窗內 且視窗內物件為空
+				{
+					CreateDecorateComponent(index);
+
+					if (AllwindowsComponent[index].allComponent[MAINCOMPONENT][0].GetComponent<body2icon>())
+						AllwindowsComponent[index].allComponent[MAINCOMPONENT][0].GetComponent<body2icon>().UpdateFunction(chooseDragObject.name, AllwindowsComponent[index].allComponent[chooseDragObject.name].Count);
+				}
+
+				break;
 		}
 	}
 	void CreateMainComponent(int index)
@@ -746,4 +845,3 @@ public class DragItemController : MonoBehaviour
 	}
 }
 
-*/
