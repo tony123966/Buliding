@@ -34,7 +34,7 @@ public class body2icon : MonoBehaviour
 	GameObject frieze_ldpoint;
 	GameObject frieze_rdpoint;
 	MeshFilter frieze_filter;
-	bool isfrieze;
+	public bool isfrieze;
 	int frieze_count = 0;
 	public float frieze_height;
 
@@ -45,7 +45,7 @@ public class body2icon : MonoBehaviour
 	GameObject balustrade_lupoint;
 	GameObject balustrade_rupoint;
 	MeshFilter balustrade_filter;
-	bool isbalustrade;
+	public bool isbalustrade;
 	int balustrade_count = 0;
 	public float balustrade_height;
 
@@ -243,6 +243,9 @@ public class body2icon : MonoBehaviour
 
 			adjmesh(frieze_height, frieze_filter.mesh);
 
+            //***
+            ratio_bodydis =0;
+
 		}
 		else if (dragitemcontroller.chooseObj.name == "BRU" || dragitemcontroller.chooseObj.name == "BLU")
 		{ //balustrade
@@ -253,6 +256,9 @@ public class body2icon : MonoBehaviour
 			balustrade_height = balustrade_rupoint.transform.position.y - R_down_point.transform.position.y;
 
 			adjmesh_balustrade(balustrade_height, balustrade_filter.mesh);
+
+            //***
+            ratio_bodydis = 0;
 
 		}
 	}

@@ -12,6 +12,8 @@ public class Movement : MonoBehaviour {
 	public MeshObj meshobj;
 	public body2icon body2icon;
 	public platform2icon platform2icon;
+    public rooficon rooficon;
+
 	void Start () {
 		dragitemcontroller = GameObject.Find ("DragItemController").GetComponent<DragItemController> ();
 
@@ -81,6 +83,14 @@ public class Movement : MonoBehaviour {
 		if (obj.transform.parent.GetComponent<body2icon> ()) {
 			obj.transform.parent.GetComponent<body2icon> ().adjPos (mospos_);
 		}
+        //***********
+        if (obj.transform.parent.GetComponent<rooficon>())
+        {
+            obj.transform.parent.GetComponent<rooficon>().reset();
+        }
+
+
+
 
 		// free
 		//2.limit movement
@@ -125,6 +135,12 @@ public class Movement : MonoBehaviour {
 			print("bodyicon.addpoint");
 
 		}
+        if (obj.transform.parent.GetComponent<rooficon>())
+        {
+            obj.transform.parent.GetComponent<rooficon>().addpoint();
+            print("rooficon.addpoint");
+
+        }
 
 	
 

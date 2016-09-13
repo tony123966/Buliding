@@ -30,11 +30,12 @@ public class CameraToCenter : MonoBehaviour
 		Vector2 mousePos2World = uICamera.ScreenToWorldPoint(mousePos);
 		if (bounds.Contains(mousePos2World) && Input.GetMouseButtonDown(0) && !isRotating)
 		{
-			isRotating=true;
+			isRotating = true;
 		}
 		if (isRotating)
 		{
-				if (clampXY) {
+			if (clampXY)
+			{
 				if (Mathf.Abs(Input.GetAxis("Mouse X")) > Mathf.Abs(Input.GetAxis("Mouse Y")) && isClamp != -1)
 				{
 					isClamp = 1;
@@ -51,21 +52,21 @@ public class CameraToCenter : MonoBehaviour
 					transform.RotateAround(point, -transform.right, y * Time.deltaTime * speedMod);
 				}
 			}
-			else 
+			else
 			{
 				x += Input.GetAxis("Mouse X") * speedMod * Time.deltaTime;
 				y += Input.GetAxis("Mouse Y") * speedMod * Time.deltaTime;
 				transform.RotateAround(point, target.transform.up, x * Time.deltaTime * speedMod);
 				transform.RotateAround(point, -transform.right, y * Time.deltaTime * speedMod);
 			}
-		
+
 		}
 		if (Input.GetMouseButtonUp(0))
 		{
 			x = 0; y = 0;
 			isClamp = 0;
-			isRotating=false;
+			isRotating = false;
 		}
-		
+
 	}
 }

@@ -14,7 +14,8 @@ public class RidgeControl : MonoBehaviour {
     public roofsurcontrol2 rfconS;
 
 
-   
+    public float Height;
+    public float Wide;
 
 
     // Use this for initialization
@@ -23,6 +24,13 @@ public class RidgeControl : MonoBehaviour {
 
     void Start () 
     {
+
+        Height = Mathf.Abs(transform.GetChild(0).transform.position.y - transform.GetChild(2).transform.position.y);
+        Wide = Mathf.Abs(transform.GetChild(0).transform.position.x - transform.GetChild(2).transform.position.x);
+
+
+
+
         /*
         build();
         eavc.ini();

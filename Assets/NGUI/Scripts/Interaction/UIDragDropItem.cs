@@ -1,6 +1,6 @@
 //----------------------------------------------
 //            NGUI: Next-Gen UI kit
-// Copyright © 2011-2015 Tasharen Entertainment
+// Copyright c 2011-2015 Tasharen Entertainment
 //----------------------------------------------
 
 using UnityEngine;
@@ -365,7 +365,8 @@ public class UIDragDropItem : MonoBehaviour
 	/// Function called when the object gets reparented after the drop operation finishes.
 	/// </summary>
 
-	protected virtual void OnDragDropEnd() {
+	protected virtual void OnDragDropEnd()
+	{
 
 	}
 

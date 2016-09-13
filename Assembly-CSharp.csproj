@@ -227,6 +227,7 @@
      <Compile Include="Assets\Scripts\CorespondingDragItem.cs" />
      <Compile Include="Assets\Scripts\DragItemController.cs" />
      <Compile Include="Assets\Scripts\FixedWindows.cs" />
+     <Compile Include="Assets\Scripts\HandleCursor.cs" />
      <Compile Include="Assets\Scripts\MeshObj.cs" />
      <Compile Include="Assets\Scripts\Movement.cs" />
      <Compile Include="Assets\Scripts\catline.cs" />

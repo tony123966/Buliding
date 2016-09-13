@@ -22,6 +22,8 @@ public class AllInOne : MonoBehaviour
 	public float percent;
 	public float platpercent;
 
+    public float Roof_Height_Percent;
+    public float Roof_Wide_Percent;
 
 	// Use this for initialization
 	void Start()
@@ -40,6 +42,10 @@ public class AllInOne : MonoBehaviour
 
 		percent = 1 / body.transform.GetChild(0).GetChild(1).GetChild(0).GetComponent<ColumnControl>().EyeToColumn;
 		platpercent = platform.transform.GetChild(2).GetComponent<PlatForm>().percent;
+
+        Roof_Height_Percent = roof.transform.GetChild(0).GetChild(0).GetChild(0).GetComponent<RidgeControl>().Height;
+        Roof_Wide_Percent = roof.transform.GetChild(0).GetChild(0).GetChild(0).GetComponent<RidgeControl>().Wide;
+
 	}
 
 	// Update is called once per frame
@@ -140,6 +146,10 @@ public class AllInOne : MonoBehaviour
 		GameObject clone = Instantiate(Resources.Load("CC"), TingPartPosition[1], Quaternion.identity) as GameObject;
 		clone.transform.parent = transform;
 
+
+
+
+
 		clone.transform.GetChild(1).GetComponent<UIcontrol>().numberslider.value = a;
 		TingPartList[1] = clone;
 	}
@@ -205,15 +215,65 @@ public class AllInOne : MonoBehaviour
 
 	//roof
 
-	public void MoveCon(Vector3 a, Vector3 b, Vector3 c)
+	public void UpdateRoof()
 	{
 
 
 
-
+        TingPartList[0].transform.GetChild(1).GetComponent<roofcontrol>().setnumberslidervalue();
 
 
 	}
+
+    public void MoveRoof_Cp1(Vector2 a)
+    {
+
+        TingPartList[0].transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0).transform.Translate(Roof_Wide_Percent*a.x, Roof_Height_Percent * a.y, 0);
+
+        TingPartList[0].transform.GetChild(0).GetChild(0).GetChild(0).GetComponent<RidgeControl>().ridgemanage[0].GetComponent<catline>().ResetCatmullRom();
+        TingPartList[0].transform.GetChild(0).GetChild(0).GetChild(0).GetComponent<RidgeControl>().reset();
+        //TingPartList[0].transform.GetChild(1).GetComponent<roofcontrol>().setnumberslidervalue();
+    
+    }
+    public void MoveRoof_Cp2(Vector2 a)
+    {
+
+        TingPartList[0].transform.GetChild(0).GetChild(0).GetChild(0).GetChild(1).transform.Translate(Roof_Wide_Percent * a.x, Roof_Height_Percent * a.y, 0);
+
+        TingPartList[0].transform.GetChild(0).GetChild(0).GetChild(0).GetComponent<RidgeControl>().ridgemanage[0].GetComponent<catline>().ResetCatmullRom();
+        TingPartList[0].transform.GetChild(0).GetChild(0).GetChild(0).GetComponent<RidgeControl>().reset();
+        
+
+        //TingPartList[0].transform.GetChild(1).GetComponent<roofcontrol>().setnumberslidervalue();
+    
+    }
+    public void MoveRoof_Cp3(Vector2 a)
+    {
+        //ridge
+        TingPartList[0].transform.GetChild(0).GetChild(0).GetChild(0).GetChild(2).transform.Translate(Roof_Wide_Percent * a.x, Roof_Height_Percent * a.y, 0);
+        //ridgetail
+        TingPartList[0].transform.GetChild(0).GetChild(1).GetChild(0).transform.Translate(Roof_Wide_Percent * a.x, Roof_Height_Percent * a.y, 0);
+
+
+        //ridge
+        TingPartList[0].transform.GetChild(0).GetChild(0).GetChild(0).GetComponent<RidgeControl>().ridgemanage[0].GetComponent<catline>().ResetCatmullRom();
+        TingPartList[0].transform.GetChild(0).GetChild(0).GetChild(0).GetComponent<RidgeControl>().reset();
+
+
+        //ridgetail
+        TingPartList[0].transform.GetChild(0).GetChild(1).GetChild(0).GetComponent<RidgetailControl>().ridgetailmanage[0].GetComponent<catline>().ResetCatmullRom();
+        TingPartList[0].transform.GetChild(0).GetChild(1).GetChild(0).GetComponent<RidgetailControl>().reset();
+
+
+
+
+        //TingPartList[0].transform.GetChild(1).GetComponent<roofcontrol>().setnumberslidervalue();
+    
+    }
+
+
+
+
 
 
 
@@ -231,6 +291,25 @@ public class AllInOne : MonoBehaviour
 
 
 	}
+
+    public void UpdateBody_F(bool a)
+    {
+
+        print("#$@#$@#$@#$@$@#$@#$@$@#$@#$  "+a);
+
+        TingPartList[1].transform.GetChild(1).GetComponent<UIcontrol>().isf = a;
+        
+        TingPartList[1].transform.GetChild(1).GetComponent<UIcontrol>().setnumberslidervalue();
+
+    }
+    public void UpdateBody_B(bool a)
+    {
+
+        TingPartList[1].transform.GetChild(1).GetComponent<UIcontrol>().isb = a;
+
+        TingPartList[1].transform.GetChild(1).GetComponent<UIcontrol>().setnumberslidervalue();
+
+    }
 
 
 

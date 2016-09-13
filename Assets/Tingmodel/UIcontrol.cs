@@ -37,12 +37,19 @@ public class UIcontrol : MonoBehaviour
 
     public  GameObject center;
 
+   public  bool isf;
+    public bool isb;
 
 	// Use this for initialization
 	void Start () 
     {
         center = transform.parent.parent.GetChild(0).gameObject;
         numberslidervalue = (int)numberslider.value;
+
+
+
+        isf = false;
+        isb = false;
         //ohohv = (int)ohoh.value;
 
         setnumberslidervalue();
@@ -140,12 +147,12 @@ public class UIcontrol : MonoBehaviour
             columncontrol.reset();
 
 
-            if (bc)
+            if (isf==true)
             {
                 bc.reset();
             }
 
-            if (fc)
+            if (isb == true)
             {
                 fc.reset();
             }
