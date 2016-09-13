@@ -494,13 +494,13 @@ public class DragItemController : MonoBehaviour
 			AllwindowsComponent[i].temporateComponent = new Dictionary<string, Dictionary<string, List<GameObject>>>();
 		}
 	}
-	void InitStateSetting() 
+	void InitStateSetting()
 	{
 		scrollViewOriginPos = gridList[0].transform.position;
 		chooseGrid = gridList[0];
 		SetCameraAndGrid(0);
 
-		mainWindows=windowsList[4];
+		mainWindows = windowsList[4];
 
 		if (changeLayoutIndexInWindowsSet == 0)
 			chooseWindow = windowsList[0];
@@ -624,22 +624,38 @@ public class DragItemController : MonoBehaviour
 			}
 		}
 	}
+	void SwapGameObject(GameObject a, GameObject b)
+	{
+		Vector3 temp = a.transform.position;
+
+		a.transform.position = b.transform.position;
+		b.transform.position = temp;
+	}
 	void SwapButtonToMainWindows(int index)
-	{ 
-		if(inUseIndex==index) return;
+	{
+		if (inUseIndex == index) return;
 
-		Vector3 temp=buttonList[index].transform.position;
-
-		buttonList[index].transform.position = buttonList[inUseIndex].transform.position;
-		buttonList[inUseIndex].transform.position = temp;
+		SwapGameObject(buttonList[index], buttonList[inUseIndex]);
 
 		inUseIndex = index;
-	
+
 	}
-	void SortButtonList()
+	void SortButtonList(int index)
 	{
+		if (inUseIndex == index) return;
+		List<GameObject> newButtonList = new List<GameObject>();
+		newButtonList.Clear();
+		for (int i = 0; i < inUseIndex; i++)
+		{
+			newButtonList.Add(buttonList[i]);
+		}
+		for (int i = inUseIndex + 1; i < buttonList.Count; i++)
+		{
+			newButtonList.Add(buttonList[i]);
+		}
+		int actualIndex = inUseIndex < index ? index-1 : index;
 
-
+		inUseIndex = index;
 	}
 	int ChooseWindow()
 	{
