@@ -31,8 +31,7 @@ public class roofcontrol : MonoBehaviour
     void Start()
     {
         center = transform.parent.parent.GetChild(0).gameObject;
-        print(numberslider.name);
-        print(numberslider.value);
+        
         numberslidervalue = (int)numberslider.value;
         //ohohv = (int)ohoh.value;
 
@@ -80,6 +79,11 @@ public class roofcontrol : MonoBehaviour
 
     public void setnumberslidervalue()
     {
+
+
+
+
+       
         numberslidervalue = (int)numberslider.value;
 
 
@@ -103,6 +107,24 @@ public class roofcontrol : MonoBehaviour
 
             ridgecontrol.reset();
 
+
+
+            print("~~~~~~~~bababababa~~~~~~~~~     " + (center.transform.position.x - transform.parent.GetChild(0).GetChild(0).GetChild(0).GetChild(0).transform.position.x));
+            if (Mathf.Abs(center.transform.position.x - transform.parent.GetChild(0).GetChild(0).GetChild(0).GetChild(0).transform.position.x) >1)
+            {
+               
+
+
+                upridge = true;
+
+                
+            }
+            else
+            {
+                upridge = false;
+            }
+
+
             if (upridge == true)
             {
                 up.reset();
@@ -119,16 +141,27 @@ public class roofcontrol : MonoBehaviour
             roofcontrol2.reset();
             roofcontrolS.reset();
         }
-      
-       
 
+
+        settwvalue();
 
 
     }
 
     public void settwvalue()
     {
+        /*
         twvalue = (int)tiledwideslider.value;
+        */
+
+        float length = Vector3.Distance(ridgecontrol.ridgemanage[0].transform.GetChild(2).transform.position, ridgecontrol.ridgemanage[1].transform.GetChild(2).transform.position);
+
+        print("lenght1  " + length);
+        print("lenght2  " + length / 2);
+        print("lenght3  " + Mathf.RoundToInt(length / 2));
+        twvalue =  Mathf.RoundToInt(length / 2);
+
+       
 
         roofcontrol1.withoutinireset();
         roofcontrol2.reset();

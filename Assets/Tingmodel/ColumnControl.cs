@@ -19,7 +19,7 @@ public class ColumnControl : MonoBehaviour
 
 	public float EyeToColumn;
 
-
+    public float ColumnLong;
 
 
 
@@ -27,6 +27,7 @@ public class ColumnControl : MonoBehaviour
 	{
 		EyeToColumn = Mathf.Abs(transform.GetChild(3).transform.position.x - uict.center.transform.position.x);
 
+        ColumnLong = Mathf.Abs(transform.GetChild(0).transform.position.y - transform.GetChild(3).transform.position.y);
 		/*
 		build();
 		fc.ini();
@@ -35,6 +36,8 @@ public class ColumnControl : MonoBehaviour
 		bc.build();
 		pf.build();
 		*/
+
+
 	}
 
 	// Update is called once per frame

@@ -12,10 +12,10 @@ public class CameraToCenter : MonoBehaviour
 	public float roomInSpeedMod = 20.0f;//a speed modifier
 
 	public bool clampXY = false;
-	public float minDistance=5.0f;
-	public float maxDistance=300.0f;
-	
-	
+	public float minDistance = 5.0f;
+	public float maxDistance = 300.0f;
+
+
 	private Vector3 point;//the coord to the point where the camera looks at
 	private float x = 0;
 	private float y = 0;
@@ -64,15 +64,15 @@ public class CameraToCenter : MonoBehaviour
 					isClamp = -1;
 
 					y += Input.GetAxis("Mouse Y") * dragSpeedMod * Time.smoothDeltaTime;
-					transform.RotateAround(point, -transform.right, y );
+					transform.RotateAround(point, -transform.right, y);
 				}
 			}
 			else
 			{
 				x += Input.GetAxis("Mouse X") * dragSpeedMod * Time.smoothDeltaTime;
 				y += Input.GetAxis("Mouse Y") * dragSpeedMod * Time.smoothDeltaTime;
-				transform.RotateAround(point, target.transform.up, x );
-				transform.RotateAround(point, -transform.right, y );
+				transform.RotateAround(point, target.transform.up, x);
+				transform.RotateAround(point, -transform.right, y);
 			}
 
 		}

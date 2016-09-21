@@ -7,6 +7,8 @@ public class rooficon : MonoBehaviour {
     public List<GameObject> cp1 = new List<GameObject>();
     public List<GameObject> cp2 = new List<GameObject>();
     public List<GameObject> cp3 = new List<GameObject>();
+    public List<GameObject> cp4 = new List<GameObject>();
+    public List<GameObject> cp5 = new List<GameObject>();
 
     public GameObject ori;
 
@@ -25,13 +27,22 @@ public class rooficon : MonoBehaviour {
     public GameObject ControlPoint1;
     public GameObject ControlPoint2;
 
+    //cp1-ORINGIN
+    public Vector3 ini_ControlPoint_1_Position;
+
+     
     public Vector3 ControlPoint_1_position;
     public Vector3 ControlPoint_2_position;
     public Vector3 ControlPoint_3_position;
+    public Vector3 ControlPoint_4_position;
+    public Vector3 ControlPoint_5_position;
+
 
     public Vector2 ControlPoint1Move;
     public Vector2 ControlPoint2Move;
     public Vector2 ControlPoint3Move;
+    public Vector2 ControlPoint4Move;
+    public Vector2 ControlPoint5Move;
 
 
     public Movement movement;
@@ -42,6 +53,10 @@ public class rooficon : MonoBehaviour {
 
     void Awake()
     {
+
+
+        ini_ControlPoint_1_Position = transform.GetChild(0).gameObject.transform.position;
+
         dragitemcontroller = GameObject.Find("DragItemController").GetComponent<DragItemController>();
 
         ori = transform.parent.parent.GetChild(1).gameObject;
@@ -71,13 +86,21 @@ public class rooficon : MonoBehaviour {
         ca.AddControlPoint(transform.GetChild(1).gameObject);
         ca.AddControlPoint(transform.GetChild(2).gameObject);
 
+
         cp1.Add(transform.GetChild(0).gameObject);
         cp2.Add(transform.GetChild(1).gameObject);
         cp3.Add(transform.GetChild(2).gameObject);
+        //tail
+        cp4.Add(transform.GetChild(3).gameObject);
+        cp5.Add(transform.GetChild(4).gameObject);
 
-        movement.verlist.AddRange(cp1);
+
+        movement.freelist.AddRange(cp1);
         movement.freelist.AddRange(cp2);
-        movement.horlist.AddRange(cp3);
+        movement.freelist.AddRange(cp3);
+        //tail
+        movement.freelist.AddRange(cp4);
+        movement.freelist.AddRange(cp5);
 
         ca.ResetCatmullRom();
         transform.gameObject.AddComponent<circlecut1>().reset();
@@ -87,18 +110,35 @@ public class rooficon : MonoBehaviour {
         Vector3 v1 = transform.GetChild(0).transform.position;
         Vector3 v2 = transform.GetChild(1).transform.position;
         Vector3 v3 = transform.GetChild(2).transform.position;
+        //tail
+        Vector3 v4 = transform.GetChild(3).transform.position;
+        Vector3 v5 = transform.GetChild(4).transform.position;
+
 
         GameObject v1c = new GameObject();
         GameObject v2c = new GameObject();
         GameObject v3c = new GameObject();
+        //tail
+        GameObject v4c = new GameObject();
+        GameObject v5c = new GameObject();
+
 
         v1c.transform.parent = transform.parent.GetChild(1);
         v2c.transform.parent = transform.parent.GetChild(1);
         v3c.transform.parent = transform.parent.GetChild(1);
+        //tail
+        v4c.transform.parent = transform.parent.GetChild(1);
+        v5c.transform.parent = transform.parent.GetChild(1);
 
-        v1c.transform.position = v1;
-        v2c.transform.position = new Vector3(v2.x - 2 * (v2.x-v1.x), v2.y, v2.z);
-        v3c.transform.position = new Vector3(v3.x - 2 * (v3.x - v1.x), v3.y, v3.z);
+
+
+        v1c.transform.position = new Vector3(v1.x - 2 * (v1.x - ini_ControlPoint_1_Position.x), v1.y, v1.z);
+        v2c.transform.position = new Vector3(v2.x - 2 * (v2.x - ini_ControlPoint_1_Position.x), v2.y, v2.z);
+        v3c.transform.position = new Vector3(v3.x - 2 * (v3.x - ini_ControlPoint_1_Position.x), v3.y, v3.z);
+        //tail
+        v4c.transform.position = new Vector3(v4.x - 2 * (v4.x - ini_ControlPoint_1_Position.x), v4.y, v4.z);
+        v5c.transform.position = new Vector3(v5.x - 2 * (v5.x - ini_ControlPoint_1_Position.x), v5.y, v5.z);
+
 
         left = transform.parent.GetChild(1).gameObject;
 
@@ -107,7 +147,9 @@ public class rooficon : MonoBehaviour {
         ca2.AddControlPoint(v1c);
         ca2.AddControlPoint(v2c);
         ca2.AddControlPoint(v3c);
-
+        //tail
+        ca2.AddControlPoint(v4c);
+        ca2.AddControlPoint(v5c);
 
 
         ca2.ResetCatmullRom();
@@ -119,6 +161,9 @@ public class rooficon : MonoBehaviour {
         ControlPoint_2_position = cp2[0].transform.position;
         ControlPoint_3_position = cp3[0].transform.position;
 
+        //tail
+        ControlPoint_4_position = cp4[0].transform.position;
+        ControlPoint_5_position = cp5[0].transform.position;
 
 
         //ThreePointToBuild();
@@ -143,6 +188,9 @@ public class rooficon : MonoBehaviour {
         ca.AddControlPoint(transform.GetChild(1).gameObject);
         ca.AddControlPoint(transform.GetChild(2).gameObject);
 
+
+
+
         ca.ResetCatmullRom();
         transform.gameObject.AddComponent<circlecut1>().reset();
 
@@ -151,10 +199,18 @@ public class rooficon : MonoBehaviour {
         Vector3 v1 = transform.GetChild(0).transform.position;
         Vector3 v2 = transform.GetChild(1).transform.position;
         Vector3 v3 = transform.GetChild(2).transform.position;
+        //tail
+        Vector3 v4 = transform.GetChild(3).transform.position;
+        Vector3 v5 = transform.GetChild(4).transform.position;
+
 
         GameObject v1c = new GameObject();
         GameObject v2c = new GameObject();
         GameObject v3c = new GameObject();
+        //tail
+        GameObject v4c = new GameObject();
+        GameObject v5c = new GameObject();
+
 
 
 
@@ -172,11 +228,18 @@ public class rooficon : MonoBehaviour {
         v1c.transform.parent = another.transform;
         v2c.transform.parent = another.transform;
         v3c.transform.parent = another.transform;
+        //tail
+        v4c.transform.parent = another.transform;
+        v5c.transform.parent = another.transform;
 
 
-        v1c.transform.position = v1;
-        v2c.transform.position = new Vector3(v2.x - 2 * (v2.x - v1.x), v2.y, v2.z);
-        v3c.transform.position = new Vector3(v3.x - 2 * (v3.x - v1.x), v3.y, v3.z);
+        v1c.transform.position = new Vector3(v1.x - 2 * (v1.x - ini_ControlPoint_1_Position.x), v1.y, v1.z);
+        v2c.transform.position = new Vector3(v2.x - 2 * (v2.x - ini_ControlPoint_1_Position.x), v2.y, v2.z);
+        v3c.transform.position = new Vector3(v3.x - 2 * (v3.x - ini_ControlPoint_1_Position.x), v3.y, v3.z);
+        //tail
+        v4c.transform.position = new Vector3(v4.x - 2 * (v4.x - ini_ControlPoint_1_Position.x), v4.y, v4.z);
+        v5c.transform.position = new Vector3(v5.x - 2 * (v5.x - ini_ControlPoint_1_Position.x), v5.y, v5.z);
+
 
         left = another.gameObject;
 
@@ -185,7 +248,8 @@ public class rooficon : MonoBehaviour {
         ca2.AddControlPoint(v1c);
         ca2.AddControlPoint(v2c);
         ca2.AddControlPoint(v3c);
-
+        ca2.AddControlPoint(v4c);
+        ca2.AddControlPoint(v5c);
 
 
         ca2.ResetCatmullRom();
@@ -210,9 +274,13 @@ public class rooficon : MonoBehaviour {
     {
         print("DFGDFGDGDGDGDGDG");
 
-        movement.verlist.AddRange(cp1);
+        movement.freelist.AddRange(cp1);
+
         movement.freelist.AddRange(cp2);
-        movement.horlist.AddRange(cp3);
+        movement.freelist.AddRange(cp3);
+
+        movement.freelist.AddRange(cp4);
+        movement.freelist.AddRange(cp5);
 
         reset();
     }
@@ -263,6 +331,7 @@ public class rooficon : MonoBehaviour {
         for (int j = 0; j <= rson-1; j++)
        
         {
+
             if (j == 0)
             {
                 /*
@@ -296,10 +365,43 @@ public class rooficon : MonoBehaviour {
                 t[2] = j;
             }
             else if (j == 1)
-            { }
-            else
             {
 
+                Vector3 v1 = transform.GetComponent<catline>().innerPointList[j];
+                Vector3 v2 = transform.parent.GetChild(1).GetComponent<catline>().innerPointList[j];
+                Vector3 v3 = transform.parent.GetChild(1).GetComponent<catline>().innerPointList[j + 1];
+
+
+                v[0] = (v1);
+                v[1] = (v2);
+                v[2] = (v3);
+
+
+                uv[0] = new Vector2(0, 1);
+                uv[1] = new Vector2(0, 1 - uvR);
+                uv[2] = new Vector2(uvR, 1 - uvR);
+
+
+                n[0] = -Vector3.forward;
+                n[1] = -Vector3.forward;
+                n[2] = -Vector3.forward;
+
+
+
+                t[0] = j + 2;
+                t[1] = j + 1;
+                t[2] = j;
+
+
+
+
+
+
+
+            }
+            else
+            {
+               
                 /*
                 Vector3 v3 = transform.GetChild(0).GetChild(1).GetComponent<circlecut1>().anchorpointlist[j];
                 Vector3 v4 = transform.GetChild(0).GetChild(0).GetComponent<circlecut1>().anchorpointlist[j];
@@ -326,6 +428,12 @@ public class rooficon : MonoBehaviour {
 
                 }
 
+                t[2 + 6 * (j - 1) - 5] = 2 * j - 1;
+                t[2 + 6 * (j - 1) - 4] = 2 * j - 3;
+                t[2 + 6 * (j - 1) - 3] = 2 * j - 2;
+                t[2 + 6 * (j - 1) - 2] = 2 * j;
+                t[2 + 6 * (j - 1) - 1] = 2 * j - 1;
+                t[2 + 6 * (j - 1)] = 2 * j - 2;
                 //東西南北
                 /*
                 if ((360 / angle) * i <= 90)
@@ -351,12 +459,7 @@ public class rooficon : MonoBehaviour {
                 */
                 //東西南   
 
-                t[2 + 6 * (j - 1) - 5] = 2 * j - 1;
-                t[2 + 6 * (j - 1) - 4] = 2 * j - 3;
-                t[2 + 6 * (j - 1) - 3] = 2 * j - 2;
-                t[2 + 6 * (j - 1) - 2] = 2 * j;
-                t[2 + 6 * (j - 1) - 1] = 2 * j - 1;
-                t[2 + 6 * (j - 1)] = 2 * j - 2;
+                
 
             }
             mesh.vertices = v;

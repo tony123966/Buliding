@@ -1238,20 +1238,29 @@ public class DragItemController : MonoBehaviour
 						Vector2 loc = chooseCamera.ScreenToWorldPoint(new Vector2(hitLocalUV.x * chooseCamera.pixelWidth, hitLocalUV.y * chooseCamera.pixelHeight));
 						movement.move(loc);
 
-
+						if (chooseObj.GetComponent<ooficonmidcontrolpointr>())
+						{
+							chooseObj.GetComponent<ooficonmidcontrolpointr>().meshreset.GetComponent<rooficon>().reset();
+						}
 						//判斷是否為body
 						if (chooseObj.transform.parent.GetComponent<body2icon>())
 						{
 							building.MoveBody(chooseObj.transform.parent.GetComponent<body2icon>().ratio_bodydis);
 
+
 							building.UpdateBody_B(chooseObj.transform.parent.GetComponent<body2icon>().isbalustrade);
 							building.UpdateBody_F(chooseObj.transform.parent.GetComponent<body2icon>().isfrieze);
 
+							//20160916
+
+							building.Move_F(chooseObj.transform.parent.GetComponent<body2icon>().frieze_height, chooseObj.transform.parent.GetComponent<body2icon>().ini_cylinderH);
+							building.Move_B(chooseObj.transform.parent.GetComponent<body2icon>().balustrade_height, chooseObj.transform.parent.GetComponent<body2icon>().ini_cylinderH);
 						}
 
 						//判斷是否為plat
 						if (chooseObj.transform.parent.GetComponent<platform2icon>())
 							building.paraplat(chooseObj.transform.parent.GetComponent<platform2icon>().ratio_platdis_h, chooseObj.transform.parent.GetComponent<platform2icon>().ratio_platdis_w);
+
 						//判斷是否為roof
 						if (chooseObj.transform.parent.GetComponent<rooficon>())
 						{
@@ -1587,6 +1596,7 @@ public class DragItemController : MonoBehaviour
 				if (AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseComponentIndex].ContainsKey(MAINCOMPONENT))//如果有拖曳物件 且在選擇的視窗內 且視窗內物件為空
 				{
 					CreateDecorateComponent(index);
+
 					if (AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseComponentIndex][MAINCOMPONENT][0].GetComponent<body2icon>())
 					{
 
@@ -1594,6 +1604,11 @@ public class DragItemController : MonoBehaviour
 
 						building.UpdateBody_F(AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseComponentIndex][MAINCOMPONENT][0].GetComponent<body2icon>().isbalustrade);
 						building.UpdateBody_B(AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseComponentIndex][MAINCOMPONENT][0].GetComponent<body2icon>().isfrieze);
+
+
+
+						building.Move_F(AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseComponentIndex][MAINCOMPONENT][0].GetComponent<body2icon>().frieze_height, AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseComponentIndex][MAINCOMPONENT][0].GetComponent<body2icon>().ini_cylinderH);
+						building.Move_B(AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseComponentIndex][MAINCOMPONENT][0].GetComponent<body2icon>().balustrade_height, AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseComponentIndex][MAINCOMPONENT][0].GetComponent<body2icon>().ini_cylinderH);
 
 					}
 
@@ -1646,12 +1661,13 @@ public class DragItemController : MonoBehaviour
 			{
 				SaveState2MainComponent(index);
 				AllwindowsComponent[index].HideAllComponent();
+				AllwindowsComponent[index].inUseComponentIndex = AllwindowsComponent[index].allComponent.Count;
+
 				Dictionary<string, List<GameObject>> newAllComponent = new Dictionary<string, List<GameObject>>();
 				AllwindowsComponent[index].allComponent.Add(newAllComponent);
 				Dictionary<string, Dictionary<string, List<GameObject>>> newTemporateComponent = new Dictionary<string, Dictionary<string, List<GameObject>>>();
 				AllwindowsComponent[index].temporateComponent.Add(newTemporateComponent);
-
-				AllwindowsComponent[index].inUseComponentIndex++;
+				
 
 				CreateMainComponent(index);
 

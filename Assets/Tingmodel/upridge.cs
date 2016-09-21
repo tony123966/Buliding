@@ -36,10 +36,11 @@ public class upridge : MonoBehaviour {
         g1.transform.parent = upri.transform;
         upri.GetComponent<catline>().AddControlPoint(g1);
 
-        GameObject g2 = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        //GameObject g2 = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        GameObject g2 = new GameObject();
 
-        g2.GetComponent<MeshRenderer>().material = ridgecon.ridgemanage[0].transform.GetChild(2).GetComponent<MeshRenderer>().material;
-        g2.AddComponent<upridgemidpoint>();
+        //g2.GetComponent<MeshRenderer>().material = ridgecon.ridgemanage[0].transform.GetChild(2).GetComponent<MeshRenderer>().material;
+        //g2.AddComponent<upridgemidpoint>();
         g2.transform.position = (v1 + v2) / 2;
         g2.transform.parent = upri.transform;
         upri.GetComponent<catline>().AddControlPoint(g2);

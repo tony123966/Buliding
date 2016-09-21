@@ -135,9 +135,7 @@ public class RidgeControl : MonoBehaviour {
 
 
         
-        print(uict.name);
-        print(uict.transform.parent.name);
-        print(uict.transform.parent.parent.name);
+       
         int angle = uict.numberslidervalue;
 
 

@@ -13,6 +13,9 @@ public class AllInOne : MonoBehaviour
 	public GameObject body;
 	public GameObject platform;
 
+
+
+
 	public List<GameObject> TingPartList = new List<GameObject>();
 	public List<Vector3> TingPartPosition = new List<Vector3>();
 
@@ -21,6 +24,8 @@ public class AllInOne : MonoBehaviour
 	//column's percent
 	public float percent;
 	public float platpercent;
+    public float columntall;
+
 
     public float Roof_Height_Percent;
     public float Roof_Wide_Percent;
@@ -42,6 +47,8 @@ public class AllInOne : MonoBehaviour
 
 		percent = 1 / body.transform.GetChild(0).GetChild(1).GetChild(0).GetComponent<ColumnControl>().EyeToColumn;
 		platpercent = platform.transform.GetChild(2).GetComponent<PlatForm>().percent;
+        columntall = body.transform.GetChild(0).GetChild(1).GetChild(0).GetComponent<ColumnControl>().ColumnLong;
+
 
         Roof_Height_Percent = roof.transform.GetChild(0).GetChild(0).GetChild(0).GetComponent<RidgeControl>().Height;
         Roof_Wide_Percent = roof.transform.GetChild(0).GetChild(0).GetChild(0).GetComponent<RidgeControl>().Wide;
@@ -55,13 +62,13 @@ public class AllInOne : MonoBehaviour
 		if (Input.GetKeyDown(KeyCode.Alpha1))
 		{
 
-			ResetRoof(4);
+            ChangeRoof();
 		}
 
 		if (Input.GetKeyDown(KeyCode.Alpha2))
 		{
-
-			MoveBody2();
+            twolayer();
+			
 		}
 
 		if (Input.GetKeyDown(KeyCode.Alpha3))
@@ -112,6 +119,26 @@ public class AllInOne : MonoBehaviour
 
 
 	}
+
+
+    public void twolayer()
+    {
+
+
+        Vector3 v1 = new Vector3(TingPartPosition[0].x + 17, TingPartPosition[0].y - 15, TingPartPosition[0].z);
+
+
+
+
+        GameObject clone = Instantiate(Resources.Load("RidgeCctwolayer"), v1, Quaternion.identity) as GameObject;
+        
+        
+        clone.transform.parent = transform;
+        
+        
+       // TingPartList[0].transform.GetChild(1).GetComponent<roofcontrol>().setnumberslidervalue();
+    }
+
 
 
 
@@ -196,7 +223,7 @@ public class AllInOne : MonoBehaviour
 
 	}
 	 * */
-
+    /*
 	public void MoveBody2()
 	{
 
@@ -209,19 +236,29 @@ public class AllInOne : MonoBehaviour
 
 
 	}
+    */
+
+
 	//formfactor
 
 
 
 	//roof
+    public void ChangeRoof()
+    {
+
+        TingPartList[0].transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0).transform.Translate(2, 0, 0);
+        TingPartList[0].transform.GetChild(1).GetComponent<roofcontrol>().setnumberslidervalue();
+
+    }
+
+
+
 
 	public void UpdateRoof()
 	{
 
-
-
         TingPartList[0].transform.GetChild(1).GetComponent<roofcontrol>().setnumberslidervalue();
-
 
 	}
 
@@ -292,13 +329,31 @@ public class AllInOne : MonoBehaviour
 
 	}
 
+
+    public void Move_F(float a,float b)
+    {
+        
+            TingPartList[1].transform.GetChild(0).GetChild(1).GetChild(0).GetChild(1).transform.position = new Vector3(TingPartList[1].transform.GetChild(0).GetChild(1).GetChild(0).GetChild(1).transform.position.x, TingPartList[1].transform.GetChild(0).GetChild(1).GetChild(0).GetChild(0).transform.position.y - ((a / b) * columntall), TingPartList[1].transform.GetChild(0).GetChild(1).GetChild(0).GetChild(1).transform.position.z);
+      
+
+      }
+
+    public void Move_B(float a, float b)
+    {
+       
+            TingPartList[1].transform.GetChild(0).GetChild(1).GetChild(0).GetChild(2).transform.position = new Vector3(TingPartList[1].transform.GetChild(0).GetChild(1).GetChild(0).GetChild(2).transform.position.x, TingPartList[1].transform.GetChild(0).GetChild(1).GetChild(0).GetChild(3).transform.position.y + ((a / b) * columntall), TingPartList[1].transform.GetChild(0).GetChild(1).GetChild(0).GetChild(2).transform.position.z);
+        
+    }
+
+
+
+
     public void UpdateBody_F(bool a)
     {
 
         print("#$@#$@#$@#$@$@#$@#$@$@#$@#$  "+a);
 
         TingPartList[1].transform.GetChild(1).GetComponent<UIcontrol>().isf = a;
-        
         TingPartList[1].transform.GetChild(1).GetComponent<UIcontrol>().setnumberslidervalue();
 
     }
@@ -306,7 +361,6 @@ public class AllInOne : MonoBehaviour
     {
 
         TingPartList[1].transform.GetChild(1).GetComponent<UIcontrol>().isb = a;
-
         TingPartList[1].transform.GetChild(1).GetComponent<UIcontrol>().setnumberslidervalue();
 
     }
