@@ -15,23 +15,20 @@ public class MeshObj : MonoBehaviour
 
 	public DragItemController dragitemcontroller;
 	public Movement movement;
-	public Material lineMat;
-//	public GameObject cp1;
-//	public GameObject cp2;
-	public Material[] mats;
-
-	public int lengthOfLineRenderer = 6;
-	LineRenderer lineRenderer;
-	//for ting model
-	//public int ting_model;
 
 	public int edgeIndex;
 
+	Vector2 ini_bodydis;
+	float ini_mainRidgedis;
+
+	Vector2 chang_bodydis;
+	float chang_mainRidgedis;
+	Vector2 ratio_bodydis;
+	float ratio_mainRidgedis;
+	float half_mainRidgedis; 
 	void Start(){
 
 		dragitemcontroller = GameObject.Find ("DragItemController").GetComponent<DragItemController> ();
-		//lineRenderer = GetComponent<LineRenderer> ();
-
 	}
 
 	void Awake () 
@@ -65,6 +62,11 @@ public class MeshObj : MonoBehaviour
 			movement.horlist.Add (controlPointList [4]);
 			movement.horlist.Add (controlPointList [5]);
 			edgeIndex = 4;
+
+
+			ini_bodydis.x = controlPointList[0].transform.localPosition.x - controlPointList[1].transform.localPosition.x;
+			ini_bodydis.y = controlPointList[0].transform.localPosition.y - controlPointList[3].transform.localPosition.y;
+			ini_mainRidgedis = controlPointList[5].transform.localPosition.x - controlPointList[4].transform.localPosition.x;
 			//store first 
 		} else if (controlPointList.Count == 4) {
 			//ting_model = 2;
@@ -98,6 +100,8 @@ public class MeshObj : MonoBehaviour
 			//store first 
 			movement.freelist.AddRange(controlPointList);
 			edgeIndex=6;
+
+		
 
 		} else if (controlPointList.Count == 5) {
 			//ting_model = 3;
@@ -154,11 +158,8 @@ public class MeshObj : MonoBehaviour
 		mesh.RecalculateNormals (); 
 	
 	}
-	public void adjPos(){
-
-
-
-
+	public void adjPos()
+	{
 
 		Vector3 middle = Vector3.zero;
 		float aa, bb, cc;
@@ -169,7 +170,8 @@ public class MeshObj : MonoBehaviour
 		}	
 		for (int i = 0; i < controlPointList.Count; i++) {
 			if (dragitemcontroller.chooseObj == controlPointList [i]) { 
-				if (controlPointList.Count == 6 && this.tag == "Rectangle") {					
+				if (controlPointList.Count == 6 && this.tag == "Rectangle") {//廡殿	
+					Vector2 dis =Vector2.zero;		
 					if (i < 4) {//1. find offset_x, offset_y of mouse position and original position. 
 						float offset_x, offset_y;
 						Vector3 mouse_pos = dragitemcontroller.chooseObj.transform.localPosition;	
@@ -194,6 +196,7 @@ public class MeshObj : MonoBehaviour
 									verts [j].z);
 							}
 						}
+
 					} else {
 						float offset_x;
 						Vector3 mouse_pos = dragitemcontroller.chooseObj.transform.localPosition;	
@@ -208,7 +211,18 @@ public class MeshObj : MonoBehaviour
 
 						}
 					}//rectangle end
-				} else {
+					if (dragitemcontroller.chooseObj == controlPointList[0])
+					{
+					
+					}
+					 chang_bodydis.x = dis.x;
+					 chang_bodydis.y = dis.y;
+					 chang_mainRidgedis = controlPointList[5].transform.localPosition.x - controlPointList[4].transform.localPosition.x;
+
+					 ratio_bodydis.x= chang_bodydis.x/ini_bodydis.x;
+					 ratio_bodydis.y = chang_bodydis.y / ini_bodydis.y;
+					 ratio_mainRidgedis = chang_mainRidgedis/ini_mainRidgedis;
+				} else {//六角亭
 					Vector3 a = dragitemcontroller.chooseObj.transform.localPosition;//after
 					a = a - middle;
 					Vector3 b = verts [i] - middle;//before

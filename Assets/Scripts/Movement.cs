@@ -35,13 +35,9 @@ public class Movement : MonoBehaviour {
 		List<GameObject> horlist =  new List<GameObject>();
 		List<GameObject> verlist =  new List<GameObject>(); 
 		List<GameObject> freelist = new List<GameObject>();
-
-
-	
-	
 	
 	}
-	public void move(Vector2 mospos_){
+	public void Move(Vector2 mospos_){
 
 
 
@@ -50,16 +46,12 @@ public class Movement : MonoBehaviour {
 		GameObject obj = dragitemcontroller.chooseObj;
 
 
-
+		// 找水平
 		for (int h = 0; h < horlist.Count; h++) {
 			if (obj == horlist [h]) {
 				horizontal (mospos_,obj);
 			}
 		}
-
-
-		// 找水平
-
 		//找垂直
 		for (int v = 0; v < verlist.Count; v++){
 			if (obj == verlist [v]) {
@@ -90,8 +82,6 @@ public class Movement : MonoBehaviour {
         }
 
 
-
-
 		// free
 		//2.limit movement
 
@@ -103,7 +93,6 @@ public class Movement : MonoBehaviour {
 
 		if (GameObject.FindWithTag ("Rectangle")) {
 			meshobj = GameObject.FindWithTag ("Rectangle").GetComponent<MeshObj> ();
-			//meshobj = GameObject.Find("RectangleObj()").GetComponent<MeshObj> ();
 			float min = meshobj.controlPointList [0].transform.position.x;
 			float max = meshobj.controlPointList [1].transform.position.x;
 			float b = Mathf.Clamp (mospos_.x, min, max);
@@ -114,38 +103,10 @@ public class Movement : MonoBehaviour {
 
 
 	}
-	public void checkrepeat(){
-
-		freelist.Clear ();
-		verlist.Clear ();
-		horlist.Clear ();
-		GameObject obj = dragitemcontroller.chooseObj;
-
-		if (obj.transform.parent.GetComponent<MeshObj> ()) {
-			obj.transform.parent.GetComponent<MeshObj> ().addpoint ();
-			print("meshobj.addpoint");
-		}
-		if (obj.transform.parent.GetComponent<platform2icon> ()) {
-			obj.transform.parent.GetComponent<platform2icon> ().addpoint ();
-			print("platform.addpoint");
-
-		}
-		if (obj.transform.parent.GetComponent<body2icon> ()) {
-			obj.transform.parent.GetComponent<body2icon> ().addpoint ();
-			print("bodyicon.addpoint");
-
-		}
-        if (obj.transform.parent.GetComponent<rooficon>())
-        {
-            obj.transform.parent.GetComponent<rooficon>().addpoint();
-            print("rooficon.addpoint");
-
-        }
-
-	
-
+	public void intiAllList() 
+	{
+		freelist.Clear();
+		verlist.Clear();
+		horlist.Clear();
 	}
-
-
-
 }
