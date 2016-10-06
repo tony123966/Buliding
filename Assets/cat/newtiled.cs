@@ -50,9 +50,6 @@ public class newtiled : MonoBehaviour
         tilelong = Vector3.Magnitude(xx / (x  ));
 
 
-
-
-        print(transform.parent.parent.parent.GetChild(1).name);
         int ui = transform.parent.parent.parent.GetChild(1).GetComponent<roofcontrol>().numberslidervalue;
         roofsurcontrol2 r2 = transform.parent.parent.GetComponent<roofsurcontrol2>();
 

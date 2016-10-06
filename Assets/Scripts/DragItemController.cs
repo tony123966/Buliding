@@ -834,13 +834,13 @@ public class DragItemController : MonoBehaviour
 
 							//20160916
 
-							building.Move_F(chooseObj.transform.parent.GetComponent<body2icon>().frieze_height, chooseObj.transform.parent.GetComponent<body2icon>().ini_cylinderH);
-							building.Move_B(chooseObj.transform.parent.GetComponent<body2icon>().balustrade_height, chooseObj.transform.parent.GetComponent<body2icon>().ini_cylinderH);
+							building.Move_F(chooseObj.transform.parent.GetComponent<body2icon>().friezeHeight, chooseObj.transform.parent.GetComponent<body2icon>().ini_cylinderHeight);
+							building.Move_B(chooseObj.transform.parent.GetComponent<body2icon>().balustradeHeight, chooseObj.transform.parent.GetComponent<body2icon>().ini_cylinderHeight);
 						}
 
 						//判斷是否為plat
 						if (chooseObj.transform.parent.GetComponent<platform2icon>())
-							building.paraplat(chooseObj.transform.parent.GetComponent<platform2icon>().ratio_platdis_h, chooseObj.transform.parent.GetComponent<platform2icon>().ratio_platdis_w);
+							building.paraplat(chooseObj.transform.parent.GetComponent<platform2icon>().chang_platdis.y, chooseObj.transform.parent.GetComponent<platform2icon>().chang_platdis.x);
 
 						//判斷是否為roof
 						if (chooseObj.transform.parent.GetComponent<rooficon>())
@@ -1200,15 +1200,15 @@ public class DragItemController : MonoBehaviour
 					if (AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseComponentIndex][MAINCOMPONENT][0].GetComponent<body2icon>())
 					{
 
-						if (AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseComponentIndex].ContainsKey(chooseDragObject.name)) AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseComponentIndex][MAINCOMPONENT][0].GetComponent<body2icon>().UpdateFunction(chooseDragObject.name, AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseComponentIndex][chooseDragObject.name].Count);
+						if (AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseComponentIndex].ContainsKey(chooseDragObject.name)) AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseComponentIndex][MAINCOMPONENT][0].GetComponent<body2icon>().UpdateFunction(chooseDragObject.name);
 
 						building.UpdateBody_F(AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseComponentIndex][MAINCOMPONENT][0].GetComponent<body2icon>().isbalustrade);
 						building.UpdateBody_B(AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseComponentIndex][MAINCOMPONENT][0].GetComponent<body2icon>().isfrieze);
 
 
 
-						building.Move_F(AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseComponentIndex][MAINCOMPONENT][0].GetComponent<body2icon>().frieze_height, AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseComponentIndex][MAINCOMPONENT][0].GetComponent<body2icon>().ini_cylinderH);
-						building.Move_B(AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseComponentIndex][MAINCOMPONENT][0].GetComponent<body2icon>().balustrade_height, AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseComponentIndex][MAINCOMPONENT][0].GetComponent<body2icon>().ini_cylinderH);
+						building.Move_F(AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseComponentIndex][MAINCOMPONENT][0].GetComponent<body2icon>().friezeHeight, AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseComponentIndex][MAINCOMPONENT][0].GetComponent<body2icon>().ini_cylinderHeight);
+						building.Move_B(AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseComponentIndex][MAINCOMPONENT][0].GetComponent<body2icon>().balustradeHeight, AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseComponentIndex][MAINCOMPONENT][0].GetComponent<body2icon>().ini_cylinderHeight);
 
 					}
 
