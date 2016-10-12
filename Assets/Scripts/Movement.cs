@@ -27,7 +27,7 @@ public class Movement : MonoBehaviour {
 
 		//1.找自己在哪個list ver or hor
 		GameObject obj = dragitemcontroller.chooseObj;
-		
+
 		// 找水平
 		for (int h = 0; h < horlist.Count; h++)
 		{
@@ -54,13 +54,15 @@ public class Movement : MonoBehaviour {
 			}
 		}
 
-		if (obj.transform.parent.GetComponent<MeshObj> ()) {
-			obj.transform.position=obj.transform.parent.GetComponent<MeshObj>().ClampPos(setPos);
-			obj.transform.parent.GetComponent<MeshObj> ().adjPos();
+		if (obj.transform.parent.GetComponent<MeshObj>())
+		{
+			obj.transform.position = obj.transform.parent.GetComponent<MeshObj>().ClampPos(setPos);
+			obj.transform.parent.GetComponent<MeshObj>().adjPos();
 		}
-		if (obj.transform.parent.GetComponent<platform2icon> ()) {
+		if (obj.transform.parent.GetComponent<platform2icon>())
+		{
 			obj.transform.position = obj.transform.parent.GetComponent<platform2icon>().ClampPos(setPos);
-			obj.transform.parent.GetComponent<platform2icon> ().adjPos ();
+			obj.transform.parent.GetComponent<platform2icon>().adjPos();
 		}
 		if (obj.transform.parent.GetComponent<body2icon> ()) {
 			obj.transform.position = obj.transform.parent.GetComponent<body2icon>().ClampPos(setPos);

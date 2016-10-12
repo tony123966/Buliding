@@ -287,6 +287,8 @@ public class MeshObj : MonoBehaviour
 	Vector2 ratio_bodydis;
 	float ratio_mainRidgedis;
 
+	List<LineRenderer> lineRenderList = new List<LineRenderer>();
+	List<LineRenderer> lineRenderListA = new List<LineRenderer>();
 	void Start()
 	{
 		dragitemcontroller = GameObject.Find("DragItemController").GetComponent<DragItemController>();
@@ -294,12 +296,13 @@ public class MeshObj : MonoBehaviour
 
 	void Awake()
 	{
-
 		mesh = GetComponent<MeshFilter>().mesh;
 		movement = GameObject.Find("Movement").GetComponent<Movement>();
 
 		if (!gameObject.GetComponent<MeshFilter>()) gameObject.AddComponent<MeshFilter>();
 		if (!gameObject.GetComponent<MeshRenderer>()) gameObject.AddComponent<MeshRenderer>();
+
+		gameObject.GetComponent<MeshRenderer>().sortingOrder=0;
 		switch (controlPointList.Count)
 		{
 			case 3:
@@ -339,22 +342,19 @@ public class MeshObj : MonoBehaviour
 				break;
 			case 6://specialCase
 				mesh.vertices = new Vector3[] {
-				controlPointList [0].transform.localPosition,
-				controlPointList [1].transform.localPosition,
-				controlPointList [2].transform.localPosition,
-				controlPointList [3].transform.localPosition,
-				controlPointList [4].transform.localPosition,
-				controlPointList [5].transform.localPosition
-			};
+					controlPointList [0].transform.localPosition,
+					controlPointList [1].transform.localPosition,
+					controlPointList [2].transform.localPosition,
+					controlPointList [3].transform.localPosition,
+					controlPointList [4].transform.localPosition,
+					controlPointList [5].transform.localPosition
+					};
+
 				if (gameObject.tag == "Rectangle")
 				{
 					edgeIndex = 4;
 					mesh.triangles = new int[] { 0, 1, 2, 0, 2, 3 };
 					verts = mesh.vertices;
-					for (int i = 0; i < controlPointList.Count - 2; i++)
-					{
-						movement.freelist.Add(controlPointList[i]);
-					}
 
 					ini_bodydis.x = controlPointList[1].transform.localPosition.x - controlPointList[0].transform.localPosition.x;
 					ini_bodydis.y = controlPointList[1].transform.localPosition.y - controlPointList[2].transform.localPosition.y;
@@ -362,12 +362,56 @@ public class MeshObj : MonoBehaviour
 
 					ini_mainRidgedis = controlPointList[4].transform.localPosition.x - controlPointList[5].transform.localPosition.x;
 					ini_mainRidgedis = ini_mainRidgedis / 2.0f;
+
+					CreateLineRenderer(controlPointList[5], controlPointList[4]);
+					CreateLineRenderer(controlPointList[1], controlPointList[4]);
+					CreateLineRenderer(controlPointList[2], controlPointList[4]);
+					CreateLineRenderer(controlPointList[0], controlPointList[5]);
+					CreateLineRenderer(controlPointList[3], controlPointList[5]);
 				}
 				else
 				{
 					edgeIndex = 6;
 					mesh.triangles = new int[] { 0, 1, 2, 0, 2, 3, 0, 3, 4, 0, 4, 5 };
 					verts = mesh.vertices;
+				}
+				break;
+			case 10://specialCase
+				if (gameObject.tag == "Shanding")
+				{
+					edgeIndex = 4;
+					mesh.vertices = new Vector3[] {
+					controlPointList [0].transform.localPosition,
+					controlPointList [1].transform.localPosition,
+					controlPointList [2].transform.localPosition,
+					controlPointList [3].transform.localPosition,
+					controlPointList [4].transform.localPosition,
+					controlPointList [5].transform.localPosition,
+					controlPointList [6].transform.localPosition,
+					controlPointList [7].transform.localPosition,
+					controlPointList [8].transform.localPosition,
+					controlPointList [9].transform.localPosition,
+					};
+					mesh.triangles = new int[] { 0, 1, 2, 0, 2, 3 };
+					verts = mesh.vertices;
+
+					ini_bodydis.x = controlPointList[1].transform.localPosition.x - controlPointList[0].transform.localPosition.x;
+					ini_bodydis.y = controlPointList[1].transform.localPosition.y - controlPointList[2].transform.localPosition.y;
+					ini_bodydis = ini_bodydis / 2.0f;
+
+					ini_mainRidgedis = controlPointList[4].transform.localPosition.x - controlPointList[5].transform.localPosition.x;
+					ini_mainRidgedis = ini_mainRidgedis / 2.0f;
+
+					CreateLineRenderer(controlPointList[5], controlPointList[4]);
+					CreateLineRenderer(controlPointList[7], controlPointList[4]);
+					CreateLineRenderer(controlPointList[8], controlPointList[4]);
+					CreateLineRenderer(controlPointList[6], controlPointList[5]);
+					CreateLineRenderer(controlPointList[9], controlPointList[5]);
+
+					CreateLineRenderer(controlPointList[0], controlPointList[6]);
+					CreateLineRenderer(controlPointList[3], controlPointList[9]);
+					CreateLineRenderer(controlPointList[1], controlPointList[7]);
+					CreateLineRenderer(controlPointList[2], controlPointList[8]);
 				}
 				break;
 
@@ -385,18 +429,13 @@ public class MeshObj : MonoBehaviour
 		mesh.RecalculateNormals();
 
 	}
-	bool CheckSameDir()
-	{
-
-		return false;
-	}
 	public void adjPos()
 	{
 		Vector3 middle = Vector3.zero;
 
 		chang_bodydis = ratio_bodydis = Vector2.zero;
-		chang_mainRidgedis =ratio_mainRidgedis= 0;
-		
+		chang_mainRidgedis = ratio_mainRidgedis = 0;
+
 		vectors2Center = new Vector3[verts.Length];
 
 		for (int i = 0; i < verts.Length; i++)
@@ -409,11 +448,10 @@ public class MeshObj : MonoBehaviour
 			if (dragitemcontroller.chooseObj == controlPointList[i])
 			{
 				Vector3 tmp = dragitemcontroller.chooseObj.transform.localPosition;
+				float offset_x = tmp.x - verts[i].x;
+				float offset_y = tmp.y - verts[i].y;
 				if (this.tag == "Rectangle")
 				{
-					float offset_x, offset_y;
-					offset_x = tmp.x - verts[i].x;
-					offset_y = tmp.y - verts[i].y;
 					if (i < 4)
 					{
 						for (int j = 0; j < controlPointList.Count - 2; j++)
@@ -439,24 +477,82 @@ public class MeshObj : MonoBehaviour
 					}
 					else//mainRidge
 					{
-						float minClampX = controlPointList[0].transform.localPosition.x;
-						float maxClampX = controlPointList[1].transform.localPosition.x;
 						if (i == 4)
 						{
-							float a = Mathf.Clamp(verts[5].x - (offset_x), minClampX, maxClampX);
-							controlPointList[5].transform.localPosition = new Vector3(a, verts[5].y, verts[5].z);
+							controlPointList[5].transform.localPosition = new Vector3(verts[5].x - (offset_x), verts[5].y, verts[5].z);
 						}
 						else
 						{
-							float b = Mathf.Clamp(verts[4].x - (offset_x), minClampX, maxClampX);
-							controlPointList[4].transform.localPosition = new Vector3(b, verts[4].y, verts[4].z);
-
+							controlPointList[4].transform.localPosition = new Vector3(verts[4].x - (offset_x), verts[4].y, verts[4].z);
 						}
 
 						chang_mainRidgedis = offset_x;
 						ratio_mainRidgedis = chang_mainRidgedis / ini_mainRidgedis;
 					}
-		
+					UpdateLineRender();
+				}
+				else if (this.tag == "Shanding")
+				{
+					if (i < 4)
+					{
+						for (int j = 0; j < 4; j++)
+						{
+							if (i == j) continue;
+							if ((verts[i].x == controlPointList[j].transform.localPosition.x))//x一樣的點
+							{
+								controlPointList[j].transform.localPosition = new Vector3(tmp.x, verts[j].y - (offset_y), verts[j].z);
+							}
+							else if ((verts[i].y == controlPointList[j].transform.localPosition.y))//y一樣的點
+							{
+								controlPointList[j].transform.localPosition = new Vector3(verts[j].x - (offset_x), tmp.y, verts[j].z);
+							}
+							else//對角的點
+							{
+								controlPointList[j].transform.localPosition = new Vector3(verts[j].x - (offset_x), verts[j].y - (offset_y), verts[j].z);
+							}
+						}
+					}
+					else if ((i == 4) || (i == 5))//mainRidge
+					{
+						if (i == 4)
+						{
+							controlPointList[7].transform.localPosition = new Vector3(controlPointList[4].transform.localPosition.x, controlPointList[7].transform.localPosition.y, controlPointList[7].transform.localPosition.z);
+							controlPointList[8].transform.localPosition = new Vector3(controlPointList[4].transform.localPosition.x, controlPointList[8].transform.localPosition.y, controlPointList[8].transform.localPosition.z);
+							controlPointList[5].transform.localPosition = new Vector3(verts[5].x - (offset_x), verts[5].y, verts[5].z);
+							controlPointList[6].transform.localPosition = new Vector3(controlPointList[5].transform.localPosition.x, controlPointList[6].transform.localPosition.y, controlPointList[6].transform.localPosition.z);
+							controlPointList[9].transform.localPosition = new Vector3(controlPointList[5].transform.localPosition.x, controlPointList[9].transform.localPosition.y, controlPointList[9].transform.localPosition.z);
+						}
+						else
+						{
+							controlPointList[6].transform.localPosition = new Vector3(controlPointList[5].transform.localPosition.x, controlPointList[6].transform.localPosition.y, controlPointList[6].transform.localPosition.z);
+							controlPointList[9].transform.localPosition = new Vector3(controlPointList[5].transform.localPosition.x, controlPointList[9].transform.localPosition.y, controlPointList[9].transform.localPosition.z);
+							controlPointList[4].transform.localPosition = new Vector3(verts[4].x - (offset_x), verts[4].y, verts[4].z);
+							controlPointList[7].transform.localPosition = new Vector3(controlPointList[4].transform.localPosition.x, controlPointList[7].transform.localPosition.y, controlPointList[7].transform.localPosition.z);
+							controlPointList[8].transform.localPosition = new Vector3(controlPointList[4].transform.localPosition.x, controlPointList[8].transform.localPosition.y, controlPointList[8].transform.localPosition.z);
+						}
+					}
+					else 
+					{
+						for (int j = 6; j < controlPointList.Count; j++)
+						{
+							if (i == j) continue;
+							if ((verts[i].x == controlPointList[j].transform.localPosition.x))//x一樣的點
+							{
+								controlPointList[j].transform.localPosition = new Vector3(tmp.x, verts[j].y - (offset_y), verts[j].z);
+							}
+							else if ((verts[i].y == controlPointList[j].transform.localPosition.y))//y一樣的點
+							{
+								controlPointList[j].transform.localPosition = new Vector3(verts[j].x - (offset_x), tmp.y, verts[j].z);
+							}
+							else//對角的點
+							{
+								controlPointList[j].transform.localPosition = new Vector3(verts[j].x - (offset_x), verts[j].y - (offset_y), verts[j].z);
+							}
+						}
+						controlPointList[4].transform.localPosition = new Vector3(controlPointList[7].transform.localPosition.x, controlPointList[4].transform.localPosition.y, controlPointList[4].transform.localPosition.z);
+						controlPointList[5].transform.localPosition = new Vector3(controlPointList[6].transform.localPosition.x, controlPointList[5].transform.localPosition.y, controlPointList[5].transform.localPosition.z);
+					}
+					UpdateLineRender();
 				}
 				else//縮放
 				{
@@ -492,11 +588,83 @@ public class MeshObj : MonoBehaviour
 			movement.horlist.Add(controlPointList[4]);
 			movement.horlist.Add(controlPointList[5]);
 		}
+		else if (this.tag == "Shanding")
+		{
+			for (int i = 0; i < 4; i++)
+			{
+				movement.freelist.Add(controlPointList[i]);
+			}
+			movement.horlist.Add(controlPointList[4]);
+			movement.horlist.Add(controlPointList[5]);
+			for (int i = 6; i < 10; i++)
+			{
+				movement.freelist.Add(controlPointList[i]);
+			}
+		}
 		else
 		{
 			movement.freelist.AddRange(controlPointList);
 
 		}
+	}
+	public void CreateLineRenderer(GameObject strat, GameObject end)
+	{
+		GameObject lineObj = new GameObject("Line", typeof(LineRenderer));
+		lineObj.transform.parent = transform;
+		LineRenderer lineRenderer = lineObj.GetComponent<LineRenderer>();
+		lineRenderer.sortingOrder=1;
+		lineRenderer.SetWidth(0.01f, 0.01f);
+		lineRenderer.useWorldSpace = true;
+		lineRenderer.material.color = Color.black;
+		lineRenderer.SetColors(Color.black, Color.black);
+		lineRenderer.SetVertexCount(2);
+		lineRenderer.SetPosition(0, strat.transform.position);
+		lineRenderer.SetPosition(1, end.transform.position);
+			if (this.tag == "Rectangle")
+		{
+		lineRenderList.Add(lineRenderer);
+		}
+		else if (this.tag == "Shanding")
+		{
+			lineRenderListA.Add(lineRenderer);
+		 }
+	}
+	public void UpdateLineRender() 
+	{
+		if (this.tag == "Rectangle")
+		{
+		AdjLineRenderer(0,controlPointList[5], controlPointList[4]);
+		AdjLineRenderer(1,controlPointList[1], controlPointList[4]);
+		AdjLineRenderer(2,controlPointList[2], controlPointList[4]);
+		AdjLineRenderer(3,controlPointList[0], controlPointList[5]);
+		AdjLineRenderer(4,controlPointList[3], controlPointList[5]);
+		}
+		else if (this.tag == "Shanding")
+		{
+		AdjLineRenderer(0,controlPointList[5], controlPointList[4]);
+		AdjLineRenderer(1,controlPointList[7], controlPointList[4]);
+		AdjLineRenderer(2,controlPointList[8], controlPointList[4]);
+		AdjLineRenderer(3, controlPointList[6], controlPointList[5]);
+		AdjLineRenderer(4, controlPointList[9], controlPointList[5]);
+
+		AdjLineRenderer(5, controlPointList[0], controlPointList[6]);
+		AdjLineRenderer(6, controlPointList[3], controlPointList[9]);
+		AdjLineRenderer(7, controlPointList[1], controlPointList[7]);
+		AdjLineRenderer(8, controlPointList[2], controlPointList[8]);
+		}
+	}
+	public void AdjLineRenderer(int index, GameObject strat, GameObject end) 
+	{	if (this.tag == "Rectangle")
+		{
+		lineRenderList[index].SetPosition(0, strat.transform.position);
+		lineRenderList[index].SetPosition(1, end.transform.position);
+		}
+		else if (this.tag == "Shanding")
+		{
+			lineRenderListA[index].SetPosition(0, strat.transform.position);
+			lineRenderListA[index].SetPosition(1, end.transform.position);
+		}
+
 	}
 	public Vector3 ClampPos(Vector3 inputPos)
 	{
@@ -506,9 +674,8 @@ public class MeshObj : MonoBehaviour
 		float maxClampY = float.MaxValue;
 		if (this.tag == "Rectangle")
 		{
-			float minWidth = ini_bodydis.x * 0.2f;
-			float minHeight = ini_bodydis.y * 0.2f;
-
+			float minWidth = ini_mainRidgedis* 0.8f;
+			float minHeight = ini_bodydis.y * 0.5f;
 			if (dragitemcontroller.chooseObj == controlPointList[4])//rightMainRidge
 			{
 				minClampX = controlPointList[5].transform.position.x + minWidth;
@@ -519,32 +686,95 @@ public class MeshObj : MonoBehaviour
 				minClampX = controlPointList[0].transform.position.x;
 				maxClampX = controlPointList[4].transform.position.x - minWidth;
 			}
-			else if (dragitemcontroller.chooseObj == controlPointList[0] )//upLeft
+			else if (dragitemcontroller.chooseObj == controlPointList[0])//upLeft
 			{
 				maxClampX = controlPointList[5].transform.position.x;
-				minClampY = controlPointList[3].transform.position.y + minHeight;
+				minClampY = controlPointList[5].transform.position.y + minHeight;
 			}
-			else if ( dragitemcontroller.chooseObj == controlPointList[3])//downLeft
+			else if (dragitemcontroller.chooseObj == controlPointList[3])//downLeft
 			{
 				maxClampX = controlPointList[5].transform.position.x;
-				maxClampY = controlPointList[0].transform.position.y - minHeight;
+				maxClampY = controlPointList[5].transform.position.y - minHeight;
 			}
-			else if (dragitemcontroller.chooseObj == controlPointList[1] )//upRight
+			else if (dragitemcontroller.chooseObj == controlPointList[1])//upRight
 			{
 				minClampX = controlPointList[4].transform.position.x;
-				minClampY = controlPointList[2].transform.position.y + minHeight;
+				minClampY = controlPointList[4].transform.position.y + minHeight;
 			}
 			else if (dragitemcontroller.chooseObj == controlPointList[2])//downRight
 			{
 				minClampX = controlPointList[4].transform.position.x;
-				maxClampY = controlPointList[1].transform.position.y - minHeight;
+				maxClampY = controlPointList[4].transform.position.y - minHeight;
 			}
 
-			float posX = Mathf.Clamp(inputPos.x, minClampX, maxClampX);
-			float posY = Mathf.Clamp(inputPos.y, minClampY, maxClampY);
-			return new Vector3(posX, posY, inputPos.z);
 		}
-		return inputPos;
+		else if (this.tag == "Shanding")
+		{
+			float minWidth = ini_mainRidgedis * 0.8f;
+			float minHeight = ini_bodydis.y*0.5f*0.5f;
+			if (dragitemcontroller.chooseObj == controlPointList[4])//rightMainRidge
+			{
+				minClampX = controlPointList[5].transform.position.x + minWidth;
+				maxClampX = controlPointList[1].transform.position.x;
+			}
+			else if (dragitemcontroller.chooseObj == controlPointList[5])//leftMainRidge
+			{
+				minClampX = controlPointList[0].transform.position.x;
+				maxClampX = controlPointList[4].transform.position.x - minWidth;
+			}
+			else if (dragitemcontroller.chooseObj == controlPointList[0])//upLeft
+			{
+				maxClampX = controlPointList[4].transform.position.x - minWidth;
+				minClampY = controlPointList[6].transform.position.y + minHeight;
+			}
+			else if (dragitemcontroller.chooseObj == controlPointList[3])//downLeft
+			{
+				maxClampX = controlPointList[4].transform.position.x - minWidth;
+				maxClampY = controlPointList[9].transform.position.y - minHeight;
+			}
+			else if (dragitemcontroller.chooseObj == controlPointList[1])//upRight
+			{
+				minClampX = controlPointList[7].transform.position.x;
+				minClampY = controlPointList[7].transform.position.y + minHeight;
+			}
+			else if (dragitemcontroller.chooseObj == controlPointList[2])//downRight
+			{
+				minClampX = controlPointList[8].transform.position.x;
+				maxClampY = controlPointList[8].transform.position.y - minHeight;
+			}
+			else if (dragitemcontroller.chooseObj == controlPointList[6])//upLeftCenter
+			{
+				minClampX = controlPointList[0].transform.position.x;
+				maxClampX = controlPointList[5].transform.position.x;
+				minClampY = controlPointList[5].transform.position.y + minHeight;
+				maxClampY = controlPointList[0].transform.position.y - minHeight;
+			}
+			else if (dragitemcontroller.chooseObj == controlPointList[9])//downLeftCenter
+			{
+				minClampX = controlPointList[3].transform.position.x;
+				maxClampX = controlPointList[5].transform.position.x;
+				minClampY = controlPointList[3].transform.position.y + minHeight;
+				maxClampY = controlPointList[5].transform.position.y - minHeight;
+
+			}
+			else if (dragitemcontroller.chooseObj == controlPointList[7])//upRightCenter
+			{
+				minClampX = controlPointList[5].transform.position.x + minWidth;
+				maxClampX = controlPointList[1].transform.position.x;
+				minClampY = controlPointList[4].transform.position.y + minHeight;
+				maxClampY = controlPointList[1].transform.position.y - minHeight;
+			}
+			else if (dragitemcontroller.chooseObj == controlPointList[8])//downRightCenter
+			{
+				minClampX = controlPointList[5].transform.position.x + minWidth;
+				maxClampX = controlPointList[2].transform.position.x;
+				minClampY = controlPointList[2].transform.position.y + minHeight;
+				maxClampY = controlPointList[4].transform.position.y - minHeight;
+			}
+		}
+		float posX = Mathf.Clamp(inputPos.x, minClampX, maxClampX);
+		float posY = Mathf.Clamp(inputPos.y, minClampY, maxClampY);
+		return new Vector3(posX, posY, inputPos.z);
 	}
 }
 

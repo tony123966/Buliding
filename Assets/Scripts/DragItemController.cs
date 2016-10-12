@@ -829,8 +829,8 @@ public class DragItemController : MonoBehaviour
 							building.MoveBody(chooseObj.transform.parent.GetComponent<body2icon>().ratio_bodydis);
 
 
-							building.UpdateBody_B(chooseObj.transform.parent.GetComponent<body2icon>().isbalustrade);
-							building.UpdateBody_F(chooseObj.transform.parent.GetComponent<body2icon>().isfrieze);
+							building.UpdateBody_B(chooseObj.transform.parent.GetComponent<body2icon>().isBalustrade);
+							building.UpdateBody_F(chooseObj.transform.parent.GetComponent<body2icon>().isFrieze);
 
 							//20160916
 
@@ -1187,8 +1187,8 @@ public class DragItemController : MonoBehaviour
 				if (AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseComponentIndex][MAINCOMPONENT][0].GetComponent<MeshObj>()) building.UpdateAll(AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseComponentIndex][MAINCOMPONENT][0].GetComponent<MeshObj>().edgeIndex);
 				if (AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseComponentIndex][MAINCOMPONENT][0].GetComponent<body2icon>())
 				{
-					building.UpdateBody_B(AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseComponentIndex][MAINCOMPONENT][0].GetComponent<body2icon>().isbalustrade);
-					building.UpdateBody_F(AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseComponentIndex][MAINCOMPONENT][0].GetComponent<body2icon>().isfrieze);
+					building.UpdateBody_B(AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseComponentIndex][MAINCOMPONENT][0].GetComponent<body2icon>().isBalustrade);
+					building.UpdateBody_F(AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseComponentIndex][MAINCOMPONENT][0].GetComponent<body2icon>().isFrieze);
 				}
 				break;
 			case DECORATECOMPONENT:
@@ -1202,8 +1202,8 @@ public class DragItemController : MonoBehaviour
 
 						if (AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseComponentIndex].ContainsKey(chooseDragObject.name)) AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseComponentIndex][MAINCOMPONENT][0].GetComponent<body2icon>().UpdateFunction(chooseDragObject.name);
 
-						building.UpdateBody_F(AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseComponentIndex][MAINCOMPONENT][0].GetComponent<body2icon>().isbalustrade);
-						building.UpdateBody_B(AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseComponentIndex][MAINCOMPONENT][0].GetComponent<body2icon>().isfrieze);
+						building.UpdateBody_F(AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseComponentIndex][MAINCOMPONENT][0].GetComponent<body2icon>().isBalustrade);
+						building.UpdateBody_B(AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseComponentIndex][MAINCOMPONENT][0].GetComponent<body2icon>().isFrieze);
 
 
 

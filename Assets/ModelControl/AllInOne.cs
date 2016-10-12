@@ -30,6 +30,11 @@ public class AllInOne : MonoBehaviour
     public float Roof_Height_Percent;
     public float Roof_Wide_Percent;
 
+	void Awake()
+	{ 
+	    Application.targetFrameRate = 60;
+	}
+
 	// Use this for initialization
 	void Start()
 	{
