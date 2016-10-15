@@ -588,12 +588,12 @@ public class DoubleRoofIcon : MeshCreate
 	public Vector3 rightDownPoint;
 	public Vector3 leftUpPoint;
 	public Vector3 leftDownPoint;
-	public void DoubleRoofIconCreate<T>(T thisGameObject, string objName, ColumnIcon rightColumn, ColumnIcon leftColumn, float doubleRoofHeight, float doubleRoofWidth) 
+	public void DoubleRoofIconCreate<T>(T thisGameObject, string objName, ColumnIcon rightColumn, ColumnIcon leftColumn, float doubleRoofHeight, float doubleRoofWidth)
 	where T : Component
 	{
 		body = new GameObject(objName);
 		mFilter = body.AddComponent<MeshFilter>();
-		Debug.Log(rightColumn.body.name);
+
 		rightDownPoint = rightColumn.upPoint.transform.position;
 		leftDownPoint = leftColumn.upPoint.transform.position;
 
@@ -625,16 +625,16 @@ public class DoubleRoofIcon : MeshCreate
 		mFilter.mesh.Clear();
 		mFilter.mesh = CreatRecMesh(leftUpPoint, rightUpPoint, rightDownPoint, leftDownPoint, mFilter.mesh);
 	}
-/*
-	void SetLine()
-	{
-		CreateLineRenderer(rightUpPoint, leftUpPoint);
-		CreateLineRenderer(rightUpPoint, rightDownPoint);
-		CreateLineRenderer(leftUpPoint, leftDownPoint);
-		CreateLineRenderer(rightDownPoint, leftDownPoint);
-	}*/
+	/*
+		void SetLine()
+		{
+			CreateLineRenderer(rightUpPoint, leftUpPoint);
+			CreateLineRenderer(rightUpPoint, rightDownPoint);
+			CreateLineRenderer(leftUpPoint, leftDownPoint);
+			CreateLineRenderer(rightDownPoint, leftDownPoint);
+		}*/
 }
-public class FriezeIcon: MeshCreate
+public class FriezeIcon : MeshCreate
 {
 	public void FriezeIconCreate<T>(T thisGameObject, string objName, float ini_friezeHeight, ColumnIcon rightColumn, ColumnIcon leftColumn) where T : Component
 	{
@@ -686,7 +686,7 @@ public class FriezeIcon: MeshCreate
 }
 public class BalustradeIcon : MeshCreate
 {
-	public void BalustradeIconCreate<T>(T thisGameObject, string objName, float ini_balustradeHeight, ColumnIcon rightColumn, ColumnIcon leftColumn)where T : Component
+	public void BalustradeIconCreate<T>(T thisGameObject, string objName, float ini_balustradeHeight, ColumnIcon rightColumn, ColumnIcon leftColumn) where T : Component
 	{
 		Vector3 h = new Vector3(0.0f, ini_balustradeHeight, 0.0f);
 		Vector3 balustrade_rd = rightColumn.downPoint.transform.position;
@@ -987,8 +987,8 @@ public class body2icon : MonoBehaviour
 		isDoubleRoof = true;
 
 		DoubleRoofIcon doubleRoof = new DoubleRoofIcon();
-		doubleRoof.DoubleRoofIconCreate(this,"DoubleRoof_mesh", rightColumn, leftColumn, ini_doubleRoofHeight, ini_doubleRoofWidth);
-		
+		doubleRoof.DoubleRoofIconCreate(this, "DoubleRoof_mesh", rightColumn, leftColumn, ini_doubleRoofHeight, ini_doubleRoofWidth);
+
 
 		return doubleRoof;
 	}
@@ -999,7 +999,7 @@ public class body2icon : MonoBehaviour
 
 		FriezeIcon frieze = new FriezeIcon();
 		frieze.FriezeIconCreate(this, "frieze_mesh", ini_friezeHeight, rightColumn, leftColumn);
-	
+
 		controlPointList.Add(rightColumn.friezePoint);
 		controlPointList.Add(leftColumn.friezePoint);
 
