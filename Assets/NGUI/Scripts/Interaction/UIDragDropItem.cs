@@ -75,8 +75,6 @@ public class UIDragDropItem : MonoBehaviour
 	[System.NonSerialized]
 	protected UICamera.MouseOrTouch mTouch;
 
-	[System.NonSerialized]
-	protected DragItemController dragItemController;
 	/// <summary>
 	/// Cache the transform.
 	/// </summary>
@@ -288,11 +286,6 @@ public class UIDragDropItem : MonoBehaviour
 		if (mTable != null) mTable.repositionNow = true;
 		if (mGrid != null) mGrid.repositionNow = true;
 
-		if (GameObject.Find("DragItemController"))
-		{
-			DragItemController item = GameObject.Find("DragItemController").GetComponent<DragItemController>();
-			item.chooseDragObject = gameObject;
-		}
 	}
 
 	/// <summary>
@@ -353,12 +346,6 @@ public class UIDragDropItem : MonoBehaviour
 			OnDragDropEnd();
 		}
 		else NGUITools.Destroy(gameObject);
-		if (GameObject.Find("DragItemController"))
-		{
-			DragItemController item = GameObject.Find("DragItemController").GetComponent<DragItemController>();
-			item.SetObjInWindows();
-			item.chooseDragObject = null;
-		}
 	}
 
 	/// <summary>
@@ -377,7 +364,7 @@ public class UIDragDropItem : MonoBehaviour
 
 	protected IEnumerator EnableDragScrollView()
 	{
-		yield return new WaitForEndOfFrame();
 		if (mDragScrollView != null) mDragScrollView.enabled = true;
+		yield return new WaitForEndOfFrame();
 	}
 }

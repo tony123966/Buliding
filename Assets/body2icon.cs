@@ -542,10 +542,12 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class MeshCreate
+public class MeshCreate:lineRendererControl
 {
+	public List<Vector3> controlPointList = new List<Vector3>();
 	public GameObject body = null;
 	public MeshFilter mFilter;
+	public MeshRenderer mRenderer;
 	public Mesh CreatRecMesh(Vector3 lu, Vector3 ru, Vector3 rd, Vector3 ld, Mesh ismesh)
 	{
 		Mesh m;
@@ -568,18 +570,25 @@ public class MeshCreate
 		m.RecalculateNormals();
 		return m;
 	}
-	public void CreateLineRenderer(Vector3 stratPos, Vector3 endPos)
+	public override void InitLineRender<T>(T thisGameObject)
 	{
-		//create a new empty gameobject and line renderer component
-		GameObject lineObj = new GameObject("Line", typeof(LineRenderer));
-		LineRenderer lineRenderer = lineObj.GetComponent<LineRenderer>();
-		lineRenderer.SetWidth(0.01f, 0.01f);
-		lineRenderer.useWorldSpace = true;
-		lineRenderer.material.color = Color.black;
-		lineRenderer.SetColors(Color.black, Color.black);
-		lineRenderer.SetVertexCount(2);
-		lineRenderer.SetPosition(0, stratPos);
-		lineRenderer.SetPosition(1, endPos);
+		for (int i = 0; i < controlPointList.Count; i++)
+		{
+			if (i != controlPointList.Count - 1)
+				CreateLineRenderer(thisGameObject, controlPointList[i], controlPointList[i + 1]);
+			else
+				CreateLineRenderer(thisGameObject, controlPointList[i], controlPointList[0]);
+		}
+	}
+	public override void UpdateLineRender()
+	{
+		for (int i = 0; i < lineRenderList.Count; i++)
+		{
+			if (i != controlPointList.Count - 1)
+				AdjLineRenderer(i, controlPointList[i], controlPointList[i + 1]);
+			else
+				AdjLineRenderer(i, controlPointList[i], controlPointList[0]);
+		}
 	}
 }
 public class DoubleRoofIcon : MeshCreate
@@ -604,11 +613,13 @@ public class DoubleRoofIcon : MeshCreate
 		rightDownPoint.x = rightDownPoint.x + doubleRoofWidth;
 		leftDownPoint.x = leftDownPoint.x - doubleRoofWidth;
 
-		MeshRenderer renderer = body.AddComponent<MeshRenderer>() as MeshRenderer;
+		mRenderer = body.AddComponent<MeshRenderer>() as MeshRenderer;
 		mFilter.mesh = CreatRecMesh(leftUpPoint, rightUpPoint, rightDownPoint, leftDownPoint, null);
 
 		body.transform.parent = thisGameObject.transform;
-		//SetLine();
+
+		InitLineRender(thisGameObject);
+		SetIconObjectColor();
 	}
 	public void AdjPos(ColumnIcon rightColumn, ColumnIcon leftColumn, float doubleRoofHeight, float doubleRoofWidth)
 	{
@@ -624,116 +635,191 @@ public class DoubleRoofIcon : MeshCreate
 
 		mFilter.mesh.Clear();
 		mFilter.mesh = CreatRecMesh(leftUpPoint, rightUpPoint, rightDownPoint, leftDownPoint, mFilter.mesh);
+
+		UpdateLineRender();
 	}
-	/*
-		void SetLine()
-		{
-			CreateLineRenderer(rightUpPoint, leftUpPoint);
-			CreateLineRenderer(rightUpPoint, rightDownPoint);
-			CreateLineRenderer(leftUpPoint, leftDownPoint);
-			CreateLineRenderer(rightDownPoint, leftDownPoint);
-		}*/
+	public override void InitLineRender<T>(T thisGameObject)
+	{
+		controlPointList.Add(leftUpPoint);
+		controlPointList.Add(rightUpPoint);
+		controlPointList.Add(rightDownPoint);
+		controlPointList.Add(leftDownPoint);
+		base.InitLineRender(thisGameObject);
+	}
+	public override void UpdateLineRender()
+	{
+		controlPointList[0] = (leftUpPoint);
+		controlPointList[1] = (rightUpPoint);
+		controlPointList[2] = (rightDownPoint);
+		controlPointList[3] = (leftDownPoint);
+		base.UpdateLineRender();
+	}
+	public void SetIconObjectColor()
+	{
+		mRenderer.material.color = Color.red;
+	}
 }
 public class FriezeIcon : MeshCreate
 {
+	public Vector3 rightUpPoint;
+	public Vector3 rightDownPoint;
+	public Vector3 leftUpPoint;
+	public Vector3 leftDownPoint;
 	public void FriezeIconCreate<T>(T thisGameObject, string objName, float ini_friezeHeight, ColumnIcon rightColumn, ColumnIcon leftColumn) where T : Component
 	{
 		Vector3 h = new Vector3(0.0f, ini_friezeHeight, 0.0f);
-		Vector3 frieze_ru = rightColumn.upPoint.transform.position;
-		Vector3 frieze_lu = leftColumn.upPoint.transform.position;
-		Vector3 frieze_rd = frieze_ru - h;
-		Vector3 frieze_ld = frieze_lu - h;
+		rightUpPoint = rightColumn.upPoint.transform.position;
+		leftUpPoint = leftColumn.upPoint.transform.position;
+		rightDownPoint = rightUpPoint - h;
+		leftDownPoint = leftUpPoint - h;
 
 		body = new GameObject(objName);
 
 		mFilter = body.AddComponent<MeshFilter>();
-		mFilter.mesh = CreatRecMesh(frieze_lu, frieze_ru, frieze_rd, frieze_ld, null);
+		mFilter.mesh = CreatRecMesh(leftUpPoint, rightUpPoint, rightDownPoint, leftDownPoint, null);
 
 		//frieze cp
 		rightColumn.friezePoint = GameObject.CreatePrimitive(PrimitiveType.Sphere);
 		rightColumn.friezePoint.tag = "ControlPoint";
 		rightColumn.friezePoint.name = "FRD";
 		rightColumn.friezePoint.transform.localScale = rightColumn.downPoint.transform.localScale;
-		rightColumn.friezePoint.transform.position = frieze_rd;
+		rightColumn.friezePoint.transform.position = rightDownPoint;
 
 		leftColumn.friezePoint = GameObject.CreatePrimitive(PrimitiveType.Sphere);
 		leftColumn.friezePoint.tag = "ControlPoint";
 		leftColumn.friezePoint.name = "FLD";
 		leftColumn.friezePoint.transform.localScale = rightColumn.downPoint.transform.localScale;
-		leftColumn.friezePoint.transform.position = frieze_ld;
+		leftColumn.friezePoint.transform.position = leftDownPoint;
 
 		rightColumn.allObjList.Add(rightColumn.friezePoint);
 		leftColumn.allObjList.Add(leftColumn.friezePoint);
 
-		MeshRenderer renderer = body.AddComponent<MeshRenderer>() as MeshRenderer;
+		mRenderer = body.AddComponent<MeshRenderer>() as MeshRenderer;
 
 		body.transform.parent = thisGameObject.transform;
 		rightColumn.friezePoint.transform.parent = thisGameObject.transform;
 		leftColumn.friezePoint.transform.parent = thisGameObject.transform;
+		
+		InitLineRender(thisGameObject);
+		SetIconObjectColor( rightColumn,  leftColumn);
 	}
 	public float AdjPos(ColumnIcon rightColumn, ColumnIcon leftColumn)
 	{
 		float friezeHeight = rightColumn.upPoint.transform.position.y - rightColumn.friezePoint.transform.position.y;
 		Vector3 h = new Vector3(0.0f, friezeHeight, 0.0f);
 		mFilter.mesh.Clear();
-		Vector3 frieze_ru = rightColumn.upPoint.transform.position;
-		Vector3 frieze_lu = leftColumn.upPoint.transform.position;
-		Vector3 frieze_rd = rightColumn.friezePoint.transform.position = frieze_ru - h;
-		Vector3 frieze_ld = leftColumn.friezePoint.transform.position = frieze_lu - h;
-		mFilter.mesh = CreatRecMesh(frieze_lu, frieze_ru, frieze_rd, frieze_ld, mFilter.mesh);
+		rightUpPoint = rightColumn.upPoint.transform.position;
+		leftUpPoint = leftColumn.upPoint.transform.position;
+		rightDownPoint = rightColumn.friezePoint.transform.position = rightUpPoint - h;
+		leftDownPoint = leftColumn.friezePoint.transform.position = leftUpPoint - h;
+		mFilter.mesh = CreatRecMesh(leftUpPoint, rightUpPoint, rightDownPoint, leftDownPoint, mFilter.mesh);
+
+		UpdateLineRender();
+
 		return friezeHeight;
+	}
+	public override void InitLineRender<T>(T thisGameObject)
+	{
+		controlPointList.Add(leftUpPoint);
+		controlPointList.Add(rightUpPoint);
+		controlPointList.Add(rightDownPoint);
+		controlPointList.Add(leftDownPoint);
+		base.InitLineRender(thisGameObject);
+	}
+	public override void UpdateLineRender()
+	{
+		controlPointList[0] = (leftUpPoint);
+		controlPointList[1] = (rightUpPoint);
+		controlPointList[2] = (rightDownPoint);
+		controlPointList[3] = (leftDownPoint);
+		base.UpdateLineRender();
+	}
+	public void SetIconObjectColor(ColumnIcon rightColumn, ColumnIcon leftColumn)
+	{
+		mRenderer.material.color = Color.red;
+		rightColumn.friezePoint.GetComponent<MeshRenderer>().material.color = Color.yellow;
+		leftColumn.friezePoint.GetComponent<MeshRenderer>().material.color = Color.yellow;
 	}
 }
 public class BalustradeIcon : MeshCreate
 {
+	public Vector3 rightUpPoint;
+	public Vector3 rightDownPoint;
+	public Vector3 leftUpPoint;
+	public Vector3 leftDownPoint;
 	public void BalustradeIconCreate<T>(T thisGameObject, string objName, float ini_balustradeHeight, ColumnIcon rightColumn, ColumnIcon leftColumn) where T : Component
 	{
 		Vector3 h = new Vector3(0.0f, ini_balustradeHeight, 0.0f);
-		Vector3 balustrade_rd = rightColumn.downPoint.transform.position;
-		Vector3 balustrade_ld = leftColumn.downPoint.transform.position;
-		Vector3 balustrade_ru = balustrade_rd + h;
-		Vector3 balustrade_lu = balustrade_ld + h;
+		rightDownPoint = rightColumn.downPoint.transform.position;
+		leftDownPoint = leftColumn.downPoint.transform.position;
+		rightUpPoint = rightDownPoint + h;
+		leftUpPoint = leftDownPoint + h;
 
 		body = new GameObject(objName);
 
 		mFilter = body.AddComponent<MeshFilter>();
-		mFilter.mesh = CreatRecMesh(balustrade_lu, balustrade_ru, balustrade_rd, balustrade_ld, null);
+		mFilter.mesh = CreatRecMesh(leftUpPoint, rightUpPoint, rightDownPoint, leftDownPoint, null);
 
 		//frieze cp
 		rightColumn.balustradePoint = GameObject.CreatePrimitive(PrimitiveType.Sphere);
 		rightColumn.balustradePoint.tag = "ControlPoint";
 		rightColumn.balustradePoint.name = "BRU";
 		rightColumn.balustradePoint.transform.localScale = rightColumn.downPoint.transform.localScale;
-		rightColumn.balustradePoint.transform.position = balustrade_ru;
+		rightColumn.balustradePoint.transform.position = rightUpPoint;
 
 		leftColumn.balustradePoint = GameObject.CreatePrimitive(PrimitiveType.Sphere);
 		leftColumn.balustradePoint.tag = "ControlPoint";
 		leftColumn.balustradePoint.name = "BLU";
 		leftColumn.balustradePoint.transform.localScale = rightColumn.downPoint.transform.localScale;
-		leftColumn.balustradePoint.transform.position = balustrade_lu;
+		leftColumn.balustradePoint.transform.position = leftUpPoint;
 
 		rightColumn.allObjList.Add(rightColumn.balustradePoint);
 		leftColumn.allObjList.Add(leftColumn.balustradePoint);
 
-		MeshRenderer renderer = body.AddComponent<MeshRenderer>() as MeshRenderer;
+		mRenderer = body.AddComponent<MeshRenderer>() as MeshRenderer;
 
 		body.transform.parent = thisGameObject.transform;
 		rightColumn.balustradePoint.transform.parent = thisGameObject.transform;
 		leftColumn.balustradePoint.transform.parent = thisGameObject.transform;
 
+		InitLineRender(thisGameObject);
+		SetIconObjectColor(rightColumn,leftColumn);
 	}
 	public float AdjPos(ColumnIcon rightColumn, ColumnIcon leftColumn)
 	{
 		float balustradeHeight = rightColumn.balustradePoint.transform.position.y - rightColumn.downPoint.transform.position.y;
 		Vector3 h = new Vector3(0.0f, balustradeHeight, 0.0f);
 		mFilter.mesh.Clear();
-		Vector3 balustrade_rd = rightColumn.downPoint.transform.position;
-		Vector3 balustrade_ld = leftColumn.downPoint.transform.position;
-		Vector3 balustrade_ru = rightColumn.balustradePoint.transform.position = balustrade_rd + h;
-		Vector3 balustrade_lu = leftColumn.balustradePoint.transform.position = balustrade_ld + h;
-		mFilter.mesh = CreatRecMesh(balustrade_lu, balustrade_ru, balustrade_rd, balustrade_ld, mFilter.mesh);
+		rightDownPoint = rightColumn.downPoint.transform.position;
+		leftDownPoint = leftColumn.downPoint.transform.position;
+		rightUpPoint = rightColumn.balustradePoint.transform.position = rightDownPoint + h;
+		leftUpPoint = leftColumn.balustradePoint.transform.position = leftDownPoint + h;
+		mFilter.mesh = CreatRecMesh(leftUpPoint, rightUpPoint, rightDownPoint, leftDownPoint, mFilter.mesh);
 
+		UpdateLineRender();
 		return balustradeHeight;
+	}
+	public override void InitLineRender<T>(T thisGameObject)
+	{
+		controlPointList.Add(leftUpPoint);
+		controlPointList.Add(rightUpPoint);
+		controlPointList.Add(rightDownPoint);
+		controlPointList.Add(leftDownPoint);
+		base.InitLineRender(thisGameObject);
+	}
+	public override void UpdateLineRender()
+	{
+		controlPointList[0] = (leftUpPoint);
+		controlPointList[1] = (rightUpPoint);
+		controlPointList[2] = (rightDownPoint);
+		controlPointList[3] = (leftDownPoint);
+		base.UpdateLineRender();
+	}
+	public void SetIconObjectColor(ColumnIcon rightColumn, ColumnIcon leftColumn)
+	{
+		mRenderer.material.color = Color.red;
+		rightColumn.balustradePoint.GetComponent<MeshRenderer>().material.color = Color.yellow;
+		leftColumn.balustradePoint.GetComponent<MeshRenderer>().material.color = Color.yellow;
 	}
 }
 public class ColumnIcon : MeshCreate
@@ -750,6 +836,8 @@ public class ColumnIcon : MeshCreate
 		this.downPoint = downPoint;
 
 		this.body = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+		mFilter=body.GetComponent<MeshFilter>();
+		mRenderer = body.GetComponent<MeshRenderer>();
 		this.body.transform.localScale = new Vector3(radius, columnHeight / 2.0f, radius);
 		this.body.transform.position = new Vector3(upPoint.transform.position.x, upPoint.transform.position.y - columnHeight / 2.0f, upPoint.transform.position.z);
 
@@ -758,6 +846,14 @@ public class ColumnIcon : MeshCreate
 		this.allObjList.Add(body);
 		this.allObjList.Add(downPoint);
 		this.allObjList.Add(upPoint);
+
+		SetIconObjectColor();
+	}
+	public void SetIconObjectColor()
+	{
+		mRenderer.material.color = Color.red;
+		upPoint.GetComponent<MeshRenderer>().material.color = Color.yellow;
+		downPoint.GetComponent<MeshRenderer>().material.color = Color.yellow;
 	}
 }
 

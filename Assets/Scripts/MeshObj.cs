@@ -538,13 +538,76 @@ public class MeshObj : MonoBehaviour
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-public class IconObject
+public class lineRendererControl
+{
+	public List<lineStruct> lineRenderList = new List<lineStruct>();
+	public struct lineStruct
+	{
+		public GameObject startControlPoint;
+		public GameObject endControlPoint;
+		public LineRenderer lineRenderer;
+	}
+	public void CreateLineRenderer<T>(T thisGameObject, GameObject strat, GameObject end) where T : Component
+	{
+		GameObject lineObj = new GameObject("Line", typeof(LineRenderer));
+		lineObj.transform.parent = thisGameObject.transform;
+		LineRenderer lineRenderer = lineObj.GetComponent<LineRenderer>();
+		lineRenderer.sortingOrder = 1;
+		lineRenderer.SetWidth(0.005f, 0.005f);
+		lineRenderer.useWorldSpace = true;
+		lineRenderer.material.color = Color.black;
+		lineRenderer.SetColors(Color.black, Color.black);
+		lineRenderer.SetVertexCount(2);
+		lineRenderer.SetPosition(0, strat.transform.position);
+		lineRenderer.SetPosition(1, end.transform.position);
+
+		lineStruct tmp = new lineStruct();
+		tmp.startControlPoint = strat;
+		tmp.endControlPoint = end;
+		tmp.lineRenderer = lineRenderer;
+		lineRenderList.Add(tmp);
+	}
+	public void CreateLineRenderer<T>(T thisGameObject, Vector3 strat, Vector3 end) where T : Component
+	{
+		GameObject lineObj = new GameObject("Line", typeof(LineRenderer));
+		lineObj.transform.parent = thisGameObject.transform;
+		LineRenderer lineRenderer = lineObj.GetComponent<LineRenderer>();
+		lineRenderer.sortingOrder = 1;
+		lineRenderer.SetWidth(0.005f, 0.005f);
+		lineRenderer.useWorldSpace = true;
+		lineRenderer.material.color = Color.black;
+		lineRenderer.SetColors(Color.black, Color.black);
+		lineRenderer.SetVertexCount(2);
+		lineRenderer.SetPosition(0, strat);
+		lineRenderer.SetPosition(1, end);
+
+		lineStruct tmp = new lineStruct();
+		tmp.lineRenderer = lineRenderer;
+		lineRenderList.Add(tmp);
+	}
+	public void AdjLineRenderer(int index, GameObject strat, GameObject end)
+	{
+		lineRenderList[index].lineRenderer.SetPosition(0, strat.transform.position);
+		lineRenderList[index].lineRenderer.SetPosition(1, end.transform.position);
+	}
+	public void AdjLineRenderer(int index, Vector3 strat, Vector3 end)
+	{
+		lineRenderList[index].lineRenderer.SetPosition(0, strat);
+		lineRenderList[index].lineRenderer.SetPosition(1, end);
+	}
+	public virtual void UpdateLineRender(){}
+	public virtual void InitLineRender<T>(T thisGameObject) where T : Component{}
+
+}
+public class IconObject : lineRendererControl
 {
 	public List<GameObject> controlPointList = new List<GameObject>();
 	public GameObject body = null;
 	public int edgeIndex;
 	public MeshFilter mFilter;
+	public MeshRenderer mRenderer;
 	public Vector3[] lastControlPointPosition;
+
 	public Vector3 AdjPos( Vector3 tmp, int index,Vector3 center)
 	{
 		Vector3[] points2Center = new Vector3[controlPointList.Count];
@@ -567,9 +630,16 @@ public class IconObject
 		Vector3 offset = tmp - lastControlPointPosition[index];
 
 		UpdateLastPos();
-
+		UpdateLineRender();
 		return offset;
 
+	}
+	public void SetIconObjectColor() 
+	{
+		mRenderer.material.color = Color.red;
+		foreach (GameObject controlPoint in controlPointList)
+			controlPoint.GetComponent<MeshRenderer>().material.color=Color.yellow;
+	
 	}
 	public void AdjMesh()
 	{
@@ -585,17 +655,24 @@ public class IconObject
 			lastControlPointPosition[i] = controlPointList[i].transform.position;
 		}
 	}
-	private Vector3 FindCenter(List<GameObject> lists)
+	public override void InitLineRender<T>(T thisGameObject)
 	{
-		float sumX = 0, sumY = 0, sumZ = 0;
-		for(int i=0;i<lists.Count;i++)
+		for (int i = 0; i < controlPointList.Count; i++)
 		{
-			sumX +=lists[i].transform.position.x;
-			sumY += lists[i].transform.position.y;
-			sumZ += lists[i].transform.position.z;
+			if (i != controlPointList.Count - 1)
+				CreateLineRenderer(thisGameObject, controlPointList[i], controlPointList[i + 1]);
+			else
+				CreateLineRenderer(thisGameObject, controlPointList[i], controlPointList[0]);
 		}
-		return new Vector3(sumX / lists.Count, sumY / lists.Count, sumZ / lists.Count);
 	}
+	public override void UpdateLineRender()
+	{
+		for (int i = 0; i < lineRenderList.Count; i++)
+		{
+			AdjLineRenderer(i, lineRenderList[i].startControlPoint, lineRenderList[i].endControlPoint);
+		}
+	}
+
 }
 public class VerandaIcon : IconObject//廡殿頂
 {
@@ -604,8 +681,8 @@ public class VerandaIcon : IconObject//廡殿頂
 		edgeIndex = 4;
 		body = new GameObject(objName);
 		mFilter = body.AddComponent<MeshFilter>();
-		MeshRenderer renderer = body.AddComponent<MeshRenderer>() as MeshRenderer;
-		renderer.sortingOrder = 0;
+		mRenderer = body.AddComponent<MeshRenderer>() as MeshRenderer;
+		mRenderer.sortingOrder = 0;
 		this.controlPointList = controlPointList;
 		//Debug.Log("ghgfhfghgh:" + this.controlPointList.Count);
 		mFilter.mesh=new Mesh();
@@ -622,6 +699,9 @@ public class VerandaIcon : IconObject//廡殿頂
 		mFilter.mesh.RecalculateNormals();
 
 		body.transform.parent = thisGameObject.transform;
+
+		InitLineRender(thisGameObject);
+		SetIconObjectColor();
 	}
 	public  Vector3 AdjPos(Vector3 tmp, int index)
 	{
@@ -658,7 +738,21 @@ public class VerandaIcon : IconObject//廡殿頂
 			}
 		}
 		UpdateLastPos();
+		UpdateLineRender();
 		return new Vector3(offset_x, offset_y, 0);
+	}
+	public override void InitLineRender<T>(T thisGameObject)
+	{
+		CreateLineRenderer(thisGameObject, controlPointList[5], controlPointList[4]);
+		CreateLineRenderer(thisGameObject, controlPointList[1], controlPointList[4]);
+		CreateLineRenderer(thisGameObject, controlPointList[2], controlPointList[4]);
+		CreateLineRenderer(thisGameObject, controlPointList[0], controlPointList[5]);
+		CreateLineRenderer(thisGameObject, controlPointList[3], controlPointList[5]);
+
+		CreateLineRenderer(thisGameObject, controlPointList[0], controlPointList[1]);
+		CreateLineRenderer(thisGameObject, controlPointList[1], controlPointList[2]);
+		CreateLineRenderer(thisGameObject, controlPointList[2], controlPointList[3]);
+		CreateLineRenderer(thisGameObject, controlPointList[3], controlPointList[0]);
 	}
 }
 public class ShandingIcon : IconObject//歇山頂
@@ -668,8 +762,8 @@ public class ShandingIcon : IconObject//歇山頂
 		edgeIndex = 4;
 		body = new GameObject(objName);
 		mFilter = body.AddComponent<MeshFilter>();
-		MeshRenderer renderer = body.AddComponent<MeshRenderer>() as MeshRenderer;
-		renderer.sortingOrder = 0;
+		mRenderer = body.AddComponent<MeshRenderer>() as MeshRenderer;
+		mRenderer.sortingOrder = 0;
 		mFilter.mesh = new Mesh();
 		this.controlPointList = controlPointList;
 		mFilter.mesh.vertices = new Vector3[] {
@@ -690,6 +784,8 @@ public class ShandingIcon : IconObject//歇山頂
 
 		body.transform.parent = thisGameObject.transform;
 
+		InitLineRender(thisGameObject);
+		SetIconObjectColor();
 	}
 	public  Vector3 AdjPos(Vector3 tmp, int index)
 	{
@@ -755,7 +851,26 @@ public class ShandingIcon : IconObject//歇山頂
 			controlPointList[5].transform.position = new Vector3(controlPointList[6].transform.position.x, controlPointList[5].transform.position.y, controlPointList[5].transform.position.z);
 		}
 		UpdateLastPos();
+		UpdateLineRender();
 		return new Vector3(offset_x, offset_y, 0);
+	}
+	public override void InitLineRender<T>(T thisGameObject)
+	{
+		CreateLineRenderer(thisGameObject, controlPointList[5], controlPointList[4]);
+		CreateLineRenderer(thisGameObject, controlPointList[7], controlPointList[4]);
+		CreateLineRenderer(thisGameObject, controlPointList[8], controlPointList[4]);
+		CreateLineRenderer(thisGameObject, controlPointList[6], controlPointList[5]);
+		CreateLineRenderer(thisGameObject, controlPointList[9], controlPointList[5]);
+					
+		CreateLineRenderer(thisGameObject, controlPointList[0], controlPointList[6]);
+		CreateLineRenderer(thisGameObject, controlPointList[3], controlPointList[9]);
+		CreateLineRenderer(thisGameObject, controlPointList[1], controlPointList[7]);
+		CreateLineRenderer(thisGameObject, controlPointList[2], controlPointList[8]);
+
+		CreateLineRenderer(thisGameObject, controlPointList[0], controlPointList[1]);
+		CreateLineRenderer(thisGameObject, controlPointList[1], controlPointList[2]);
+		CreateLineRenderer(thisGameObject, controlPointList[2], controlPointList[3]);
+		CreateLineRenderer(thisGameObject, controlPointList[3], controlPointList[0]);
 	}
 }
 
@@ -766,8 +881,8 @@ public class TriangleIcon : IconObject//三角形
 		edgeIndex = 3;
 		body = new GameObject(objName);
 		mFilter = body.AddComponent<MeshFilter>();
-		MeshRenderer renderer = body.AddComponent<MeshRenderer>() as MeshRenderer;
-		renderer.sortingOrder = 0;
+		mRenderer = body.AddComponent<MeshRenderer>() as MeshRenderer;
+		mRenderer.sortingOrder = 0;
 		mFilter.mesh = new Mesh();
 		this.controlPointList = controlPointList;
 	
@@ -785,8 +900,10 @@ public class TriangleIcon : IconObject//三角形
 		mFilter.mesh.RecalculateNormals();
 
 		body.transform.parent = thisGameObject.transform;
-	}
 
+		InitLineRender(thisGameObject);
+		SetIconObjectColor();
+	}
 }
 public class RectangleIcon : IconObject//四角形
 {
@@ -795,8 +912,8 @@ public class RectangleIcon : IconObject//四角形
 		edgeIndex = 4;
 		body = new GameObject(objName);
 		mFilter = body.AddComponent<MeshFilter>();
-		MeshRenderer renderer = body.AddComponent<MeshRenderer>() as MeshRenderer;
-		renderer.sortingOrder = 0;
+		mRenderer = body.AddComponent<MeshRenderer>() as MeshRenderer;
+		mRenderer.sortingOrder = 0;
 		mFilter.mesh = new Mesh();
 		this.controlPointList = controlPointList;
 		mFilter.mesh.vertices = new Vector3[] {
@@ -806,13 +923,15 @@ public class RectangleIcon : IconObject//四角形
 				controlPointList [3].transform.position,
 			};
 
-		mFilter.mesh.triangles = new int[] { 0, 1, 2, 0, 3, 1 };
+		mFilter.mesh.triangles = new int[] { 0, 1, 2, 0, 2, 3 };
 		lastControlPointPosition = mFilter.mesh.vertices;
 		mFilter.mesh.RecalculateNormals();
 
 		body.transform.parent = thisGameObject.transform;
-	}
 
+		InitLineRender(thisGameObject);
+		SetIconObjectColor();
+	}
 }
 public class PentagonIcon : IconObject//五邊形
 {
@@ -821,8 +940,8 @@ public class PentagonIcon : IconObject//五邊形
 		edgeIndex = 5;
 		body = new GameObject(objName);
 		mFilter = body.AddComponent<MeshFilter>();
-		MeshRenderer renderer = body.AddComponent<MeshRenderer>() as MeshRenderer;
-		renderer.sortingOrder = 0;
+		mRenderer = body.AddComponent<MeshRenderer>() as MeshRenderer;
+		mRenderer.sortingOrder = 0;
 		mFilter.mesh = new Mesh();
 		this.controlPointList = controlPointList;
 		mFilter.mesh.vertices = new Vector3[] {
@@ -837,8 +956,10 @@ public class PentagonIcon : IconObject//五邊形
 		mFilter.mesh.RecalculateNormals();
 
 		body.transform.parent = thisGameObject.transform;
-	}
 
+		InitLineRender(thisGameObject);
+		SetIconObjectColor();
+	}
 }
 public class HexagonIcon : IconObject//六邊形
 {
@@ -847,8 +968,8 @@ public class HexagonIcon : IconObject//六邊形
 		edgeIndex = 6;
 		body = new GameObject(objName);
 		mFilter = body.AddComponent<MeshFilter>();
-		MeshRenderer renderer = body.AddComponent<MeshRenderer>() as MeshRenderer;
-		renderer.sortingOrder = 0;
+		mRenderer = body.AddComponent<MeshRenderer>() as MeshRenderer;
+		mRenderer.sortingOrder = 0;
 		mFilter.mesh = new Mesh();
 		this.controlPointList = controlPointList;
 		mFilter.mesh.vertices = new Vector3[] {
@@ -864,6 +985,9 @@ public class HexagonIcon : IconObject//六邊形
 		mFilter.mesh.RecalculateNormals();
 
 		body.transform.parent = thisGameObject.transform;
+
+		InitLineRender(thisGameObject);
+		SetIconObjectColor();
 	}
 
 }
@@ -891,8 +1015,6 @@ public class MeshObj : MonoBehaviour
 	Vector2 ratio_bodydis;
 	float ratio_mainRidgedis;
 
-	List<LineRenderer> lineRenderList = new List<LineRenderer>();
-	List<LineRenderer> lineRenderListA = new List<LineRenderer>();
 	void Start()
 	{
 		dragitemcontroller = GameObject.Find("DragItemController").GetComponent<DragItemController>();
@@ -900,9 +1022,10 @@ public class MeshObj : MonoBehaviour
 	VerandaIcon CreateVerandaIcon()
 	{
 		VerandaIcon verandaIcon = new VerandaIcon();
-		edgeIndex = verandaIcon.edgeIndex;
+	
 		verandaIcon.VerandaIconCreate(this, "VerandaIcon_mesh", controlPointList);
 
+		edgeIndex = verandaIcon.edgeIndex;
 
 		ini_bodydis.x = controlPointList[1].transform.position.x - controlPointList[0].transform.position.x;
 		ini_bodydis.y = controlPointList[1].transform.position.y - controlPointList[2].transform.position.y;
@@ -916,9 +1039,9 @@ public class MeshObj : MonoBehaviour
 	ShandingIcon CreateShandingIcon()
 	{
 		ShandingIcon shandingIcon = new ShandingIcon();
-		edgeIndex = shandingIcon.edgeIndex;
-
 		shandingIcon.ShandingIconCreate(this, "ShandingIcon_mesh", controlPointList);
+
+		edgeIndex = shandingIcon.edgeIndex;
 		ini_bodydis.x = controlPointList[1].transform.position.x - controlPointList[0].transform.position.x;
 		ini_bodydis.y = controlPointList[1].transform.position.y - controlPointList[2].transform.position.y;
 		ini_bodydis = ini_bodydis / 2.0f;
@@ -929,31 +1052,39 @@ public class MeshObj : MonoBehaviour
 	}
 	TriangleIcon CreateTriangleIcon()
 	{
-	Debug.Log("tri");
 		TriangleIcon triIcon = new TriangleIcon();
-		edgeIndex = triIcon.edgeIndex;
+		
 		triIcon.TriangleIconCreate(this, "TiangleIcon_mesh", controlPointList);
+
+		edgeIndex = triIcon.edgeIndex;
+
 		return triIcon;
 	}
 	RectangleIcon CreateRectangleIcon()
 	{
 		RectangleIcon rectIcon = new RectangleIcon();
-		edgeIndex = rectIcon.edgeIndex;
+	
 		rectIcon.RectangleIconCreate(this, "RectangleIcon_mesh", controlPointList);
+
+		edgeIndex = rectIcon.edgeIndex;
 		return rectIcon;
 	}
 	PentagonIcon CreatePentagonIcon()
 	{
 		PentagonIcon pentaIcon = new PentagonIcon();
-		edgeIndex = pentaIcon.edgeIndex;
+		
 		pentaIcon.PentagonIconCreate(this, "PentagonIcon_mesh", controlPointList);
+
+		edgeIndex = pentaIcon.edgeIndex;
 		return pentaIcon;
 	}
 	HexagonIcon CreateHexagonIcon()
 	{
 		HexagonIcon hexIcon = new HexagonIcon();
-		edgeIndex = hexIcon.edgeIndex;
+	
 		hexIcon.HexagonIconCreate(this, "HexagonIcon_mesh", controlPointList);
+
+		edgeIndex = hexIcon.edgeIndex;
 		return hexIcon;
 	}
 
@@ -1063,66 +1194,6 @@ public class MeshObj : MonoBehaviour
 				movement.freelist.AddRange(controlPointList);
 				break;
 
-		}
-
-	}
-	public void CreateLineRenderer(GameObject strat, GameObject end)
-	{
-		GameObject lineObj = new GameObject("Line", typeof(LineRenderer));
-		lineObj.transform.parent = transform;
-		LineRenderer lineRenderer = lineObj.GetComponent<LineRenderer>();
-		lineRenderer.sortingOrder = 1;
-		lineRenderer.SetWidth(0.01f, 0.01f);
-		lineRenderer.useWorldSpace = true;
-		lineRenderer.material.color = Color.black;
-		lineRenderer.SetColors(Color.black, Color.black);
-		lineRenderer.SetVertexCount(2);
-		lineRenderer.SetPosition(0, strat.transform.position);
-		lineRenderer.SetPosition(1, end.transform.position);
-		if (this.tag == "Rectangle")
-		{
-			lineRenderList.Add(lineRenderer);
-		}
-		else if (this.tag == "Shanding")
-		{
-			lineRenderListA.Add(lineRenderer);
-		}
-	}
-	public void UpdateLineRender()
-	{
-		if (this.tag == "Rectangle")
-		{
-			AdjLineRenderer(0, controlPointList[5], controlPointList[4]);
-			AdjLineRenderer(1, controlPointList[1], controlPointList[4]);
-			AdjLineRenderer(2, controlPointList[2], controlPointList[4]);
-			AdjLineRenderer(3, controlPointList[0], controlPointList[5]);
-			AdjLineRenderer(4, controlPointList[3], controlPointList[5]);
-		}
-		else if (this.tag == "Shanding")
-		{
-			AdjLineRenderer(0, controlPointList[5], controlPointList[4]);
-			AdjLineRenderer(1, controlPointList[7], controlPointList[4]);
-			AdjLineRenderer(2, controlPointList[8], controlPointList[4]);
-			AdjLineRenderer(3, controlPointList[6], controlPointList[5]);
-			AdjLineRenderer(4, controlPointList[9], controlPointList[5]);
-
-			AdjLineRenderer(5, controlPointList[0], controlPointList[6]);
-			AdjLineRenderer(6, controlPointList[3], controlPointList[9]);
-			AdjLineRenderer(7, controlPointList[1], controlPointList[7]);
-			AdjLineRenderer(8, controlPointList[2], controlPointList[8]);
-		}
-	}
-	public void AdjLineRenderer(int index, GameObject strat, GameObject end)
-	{
-		if (this.tag == "Rectangle")
-		{
-			lineRenderList[index].SetPosition(0, strat.transform.position);
-			lineRenderList[index].SetPosition(1, end.transform.position);
-		}
-		else if (this.tag == "Shanding")
-		{
-			lineRenderListA[index].SetPosition(0, strat.transform.position);
-			lineRenderListA[index].SetPosition(1, end.transform.position);
 		}
 
 	}
