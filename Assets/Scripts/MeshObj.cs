@@ -541,6 +541,7 @@ using System.Collections.Generic;
 public class lineRendererControl
 {
 	public List<lineStruct> lineRenderList = new List<lineStruct>();
+	float lineWidth=0.01f;
 	public struct lineStruct
 	{
 		public GameObject startControlPoint;
@@ -553,7 +554,7 @@ public class lineRendererControl
 		lineObj.transform.parent = thisGameObject.transform;
 		LineRenderer lineRenderer = lineObj.GetComponent<LineRenderer>();
 		lineRenderer.sortingOrder = 1;
-		lineRenderer.SetWidth(0.005f, 0.005f);
+		lineRenderer.SetWidth(lineWidth, lineWidth);
 		lineRenderer.useWorldSpace = true;
 		lineRenderer.material.color = Color.black;
 		lineRenderer.SetColors(Color.black, Color.black);
@@ -573,7 +574,7 @@ public class lineRendererControl
 		lineObj.transform.parent = thisGameObject.transform;
 		LineRenderer lineRenderer = lineObj.GetComponent<LineRenderer>();
 		lineRenderer.sortingOrder = 1;
-		lineRenderer.SetWidth(0.005f, 0.005f);
+		lineRenderer.SetWidth(lineWidth, lineWidth);
 		lineRenderer.useWorldSpace = true;
 		lineRenderer.material.color = Color.black;
 		lineRenderer.SetColors(Color.black, Color.black);
@@ -891,9 +892,6 @@ public class TriangleIcon : IconObject//三角形
 				controlPointList [1].transform.position,
 				controlPointList [2].transform.position,
 			};
-		Debug.Log("mFilter.mesh.vertices[0]" + mFilter.mesh.vertices[0]);
-		Debug.Log("mFilter.mesh.vertices[1]" + mFilter.mesh.vertices[1]);
-		Debug.Log("mFilter.mesh.vertices[2]" + mFilter.mesh.vertices[2]);
 		mFilter.mesh.triangles = new int[] { 0, 1, 2 };
 	
 		lastControlPointPosition = mFilter.mesh.vertices;
@@ -1007,13 +1005,13 @@ public class MeshObj : MonoBehaviour
 
 	public int edgeIndex;
 
-	Vector2 ini_bodydis;
-	float ini_mainRidgedis;
+	public Vector2 ini_bodydis;
+	public float ini_mainRidgedis;
 
-	Vector2 chang_bodydis;
-	float chang_mainRidgedis;
-	Vector2 ratio_bodydis;
-	float ratio_mainRidgedis;
+	public Vector2 chang_bodydis;
+	public float chang_mainRidgedis;
+	public Vector2 ratio_bodydis;
+	public float ratio_mainRidgedis;
 
 	void Start()
 	{
@@ -1132,11 +1130,24 @@ public class MeshObj : MonoBehaviour
 				{
 					case "VerandaIcon"://specialCase
 						Vector3 offsetVector = verandaIcon.AdjPos(tmp, i);
-						chang_bodydis.x = offsetVector.x;
-						chang_bodydis.y = offsetVector.y;
-						ratio_bodydis.x = chang_bodydis.x / ini_bodydis.x;
-						ratio_bodydis.y = chang_bodydis.y / ini_bodydis.y;
+						switch(i)
+						{
+							case 0:
+							case 1:
+							case 2:
+							case 3:
+								chang_bodydis.x = offsetVector.x;
+								chang_bodydis.y = offsetVector.y;
+								ratio_bodydis.x = chang_bodydis.x / ini_bodydis.x;
+								ratio_bodydis.y = chang_bodydis.y / ini_bodydis.y;
+							break;
+							case 4:
+							case 5:
+								chang_mainRidgedis = offsetVector.x;
+								ratio_mainRidgedis = chang_mainRidgedis / ini_mainRidgedis;
+							break;
 
+						}
 						verandaIcon.AdjMesh();
 						break;
 					case "ShandingIcon"://specialCase

@@ -838,6 +838,7 @@ public class ColumnIcon : MeshCreate
 		this.body = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
 		mFilter=body.GetComponent<MeshFilter>();
 		mRenderer = body.GetComponent<MeshRenderer>();
+		mRenderer.sortingOrder=0;
 		this.body.transform.localScale = new Vector3(radius, columnHeight / 2.0f, radius);
 		this.body.transform.position = new Vector3(upPoint.transform.position.x, upPoint.transform.position.y - columnHeight / 2.0f, upPoint.transform.position.z);
 
