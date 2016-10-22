@@ -741,6 +741,90 @@ public class FriezeIcon : MeshCreate
 		leftColumn.friezePoint.GetComponent<MeshRenderer>().material.color = Color.yellow;
 	}
 }
+public class WallIcon:MeshCreate
+{
+	public GameObject rightUpPoint;
+	public GameObject rightDownPoint;
+	public GameObject leftUpPoint;
+	public GameObject leftDownPoint;
+	Vector3 offset;
+	public void WallIconCreate<T>(T thisGameObject, string objName, ColumnIcon rightColumn, ColumnIcon leftColumn) where T : Component
+	{
+		offset = new Vector3(Mathf.Abs(rightColumn.upPoint.transform.transform.position.x - leftColumn.upPoint.transform.transform.position.x)*0.2f,0,0);
+		//WallIcon cp
+		rightUpPoint = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+		rightUpPoint.tag = "ControlPoint";
+		rightUpPoint.name = "WRU";
+		rightUpPoint.transform.localScale = rightColumn.upPoint.transform.localScale;
+		rightUpPoint.transform.position = rightColumn.upPoint.transform.transform.position - offset;
+
+		rightDownPoint = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+		rightDownPoint.tag = "ControlPoint";
+		rightDownPoint.name = "WRD";
+		rightDownPoint.transform.localScale = rightColumn.downPoint.transform.localScale;
+		rightDownPoint.transform.position = rightColumn.downPoint.transform.transform.position - offset;
+
+		leftUpPoint = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+		leftUpPoint.tag = "ControlPoint";
+		leftUpPoint.name = "WLU";
+		leftUpPoint.transform.localScale = leftColumn.upPoint.transform.localScale;
+		leftUpPoint.transform.position = leftColumn.upPoint.transform.transform.position + offset;
+
+		leftDownPoint = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+		leftDownPoint.tag = "ControlPoint";
+		leftDownPoint.name = "WLD";
+		leftDownPoint.transform.localScale = leftColumn.downPoint.transform.localScale;
+		leftDownPoint.transform.position = leftColumn.downPoint.transform.transform.position + offset;
+
+		body = new GameObject(objName);
+
+		mFilter = body.AddComponent<MeshFilter>();
+		mFilter.mesh = CreatRecMesh(leftUpPoint.transform.position, rightUpPoint.transform.position, rightDownPoint.transform.position, leftDownPoint.transform.position, null);
+
+		mRenderer = body.AddComponent<MeshRenderer>() as MeshRenderer;
+
+		body.transform.parent = thisGameObject.transform;
+
+		leftUpPoint.transform.parent = thisGameObject.transform;
+		leftDownPoint.transform.parent = thisGameObject.transform;
+		rightUpPoint.transform.parent = thisGameObject.transform;
+		rightDownPoint.transform.parent = thisGameObject.transform;
+
+		InitLineRender(thisGameObject);
+		SetIconObjectColor(rightColumn, leftColumn);
+	}
+	public void AdjPos(ColumnIcon rightColumn, ColumnIcon leftColumn)
+	{
+		mFilter.mesh.Clear();
+		mFilter.mesh = CreatRecMesh(leftUpPoint.transform.position, rightUpPoint.transform.position, rightDownPoint.transform.position, leftDownPoint.transform.position, mFilter.mesh);
+
+		UpdateLineRender();
+	}
+	public override void InitLineRender<T>(T thisGameObject)
+	{
+		controlPointList.Add(leftUpPoint.transform.position);
+		controlPointList.Add(rightUpPoint.transform.position);
+		controlPointList.Add(rightDownPoint.transform.position);
+		controlPointList.Add(leftDownPoint.transform.position);
+		base.InitLineRender(thisGameObject);
+	}
+	public override void UpdateLineRender()
+	{
+		controlPointList[0] = (leftUpPoint.transform.position);
+		controlPointList[1] = (rightUpPoint.transform.position);
+		controlPointList[2] = (rightDownPoint.transform.position);
+		controlPointList[3] = (leftDownPoint.transform.position);
+		base.UpdateLineRender();
+	}
+	public void SetIconObjectColor(ColumnIcon rightColumn, ColumnIcon leftColumn)
+	{
+		mRenderer.material.color = Color.red;
+		leftUpPoint.GetComponent<MeshRenderer>().material.color = Color.yellow;
+		rightUpPoint.GetComponent<MeshRenderer>().material.color = Color.yellow;
+		rightDownPoint.GetComponent<MeshRenderer>().material.color = Color.yellow;
+		leftDownPoint.GetComponent<MeshRenderer>().material.color = Color.yellow;
+	}
+}
 public class BalustradeIcon : MeshCreate
 {
 	public Vector3 rightUpPoint;
@@ -873,6 +957,7 @@ public class body2icon : MonoBehaviour
 	private FriezeIcon friezeIcon;
 	private BalustradeIcon balustradeIcon;
 
+	private WallIcon wallIcon;
 
 	public float ini_bodydis;
 	public float chang_bodydis;
@@ -890,6 +975,8 @@ public class body2icon : MonoBehaviour
 	public bool isBalustrade;
 	public bool isFrieze;
 	public bool isDoubleRoof;
+
+	public bool isWall;
 
 	public float cylinderHeight;
 	public float friezeHeight;
@@ -928,7 +1015,7 @@ public class body2icon : MonoBehaviour
 	public void adjPos()
 	{
 		ratio_bodydis = 0;
-		Vector2 tmp = dragitemcontroller.chooseObj.transform.position;
+		Vector3 tmp = dragitemcontroller.chooseObj.transform.position;
 		if (dragitemcontroller.chooseObj == rightColumn.upPoint || dragitemcontroller.chooseObj == leftColumn.upPoint)//RU LU
 		{
 			float dis = (tmp.y - rightColumn.upPoint.transform.position.y);
@@ -1003,6 +1090,7 @@ public class body2icon : MonoBehaviour
 			{
 				doubleRoofIcon.AdjPos(rightColumn, leftColumn, ini_doubleRoofHeight, ini_doubleRoofWidth);
 			}
+
 			chang_bodydis = dis;
 			ratio_bodydis = chang_bodydis / ini_bodydis;
 		}
@@ -1032,7 +1120,7 @@ public class body2icon : MonoBehaviour
 			ratio_bodydis = chang_bodydis / ini_bodydis;
 		}
 		else if (dragitemcontroller.chooseObj == rightColumn.friezePoint || dragitemcontroller.chooseObj == leftColumn.friezePoint)
-		{
+		{//frieze
 
 			leftColumn.friezePoint.transform.position = new Vector3(leftColumn.friezePoint.transform.position.x, tmp.y, leftColumn.friezePoint.transform.position.z);
 			rightColumn.friezePoint.transform.position = new Vector3(rightColumn.friezePoint.transform.position.x, tmp.y, rightColumn.friezePoint.transform.position.z);
@@ -1049,6 +1137,35 @@ public class body2icon : MonoBehaviour
 
 			balustradeHeight = balustradeIcon.AdjPos(rightColumn, leftColumn);
 
+		}
+		else if (dragitemcontroller.chooseObj == wallIcon.rightUpPoint)
+		{
+			float dis = (tmp.x - wallIcon.rightDownPoint.transform.position.x);
+
+
+			wallIcon.rightDownPoint.transform.position = new Vector3(tmp.x, wallIcon.rightDownPoint.transform.position.y, wallIcon.rightDownPoint.transform.position.z);
+			wallIcon.leftUpPoint.transform.position = new Vector3(wallIcon.leftUpPoint.transform.position.x -(dis), wallIcon.leftUpPoint.transform.position.y, wallIcon.leftUpPoint.transform.position.z);
+			wallIcon.leftDownPoint.transform.position = new Vector3(wallIcon.leftDownPoint.transform.position.x - (dis), wallIcon.leftDownPoint.transform.position.y, wallIcon.leftDownPoint.transform.position.z);
+
+			wallIcon.AdjPos(rightColumn, leftColumn);
+		}
+		else if(dragitemcontroller.chooseObj == wallIcon.leftUpPoint)
+		{
+			float dis = (tmp.x - wallIcon.leftDownPoint.transform.position.x);
+			wallIcon.rightUpPoint.transform.position = new Vector3(wallIcon.rightUpPoint.transform.position.x + (dis), wallIcon.rightUpPoint.transform.position.y, wallIcon.rightUpPoint.transform.position.z);
+			wallIcon.rightDownPoint.transform.position = new Vector3(wallIcon.rightDownPoint.transform.position.x + (dis), wallIcon.rightDownPoint.transform.position.y, wallIcon.rightDownPoint.transform.position.z);
+
+			wallIcon.leftDownPoint.transform.position = new Vector3(tmp.x, wallIcon.leftDownPoint.transform.position.y, wallIcon.leftDownPoint.transform.position.z);
+
+			wallIcon.AdjPos(rightColumn, leftColumn);
+		}
+		else if(dragitemcontroller.chooseObj == wallIcon.rightDownPoint)
+		{
+		
+		}
+		else if (dragitemcontroller.chooseObj == wallIcon.leftDownPoint)
+		{
+		
 		}
 	}
 	public void UpdateFunction(string objName)
@@ -1067,8 +1184,10 @@ public class body2icon : MonoBehaviour
 				if (!isDoubleRoof)
 					doubleRoofIcon = CreateDoubleRoof();
 				break;
-
-
+			case "Wall":
+				if (!isWall)
+					wallIcon = CreateWall();
+				break;
 		}
 	}
 	public void addpoint()
@@ -1077,7 +1196,20 @@ public class body2icon : MonoBehaviour
 		movement.horlist.Add(rightColumn.body);
 		movement.horlist.Add(leftColumn.body);
 	}
+	WallIcon CreateWall()
+	{
+		isWall = true;
 
+		WallIcon wall = new WallIcon();
+		wall.WallIconCreate(this, "Wall_mesh", rightColumn, leftColumn);
+
+		movement.horlist.Add(wall.rightDownPoint);
+		movement.horlist.Add(wall.rightUpPoint);
+		movement.horlist.Add(wall.leftDownPoint);
+		movement.horlist.Add(wall.leftUpPoint);
+
+		return wall;
+	}
 
 	DoubleRoofIcon CreateDoubleRoof()
 	{
@@ -1085,7 +1217,6 @@ public class body2icon : MonoBehaviour
 
 		DoubleRoofIcon doubleRoof = new DoubleRoofIcon();
 		doubleRoof.DoubleRoofIconCreate(this, "DoubleRoof_mesh", rightColumn, leftColumn, ini_doubleRoofHeight, ini_doubleRoofWidth);
-
 
 		return doubleRoof;
 	}
@@ -1127,7 +1258,7 @@ public class body2icon : MonoBehaviour
 		float maxClampX = float.MaxValue;
 		float minClampY = float.MinValue;
 		float maxClampY = float.MaxValue;
-		float minWidth = 0;
+		float minWidth = ini_bodydis*0.2f;
 		float minHeight = ini_cylinderHeight * 0.7f;
 		float minFriezeHeight = ini_cylinderHeight * 0.1f;
 		float minBalustradeHeight = ini_cylinderHeight * 0.1f;
