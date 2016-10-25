@@ -942,16 +942,13 @@ public class DragItemController : MonoBehaviour
 					if (hitLocalUV.x >= border && hitLocalUV.x <= (1 - border) && hitLocalUV.y >= border && hitLocalUV.y <= (1 - border))
 					{
 						Vector2 loc = chooseCamera.ScreenToWorldPoint(new Vector2(hitLocalUV.x * chooseCamera.pixelWidth, hitLocalUV.y * chooseCamera.pixelHeight));
+						//移動控制點
 						movement.Move(loc);
 
-						if (chooseObj.GetComponent<ooficonmidcontrolpointr>())
-						{
-							chooseObj.GetComponent<ooficonmidcontrolpointr>().meshreset.GetComponent<rooficon>().reset();
-						}
 						//判斷是否為body
 						if (chooseObj.transform.parent.GetComponent<body2icon>())
 						{
-							building.MoveBody(chooseObj.transform.parent.GetComponent<body2icon>().ratio_bodydis);
+							building.MoveBody(chooseObj.transform.parent.GetComponent<body2icon>().ratio_bodydis.x);
 
 
 							building.UpdateBody_B(chooseObj.transform.parent.GetComponent<body2icon>().isBalustrade);
@@ -959,8 +956,8 @@ public class DragItemController : MonoBehaviour
 
 							//20160916
 
-							building.Move_F(chooseObj.transform.parent.GetComponent<body2icon>().friezeHeight, chooseObj.transform.parent.GetComponent<body2icon>().ini_cylinderHeight);
-							building.Move_B(chooseObj.transform.parent.GetComponent<body2icon>().balustradeHeight, chooseObj.transform.parent.GetComponent<body2icon>().ini_cylinderHeight);
+							building.Move_F(chooseObj.transform.parent.GetComponent<body2icon>().friezeHeight, chooseObj.transform.parent.GetComponent<body2icon>().ini_bodydis.y);
+							building.Move_B(chooseObj.transform.parent.GetComponent<body2icon>().balustradeHeight, chooseObj.transform.parent.GetComponent<body2icon>().ini_bodydis.y);
 						}
 
 						//判斷是否為plat
@@ -973,6 +970,14 @@ public class DragItemController : MonoBehaviour
 							building.MoveRoof_Cp1(chooseObj.transform.parent.GetComponent<rooficon>().ControlPoint1Move);
 							building.MoveRoof_Cp2(chooseObj.transform.parent.GetComponent<rooficon>().ControlPoint2Move);
 							building.MoveRoof_Cp3(chooseObj.transform.parent.GetComponent<rooficon>().ControlPoint3Move);
+
+						}
+
+						if (chooseObj.transform.parent.GetComponent<Testing>())
+						{
+							building.MoveRoof_Cp1(chooseObj.transform.parent.GetComponent<Testing>().ControlPoint1Move);
+							building.MoveRoof_Cp2(chooseObj.transform.parent.GetComponent<Testing>().ControlPoint2Move);
+							building.MoveRoof_Cp3(chooseObj.transform.parent.GetComponent<Testing>().ControlPoint3Move);
 
 						}
 					}
@@ -1070,6 +1075,10 @@ public class DragItemController : MonoBehaviour
 								if (chooseObj.transform.parent.GetComponent<rooficon>())
 								{
 									chooseObj.transform.parent.GetComponent<rooficon>().addpoint();
+								}
+								if (chooseObj.transform.parent.GetComponent<Testing>())
+								{
+									chooseObj.transform.parent.GetComponent<Testing>().addpoint();
 								}
 								chooseObj.GetComponent<Collider>().enabled = false;
 							}
@@ -1332,8 +1341,8 @@ public class DragItemController : MonoBehaviour
 
 
 
-						building.Move_F(AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseTab2ComponentLayerIndex][MAINCOMPONENT][0].GetComponent<body2icon>().friezeHeight, AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseTab2ComponentLayerIndex][MAINCOMPONENT][0].GetComponent<body2icon>().ini_cylinderHeight);
-						building.Move_B(AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseTab2ComponentLayerIndex][MAINCOMPONENT][0].GetComponent<body2icon>().balustradeHeight, AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseTab2ComponentLayerIndex][MAINCOMPONENT][0].GetComponent<body2icon>().ini_cylinderHeight);
+						building.Move_F(AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseTab2ComponentLayerIndex][MAINCOMPONENT][0].GetComponent<body2icon>().friezeHeight, AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseTab2ComponentLayerIndex][MAINCOMPONENT][0].GetComponent<body2icon>().ini_bodydis.y);
+						building.Move_B(AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseTab2ComponentLayerIndex][MAINCOMPONENT][0].GetComponent<body2icon>().balustradeHeight, AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseTab2ComponentLayerIndex][MAINCOMPONENT][0].GetComponent<body2icon>().ini_bodydis.y);
 
 					}
 

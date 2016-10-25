@@ -230,6 +230,7 @@
      <Compile Include="Assets\Scripts\HandleCursor.cs" />
      <Compile Include="Assets\Scripts\MeshObj.cs" />
      <Compile Include="Assets\Scripts\Movement.cs" />
+     <Compile Include="Assets\Scripts\Testing.cs" />
      <Compile Include="Assets\Scripts\UIDragDropItem2DragItemController.cs" />
      <Compile Include="Assets\Scripts\catline.cs" />
      <Compile Include="Assets\Scripts\creaticonforfractor.cs" />

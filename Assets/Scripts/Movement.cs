@@ -74,6 +74,11 @@ public class Movement : MonoBehaviour {
 			obj.transform.position =setPos;
             obj.transform.parent.GetComponent<rooficon>().reset();
         }
+		if (obj.transform.parent.GetComponent<Testing>())
+		{
+			obj.transform.position = setPos;
+			obj.transform.parent.GetComponent<Testing>().adjPos();
+		}
 	
 	}
 	public void intiAllList() 
