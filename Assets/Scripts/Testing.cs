@@ -1,35 +1,36 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-public class RoofStruct 
+public class RoofStruct
 {
-	public GameObject body=null;
-	public List<GameObject> bodyControlPointList=new List<GameObject>();
-	public List<GameObject> tailControlPointList=new List<GameObject>();
+	public GameObject body = null;
+	public List<GameObject> bodyControlPointList = new List<GameObject>();
+	public List<GameObject> tailControlPointList = new List<GameObject>();
 	public catline catLine;
 }
-public class BasedRoofIcon : IconObject 
+public class BasedRoofIcon : IconObject
 {
 	public RoofStruct rightRoofLine = new RoofStruct();
 	public RoofStruct leftRoofLine = new RoofStruct();
 	Vector3 centerPos;
+	int sliceUnit2LineRender = 80;
 	public void CreateBasedRoofIcon<T>(T thisGameObject, string objName, List<GameObject> bodyControlPointList, List<GameObject> tailControlPointList, Vector3 centerPos) where T : Component
 	{
-		this.centerPos=centerPos;
+		this.centerPos = centerPos;
 		body = new GameObject(objName);
 		body.transform.parent = thisGameObject.transform;
 		mFilter = body.AddComponent<MeshFilter>();
 		mFilter.mesh = new Mesh();
 		mRenderer = body.AddComponent<MeshRenderer>() as MeshRenderer;
 
-		rightRoofLine.bodyControlPointList=bodyControlPointList;
-		rightRoofLine.tailControlPointList=tailControlPointList;
-		
+		rightRoofLine.bodyControlPointList = bodyControlPointList;
+		rightRoofLine.tailControlPointList = tailControlPointList;
+
 		//RightCatmullromLine
 		rightRoofLine.body = new GameObject("CatLine_Right");
 		rightRoofLine.body.transform.parent = body.transform;
 		rightRoofLine.catLine = rightRoofLine.body.AddComponent<catline>();
-		for(int i=0;i<bodyControlPointList.Count;i++)
+		for (int i = 0; i < bodyControlPointList.Count; i++)
 		{
 			rightRoofLine.catLine.AddControlPoint(bodyControlPointList[i]);
 		}
@@ -40,7 +41,7 @@ public class BasedRoofIcon : IconObject
 		leftRoofLine.body.transform.parent = body.transform;
 		leftRoofLine.catLine = leftRoofLine.body.AddComponent<catline>();
 
-		for(int i=0;i<bodyControlPointList.Count;i++)
+		for (int i = 0; i < bodyControlPointList.Count; i++)
 		{
 			GameObject copy = new GameObject();
 			copy.transform.parent = leftRoofLine.body.transform;
@@ -58,64 +59,158 @@ public class BasedRoofIcon : IconObject
 
 		leftRoofLine.catLine.ResetCatmullRom();
 		AdjMesh();
+		InitLineRender<T>(thisGameObject);
 		SetIconObjectColor();
 	}
 	public void AdjPos()
 	{
 		rightRoofLine.catLine.ResetCatmullRom();
-		for (int i = 0; i < rightRoofLine.bodyControlPointList.Count; i++)
+		for (int i = 0; i < leftRoofLine.bodyControlPointList.Count; i++)
 		{
 			leftRoofLine.bodyControlPointList[i].transform.position = new Vector3(rightRoofLine.bodyControlPointList[i].transform.position.x - 2 * (rightRoofLine.bodyControlPointList[i].transform.position.x - centerPos.x), rightRoofLine.bodyControlPointList[i].transform.position.y, rightRoofLine.bodyControlPointList[i].transform.position.z);
 		}
 		leftRoofLine.catLine.ResetCatmullRom();
 		AdjMesh();
+		UpdateLineRender();
 	}
 	public void AdjMesh()
 	{
 		int innerPointCount = rightRoofLine.catLine.innerPointList.Count;
-		float uvR = (1 / (float)innerPointCount);
+		float uvR = (1 / ((float)innerPointCount*2)) * (rightRoofLine.catLine.innerPointList[rightRoofLine.catLine.innerPointList.Count - 1].x - leftRoofLine.catLine.innerPointList[rightRoofLine.catLine.innerPointList.Count - 1].x);
 		mFilter.mesh.Clear();
-		Vector3[] v = new Vector3[2 * innerPointCount];
-		Vector3[] n = new Vector3[2 * innerPointCount];
+		Vector3[] v = new Vector3[4 * innerPointCount];
+		Vector3[] n = new Vector3[4 * innerPointCount];
 		//Vector2[] uv = new Vector2[2 * innerPointCount];
-		int[] t = new int[6 * innerPointCount];
-
-		for (int i = 0; i < rightRoofLine.catLine.innerPointList.Count; i++)
+		int[] t = new int[6 * (innerPointCount-1) * 2+6];
+		for (int i = 0; i < innerPointCount; i++)
 		{
 			v[i] = rightRoofLine.catLine.innerPointList[i];
 		}
-		for (int i = 0; i <leftRoofLine.catLine.innerPointList.Count; i++)
+		for (int i = 0; i < innerPointCount; i++)
 		{
-			v[i + rightRoofLine.catLine.innerPointList.Count] = leftRoofLine.catLine.innerPointList[i];
+			v[i + innerPointCount] = leftRoofLine.catLine.innerPointList[i];
+		}
+		for (int i = 0; i < innerPointCount*2; i++)
+		{
+			v[i + innerPointCount*2] = leftRoofLine.catLine.innerPointList[leftRoofLine.catLine.innerPointList.Count - 1] + new Vector3(uvR * (i + 1), 0, 0);
 		}
 		int index = 0;
-		for (int i = 0; i < rightRoofLine.catLine.innerPointList.Count - 1; i++)
+
+		t[index] = 0;
+		t[index + 1] = innerPointCount * 2 + innerPointCount / 2;
+		t[index + 2] = innerPointCount;
+		t[index + 3] = innerPointCount;
+		t[index + 4] = innerPointCount * 2 + innerPointCount / 2;
+		t[index + 5] = innerPointCount * 2 + innerPointCount / 2 - 1;
+		index += 6;
+
+		for (int i = 0; i < innerPointCount - 1; i++)
 		{
 			t[index] = i;
 			t[index + 1] = (i + 1);
-			t[index + 2] = i + rightRoofLine.catLine.innerPointList.Count;
-			t[index + 3] = i + rightRoofLine.catLine.innerPointList.Count;
-			t[index + 4] = (i + 1);
-			t[index + 5] = (i+1) + rightRoofLine.catLine.innerPointList.Count;
+			t[index + 2] = (i + 1) + innerPointCount * 2 + innerPointCount / 2;
+			t[index + 3] = i;
+			t[index + 4] = (i + 1) + innerPointCount * 2 + innerPointCount / 2;
+			t[index + 5] = i + innerPointCount * 2 + innerPointCount / 2;
 			index += 6;
 		}
-		for (int i = 0; i < 2 * innerPointCount; i++)
+		for (int i = 0; i < innerPointCount - 1; i++)
 		{
-			n[i]=-Vector3.forward;
+		/*	t[index] = innerPointCount + i;
+			t[index + 1] = innerPointCount * 2 + innerPointCount / 2 - 1 - i;
+			t[index + 2] = innerPointCount + 1 + i;
+			t[index + 3] = innerPointCount + 1 + i;
+			t[index + 4] = innerPointCount * 2 + innerPointCount / 2 - 1 - i;
+			t[index + 5] = innerPointCount * 2 + innerPointCount / 2 - 2 - i;
+			index += 6;*/
+			t[index] = innerPointCount + i;
+			t[index + 1] = innerPointCount * 2 + (innerPointCount-1) - i;
+			t[index + 2] = innerPointCount + 1 + i;
+			t[index + 3] = innerPointCount + 1 + i;
+			t[index + 4] = innerPointCount * 2 + (innerPointCount - 1) - i;
+			t[index + 5] = innerPointCount * 2 + (innerPointCount - 2) - i;
+			index += 6;
+		}
+		for (int i = 0; i < 4 * innerPointCount; i++)
+		{
+			n[i] = -Vector3.forward;
 		}
 		mFilter.mesh.vertices = v;
 		mFilter.mesh.triangles = t;
 		mFilter.mesh.normals = n;
+
 		//mFilter.mesh.uv = uv;
+		/*	int innerPointCount = rightRoofLine.catLine.innerPointList.Count;
+			float uvR = (1 / (float)innerPointCount);
+			mFilter.mesh.Clear();
+			Vector3[] v = new Vector3[2 * innerPointCount];
+			Vector3[] n = new Vector3[2 * innerPointCount];
+			//Vector2[] uv = new Vector2[2 * innerPointCount];
+			int[] t = new int[6 * innerPointCount];
+
+			for (int i = 0; i < rightRoofLine.catLine.innerPointList.Count; i++)
+			{
+				v[i] = rightRoofLine.catLine.innerPointList[i];
+			}
+			for (int i = 0; i <leftRoofLine.catLine.innerPointList.Count; i++)
+			{
+				v[i + rightRoofLine.catLine.innerPointList.Count] = leftRoofLine.catLine.innerPointList[i];
+			}
+			int index = 0;
+			for (int i = 0; i < rightRoofLine.catLine.innerPointList.Count - 1; i++)
+			{
+				t[index] = i;
+				t[index + 1] = (i + 1);
+				t[index + 2] = i + rightRoofLine.catLine.innerPointList.Count;
+				t[index + 3] = i + rightRoofLine.catLine.innerPointList.Count;
+				t[index + 4] = (i + 1);
+				t[index + 5] = (i+1) + rightRoofLine.catLine.innerPointList.Count;
+				index += 6;
+			}
+			for (int i = 0; i < 2 * innerPointCount; i++)
+			{
+				n[i]=-Vector3.forward;
+			}
+			mFilter.mesh.vertices = v;
+			mFilter.mesh.triangles = t;
+			mFilter.mesh.normals = n;
+			//mFilter.mesh.uv = uv;*/
 	}
 	public override void InitLineRender<T>(T thisGameObject)
 	{
 
+		for (int i = 0; i < rightRoofLine.catLine.innerPointList.Count; i += sliceUnit2LineRender)
+		{
+			if ((i >= rightRoofLine.catLine.innerPointList.Count - 1)) i = rightRoofLine.catLine.innerPointList.Count - 1;
+			CreateLineRenderer(thisGameObject, rightRoofLine.catLine.innerPointList[i], rightRoofLine.catLine.innerPointList[(i + sliceUnit2LineRender) > rightRoofLine.catLine.innerPointList.Count - 1 ? rightRoofLine.catLine.innerPointList.Count - 1 : (i + sliceUnit2LineRender)]);
+		}
+		for (int i = 0; i < leftRoofLine.catLine.innerPointList.Count; i += sliceUnit2LineRender)
+		{
+			if ((i >= leftRoofLine.catLine.innerPointList.Count - 1)) i = leftRoofLine.catLine.innerPointList.Count - 1;
+			CreateLineRenderer(thisGameObject, leftRoofLine.catLine.innerPointList[i], leftRoofLine.catLine.innerPointList[(i + sliceUnit2LineRender) > leftRoofLine.catLine.innerPointList.Count - 1 ? leftRoofLine.catLine.innerPointList.Count - 1 : (i + sliceUnit2LineRender)]);
+		}
+		CreateLineRenderer(thisGameObject, leftRoofLine.catLine.innerPointList[0], rightRoofLine.catLine.innerPointList[0]);
+		CreateLineRenderer(thisGameObject, leftRoofLine.catLine.innerPointList[leftRoofLine.catLine.innerPointList.Count - 1], rightRoofLine.catLine.innerPointList[rightRoofLine.catLine.innerPointList.Count - 1]);
+	}
+	public override void UpdateLineRender()
+	{
+
+		int size = lineRenderList.Count - 2;
+		for (int i = 0; i < size / 2; i++)
+		{
+			AdjLineRenderer(i, rightRoofLine.catLine.innerPointList[i * sliceUnit2LineRender], rightRoofLine.catLine.innerPointList[(i * sliceUnit2LineRender + sliceUnit2LineRender) > rightRoofLine.catLine.innerPointList.Count - 1 ? rightRoofLine.catLine.innerPointList.Count - 1 : (i * sliceUnit2LineRender + sliceUnit2LineRender)]);
+		}
+		for (int i = size / 2; i < size; i++)
+		{
+			AdjLineRenderer(i, leftRoofLine.catLine.innerPointList[(i - size / 2) * sliceUnit2LineRender], leftRoofLine.catLine.innerPointList[((i - size / 2) * sliceUnit2LineRender + sliceUnit2LineRender) > leftRoofLine.catLine.innerPointList.Count - 1 ? leftRoofLine.catLine.innerPointList.Count - 1 : ((i - size / 2) * sliceUnit2LineRender + sliceUnit2LineRender)]);
+		}
+		AdjLineRenderer(size, leftRoofLine.catLine.innerPointList[0], rightRoofLine.catLine.innerPointList[0]);
+		AdjLineRenderer(size + 1, leftRoofLine.catLine.innerPointList[leftRoofLine.catLine.innerPointList.Count - 1], rightRoofLine.catLine.innerPointList[rightRoofLine.catLine.innerPointList.Count - 1]);
 	}
 	public void SetIconObjectColor()
 	{
 		mRenderer.material.color = Color.red;
-		for(int i=0;i<rightRoofLine.bodyControlPointList.Count;i++)
+		for (int i = 0; i < rightRoofLine.bodyControlPointList.Count; i++)
 		{
 			rightRoofLine.bodyControlPointList[i].GetComponent<MeshRenderer>().material.color = Color.yellow;
 		}
@@ -125,7 +220,8 @@ public class BasedRoofIcon : IconObject
 		}
 	}
 }
-public class Testing : MonoBehaviour {
+public class Testing : MonoBehaviour
+{
 
 	public List<GameObject> bodyControlPointList = new List<GameObject>();
 	public List<GameObject> tailControlPointList = new List<GameObject>();
@@ -164,7 +260,7 @@ public class Testing : MonoBehaviour {
 		RooficonWide = Mathf.Abs(bodyControlPointList[0].transform.position.x - bodyControlPointList[bodyControlPointList.Count - 1].transform.position.x);
 		ini_ControlPoint_1_Position = bodyControlPointList[0].transform.position;
 
-		basedRoofIcon=new BasedRoofIcon();
+		basedRoofIcon = new BasedRoofIcon();
 		basedRoofIcon.CreateBasedRoofIcon(this, "BasedRoofIcon_mesh", bodyControlPointList, tailControlPointList, ini_ControlPoint_1_Position);
 
 		ControlPoint_1_position = bodyControlPointList[0].transform.position;
@@ -175,8 +271,8 @@ public class Testing : MonoBehaviour {
 		ControlPoint_4_position = tailControlPointList[0].transform.position;
 		ControlPoint_5_position = tailControlPointList[1].transform.position;
 	}
-	public void adjPos() 
-	{ 
+	public void adjPos()
+	{
 		basedRoofIcon.AdjPos();
 		basedRoofIcon.AdjMesh();
 

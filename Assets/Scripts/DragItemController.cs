@@ -5,7 +5,7 @@ using System.Collections;
 public class WindowsList : MonoBehaviour
 {
 	public List<Dictionary<string, List<GameObject>>> allComponent;
-	public List<Dictionary<string, Dictionary<string, List<GameObject>>>> temporateComponent;
+	public List<Dictionary<string, Dictionary<string, List<GameObject>>>> temporateAllFloorItem;
 	public string lastChooseMainDragObjectName = null;
 	public int inUseTab2ComponentLayerIndex = 0;
 
@@ -121,11 +121,11 @@ public class DragItemController : MonoBehaviour
 		{
 			AllwindowsComponent[i] = new WindowsList();
 			AllwindowsComponent[i].allComponent = new List<Dictionary<string, List<GameObject>>>();
-			AllwindowsComponent[i].temporateComponent = new List<Dictionary<string, Dictionary<string, List<GameObject>>>>();
+			AllwindowsComponent[i].temporateAllFloorItem = new List<Dictionary<string, Dictionary<string, List<GameObject>>>>();
 			Dictionary<string, List<GameObject>> newAllComponent = new Dictionary<string, List<GameObject>>();
 			AllwindowsComponent[i].allComponent.Add(newAllComponent);
-			Dictionary<string, Dictionary<string, List<GameObject>>> newTemporateComponent = new Dictionary<string, Dictionary<string, List<GameObject>>>();
-			AllwindowsComponent[i].temporateComponent.Add(newTemporateComponent);
+			Dictionary<string, Dictionary<string, List<GameObject>>> newtemporateAllFloorItem = new Dictionary<string, Dictionary<string, List<GameObject>>>();
+			AllwindowsComponent[i].temporateAllFloorItem.Add(newtemporateAllFloorItem);
 		}
 	}
 	void InitStateSetting()
@@ -427,7 +427,7 @@ public class DragItemController : MonoBehaviour
 		AllwindowsComponent[index].inUseTab2ComponentLayerIndex = number;
 
 
-		AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseTab2ComponentLayerIndex] = AllwindowsComponent[index].temporateComponent[AllwindowsComponent[index].inUseTab2ComponentLayerIndex][AllwindowsComponent[index].lastChooseMainDragObjectName];
+		AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseTab2ComponentLayerIndex] = AllwindowsComponent[index].temporateAllFloorItem[AllwindowsComponent[index].inUseTab2ComponentLayerIndex][AllwindowsComponent[index].lastChooseMainDragObjectName];
 		AllwindowsComponent[index].ShowAllComponent();
 
 	}
@@ -513,10 +513,10 @@ public class DragItemController : MonoBehaviour
 					if (AllwindowsComponent[index].lastChooseMainDragObjectName != chooseDragObject.name)//如果不是拖曳同一個主物件取代原本的主物物件
 					{
 						//紀錄操作的物件
-						if (AllwindowsComponent[index].temporateComponent[AllwindowsComponent[index].inUseTab2ComponentLayerIndex].ContainsKey(chooseDragObject.name)) //有編輯過此視窗
+						if (AllwindowsComponent[index].temporateAllFloorItem[AllwindowsComponent[index].inUseTab2ComponentLayerIndex].ContainsKey(chooseDragObject.name)) //有編輯過此視窗
 						{
 							AllwindowsComponent[index].HideAllComponent();
-							AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseTab2ComponentLayerIndex] = AllwindowsComponent[index].temporateComponent[AllwindowsComponent[index].inUseTab2ComponentLayerIndex][chooseDragObject.name];
+							AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseTab2ComponentLayerIndex] = AllwindowsComponent[index].temporateAllFloorItem[AllwindowsComponent[index].inUseTab2ComponentLayerIndex][chooseDragObject.name];
 							AllwindowsComponent[index].ShowAllComponent();
 							Debug.Log("1111");
 
@@ -532,7 +532,7 @@ public class DragItemController : MonoBehaviour
 					{
 						//取代原本的主物物件 清除此視窗物件
 						AllwindowsComponent[index].ClearAllComponent();
-						AllwindowsComponent[index].temporateComponent[AllwindowsComponent[index].inUseTab2ComponentLayerIndex][chooseDragObject.name].Clear();
+						AllwindowsComponent[index].temporateAllFloorItem[AllwindowsComponent[index].inUseTab2ComponentLayerIndex][chooseDragObject.name].Clear();
 						CreateMainComponent(index);
 						Debug.Log("333");
 
@@ -577,17 +577,17 @@ public class DragItemController : MonoBehaviour
 	{
 		if (AllwindowsComponent[index].lastChooseMainDragObjectName != null)
 		{
-			if (!AllwindowsComponent[index].temporateComponent[AllwindowsComponent[index].inUseTab2ComponentLayerIndex].ContainsKey(AllwindowsComponent[index].lastChooseMainDragObjectName))
+			if (!AllwindowsComponent[index].temporateAllFloorItem[AllwindowsComponent[index].inUseTab2ComponentLayerIndex].ContainsKey(AllwindowsComponent[index].lastChooseMainDragObjectName))
 			{
 				Debug.Log("First");
 				Dictionary<string, List<GameObject>> copy = new Dictionary<string, List<GameObject>>(AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseTab2ComponentLayerIndex]);
-				AllwindowsComponent[index].temporateComponent[AllwindowsComponent[index].inUseTab2ComponentLayerIndex].Add(AllwindowsComponent[index].lastChooseMainDragObjectName, copy);
+				AllwindowsComponent[index].temporateAllFloorItem[AllwindowsComponent[index].inUseTab2ComponentLayerIndex].Add(AllwindowsComponent[index].lastChooseMainDragObjectName, copy);
 			}
 			else
 			{
 				Debug.Log("Second");
 				Dictionary<string, List<GameObject>> copy = new Dictionary<string, List<GameObject>>(AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseTab2ComponentLayerIndex]);
-				AllwindowsComponent[index].temporateComponent[AllwindowsComponent[index].inUseTab2ComponentLayerIndex][AllwindowsComponent[index].lastChooseMainDragObjectName] = copy;
+				AllwindowsComponent[index].temporateAllFloorItem[AllwindowsComponent[index].inUseTab2ComponentLayerIndex][AllwindowsComponent[index].lastChooseMainDragObjectName] = copy;
 			}
 		}
 	}
@@ -620,8 +620,8 @@ public class DragItemController : MonoBehaviour
 
 				Dictionary<string, List<GameObject>> newAllComponent = new Dictionary<string, List<GameObject>>();
 				AllwindowsComponent[index].allComponent.Add(newAllComponent);
-				Dictionary<string, Dictionary<string, List<GameObject>>> newTemporateComponent = new Dictionary<string, Dictionary<string, List<GameObject>>>();
-				AllwindowsComponent[index].temporateComponent.Add(newTemporateComponent);
+				Dictionary<string, Dictionary<string, List<GameObject>>> newtemporateAllFloorItem = new Dictionary<string, Dictionary<string, List<GameObject>>>();
+				AllwindowsComponent[index].temporateAllFloorItem.Add(newtemporateAllFloorItem);
 
 
 				CreateMainComponent(index);
@@ -749,19 +749,20 @@ public class MisstionTab : MonoBehaviour
 public class WindowsList : MonoBehaviour//視窗
 {
 	//視窗中正在使用的components
-	public List<Dictionary<string, List<GameObject>>> allComponent;
+	[SerializeField]
+	public List<Dictionary<string, List<GameObject>>> allFloorItem;
 	//allComponent[第幾層樓][(物件名稱)MAINCOMPONENT].Count:第幾層樓的主物件有幾個
-
+	[SerializeField]
 	//暫存視窗中所有曾經編輯的components
-	public Dictionary<string,  List<Dictionary<string, List<GameObject>>>> temporateComponent;
-	//temporateComponent[曾編輯過的主物件][第幾層樓][(物件名稱)MAINCOMPONENT].Count:第幾層樓的主物件有幾個
+	public Dictionary<string,  List<Dictionary<string, List<GameObject>>>> temporateAllFloorItem;
+	//temporateAllFloorItem[曾編輯過的主物件][第幾層樓][(物件名稱)MAINCOMPONENT].Count:第幾層樓的主物件有幾個
 	//上次選用的MainIcon
 	public string lastChooseMainDragObjectName = null;
 	//第幾號allComponent 用於樓層
 	public int inUseTab2ComponentLayerIndex = 0;
 	public void PrintAllComponentCount()//印出視窗中所有正在使用的components
 	{
-		foreach (KeyValuePair<string, List<GameObject>> kvp in allComponent[inUseTab2ComponentLayerIndex])
+		foreach (KeyValuePair<string, List<GameObject>> kvp in allFloorItem[inUseTab2ComponentLayerIndex])
 		{
 			Debug.Log(kvp.Key + kvp.Value.Count);
 		}
@@ -769,19 +770,24 @@ public class WindowsList : MonoBehaviour//視窗
 
 	public void ClearAllComponent()
 	{
-		foreach (KeyValuePair<string, List<GameObject>> kvp in allComponent[inUseTab2ComponentLayerIndex])
+		foreach (KeyValuePair<string, List<GameObject>> kvp in allFloorItem[inUseTab2ComponentLayerIndex])
 		{
 			for (int i = 0; i < kvp.Value.Count; i++)
 			{
 				Destroy(kvp.Value[i]);
 			}
 		}
-		allComponent[inUseTab2ComponentLayerIndex].Clear();
+		allFloorItem[inUseTab2ComponentLayerIndex].Clear();
 	}
 	public void DeleteAllComponent(int index)
 	{
-		foreach (KeyValuePair<string, List<GameObject>> kvp in allComponent[index])
+		Debug.Log("AllComponent : " + allFloorItem.Count);
+
+		//Dictionary<string, List<GameObject>
+		foreach (KeyValuePair<string, List<GameObject>> kvp in allFloorItem[index])
 		{
+			Debug.Log("enterDeleteAll");
+			
 			for (int i = 0; i < kvp.Value.Count; i++)
 			{	
 				Destroy(kvp.Value[i]);
@@ -789,21 +795,21 @@ public class WindowsList : MonoBehaviour//視窗
 			}
 	
 		}
-		allComponent[index].Clear();
-		allComponent.RemoveAt(index);
+		allFloorItem[index].Clear();
+		allFloorItem.RemoveAt(index);
 	}
 	public void HideAllComponent()
 	{
-		foreach (KeyValuePair<string, List<GameObject>> kvp in allComponent[inUseTab2ComponentLayerIndex])
+		foreach (KeyValuePair<string, List<GameObject>> kvp in allFloorItem[inUseTab2ComponentLayerIndex])
 		{
 			for (int i = 0; i < kvp.Value.Count; i++)
 				(kvp.Value[i]).SetActive(false);
 		}
-		allComponent[inUseTab2ComponentLayerIndex].Clear();
+		allFloorItem[inUseTab2ComponentLayerIndex].Clear();
 	}
 	public void ShowAllComponent()
 	{
-		foreach (KeyValuePair<string, List<GameObject>> kvp in allComponent[inUseTab2ComponentLayerIndex])
+		foreach (KeyValuePair<string, List<GameObject>> kvp in allFloorItem[inUseTab2ComponentLayerIndex])
 		{
 			for (int i = 0; i < kvp.Value.Count; i++)
 				(kvp.Value[i]).SetActive(true);
@@ -811,7 +817,7 @@ public class WindowsList : MonoBehaviour//視窗
 	}
 	public void ShowAllComponent(int index)
 	{
-		foreach (KeyValuePair<string, List<GameObject>> kvp in allComponent[index])
+		foreach (KeyValuePair<string, List<GameObject>> kvp in allFloorItem[index])
 		{
 			for (int i = 0; i < kvp.Value.Count; i++)
 				(kvp.Value[i]).SetActive(true);
@@ -845,7 +851,7 @@ public class DragItemController : MonoBehaviour
 	public List<GameObject> buttonList = new List<GameObject>();
 
 	//四個視窗中的物件集合
-	private WindowsList[] AllwindowsComponent;
+	private WindowsList[] AllWindowsStruct;
 	//當前使用視窗中的物件集合
 	[HideInInspector]
 	public WindowsList ThisWindowsComponent;
@@ -877,21 +883,21 @@ public class DragItemController : MonoBehaviour
 		RayCastToChooseObj();
 		if(Input.GetKeyDown(KeyCode.C))
 		{
-			Debug.Log( ThisWindowsComponent.allComponent.Count);
-			Debug.Log(ThisWindowsComponent.temporateComponent.Count);
+			Debug.Log( ThisWindowsComponent.allFloorItem.Count);
+			Debug.Log(ThisWindowsComponent.temporateAllFloorItem.Count);
 		}
 	}
 	void InitWindowListMemorySetting()
 	{
 		misstionTab = new MisstionTab();
-		AllwindowsComponent = new WindowsList[windowsList.Count];
+		AllWindowsStruct = new WindowsList[windowsList.Count];
 		for (int i = 0; i < windowsList.Count; i++)
 		{
-			AllwindowsComponent[i] = new WindowsList();
-			AllwindowsComponent[i].allComponent = new List<Dictionary<string, List<GameObject>>>();
-			AllwindowsComponent[i].temporateComponent = new Dictionary<string,  List<Dictionary<string, List<GameObject>>>>();
+			AllWindowsStruct[i] = new WindowsList();
+			AllWindowsStruct[i].allFloorItem = new List<Dictionary<string, List<GameObject>>>();
+			AllWindowsStruct[i].temporateAllFloorItem = new Dictionary<string,  List<Dictionary<string, List<GameObject>>>>();
 			Dictionary<string, List<GameObject>> newAllComponent = new Dictionary<string, List<GameObject>>();
-			AllwindowsComponent[i].allComponent.Add(newAllComponent);
+			AllWindowsStruct[i].allFloorItem.Add(newAllComponent);
 	
 		}
 	}
@@ -995,7 +1001,7 @@ public class DragItemController : MonoBehaviour
 						int index = ChooseWindow();
 						if (index != -1)
 						{
-							ThisWindowsComponent = AllwindowsComponent[index];
+							ThisWindowsComponent = AllWindowsStruct[index];
 							SetCameraAndGrid(index);
 							SetMissionTab(index);
 							//選擇視窗
@@ -1017,7 +1023,7 @@ public class DragItemController : MonoBehaviour
 							if (bounds.Contains(mousePos2World))
 							{
 								chooseWindow.GetComponent<UITexture>().mainTexture = windowsList[i].GetComponent<UITexture>().mainTexture;
-								ThisWindowsComponent = AllwindowsComponent[i];
+								ThisWindowsComponent = AllWindowsStruct[i];
 								SetCameraAndGrid(i);
 								SetMissionTab(i);
 								SortButtonListTomainSingleWindow(i);
@@ -1196,15 +1202,15 @@ public class DragItemController : MonoBehaviour
 	void SetInUseTabIndex2Window(int index, int number)
 	{
 
-		if (AllwindowsComponent[index].inUseTab2ComponentLayerIndex == number) return;
+		if (AllWindowsStruct[index].inUseTab2ComponentLayerIndex == number) return;
 
 		SaveState2MainComponent(index);
-		AllwindowsComponent[index].HideAllComponent();
-		AllwindowsComponent[index].inUseTab2ComponentLayerIndex = number;
+		AllWindowsStruct[index].HideAllComponent();
+		AllWindowsStruct[index].inUseTab2ComponentLayerIndex = number;
 
 
-		AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseTab2ComponentLayerIndex] = AllwindowsComponent[index].temporateComponent[AllwindowsComponent[index].lastChooseMainDragObjectName][AllwindowsComponent[index].inUseTab2ComponentLayerIndex];
-		AllwindowsComponent[index].ShowAllComponent();
+		AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex] = AllWindowsStruct[index].temporateAllFloorItem[AllWindowsStruct[index].lastChooseMainDragObjectName][AllWindowsStruct[index].inUseTab2ComponentLayerIndex];
+		AllWindowsStruct[index].ShowAllComponent();
 
 	}
 	//按下刪除鈕後，清除選用視窗最後的missionTab對應的commponent內容
@@ -1212,23 +1218,27 @@ public class DragItemController : MonoBehaviour
 	{
 	
 		  SaveState2MainComponent(index);
-		  AllwindowsComponent[index].temporateComponent[AllwindowsComponent[index].lastChooseMainDragObjectName][AllwindowsComponent[index].allComponent.Count - 1].Clear();
-		  AllwindowsComponent[index].temporateComponent[AllwindowsComponent[index].lastChooseMainDragObjectName].RemoveAt(AllwindowsComponent[index].allComponent.Count - 1);
-		  if (AllwindowsComponent[index].inUseTab2ComponentLayerIndex == AllwindowsComponent[index].allComponent.Count - 1)//最後一個missionTab對應的commponent內容正在編輯
+		  AllWindowsStruct[index].temporateAllFloorItem[AllWindowsStruct[index].lastChooseMainDragObjectName][AllWindowsStruct[index].allFloorItem.Count - 1].Clear();
+		  AllWindowsStruct[index].temporateAllFloorItem[AllWindowsStruct[index].lastChooseMainDragObjectName].RemoveAt(AllWindowsStruct[index].allFloorItem.Count - 1);
+		  if (AllWindowsStruct[index].inUseTab2ComponentLayerIndex == AllWindowsStruct[index].allFloorItem.Count - 1)//最後一個missionTab對應的commponent內容正在編輯
 		  {
 			  //刪除最後一個
-			  AllwindowsComponent[index].DeleteAllComponent(AllwindowsComponent[index].allComponent.Count - 1);
+
+			  Debug.Log("last:" + (AllWindowsStruct[index].allFloorItem.Count - 1));
+
+			  AllWindowsStruct[index].DeleteAllComponent(AllWindowsStruct[index].allFloorItem.Count - 1);
 			  //顯示前一個
-			  AllwindowsComponent[index].inUseTab2ComponentLayerIndex--;
-			  AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseTab2ComponentLayerIndex] = AllwindowsComponent[index].temporateComponent[AllwindowsComponent[index].lastChooseMainDragObjectName][AllwindowsComponent[index].inUseTab2ComponentLayerIndex];
-			  AllwindowsComponent[index].ShowAllComponent();
+			  AllWindowsStruct[index].inUseTab2ComponentLayerIndex--;
+			  AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex] = AllWindowsStruct[index].temporateAllFloorItem[AllWindowsStruct[index].lastChooseMainDragObjectName][AllWindowsStruct[index].inUseTab2ComponentLayerIndex];
+			  AllWindowsStruct[index].ShowAllComponent();
 		  }
 		  else//最後一個missionTab對應的commponent內容沒有正在編輯
 		  {
 			  //刪除最後一個
-			  AllwindowsComponent[index].DeleteAllComponent(AllwindowsComponent[index].allComponent.Count - 1);
-		  }
+			  Debug.Log("last:" + (AllWindowsStruct[index].allFloorItem.Count - 1));
 
+			  AllWindowsStruct[index].DeleteAllComponent(AllWindowsStruct[index].allFloorItem.Count - 1);
+		  }
 	}
 	//
 	void SwitchWindow()
@@ -1252,7 +1262,7 @@ public class DragItemController : MonoBehaviour
 					SetMissionTab(index);
 					if (windowsList[index] == chooseWindow)
 					{
-						ThisWindowsComponent = AllwindowsComponent[index];
+						ThisWindowsComponent = AllWindowsStruct[index];
 
 						SetWindowsComponent(index);
 					}
@@ -1267,7 +1277,7 @@ public class DragItemController : MonoBehaviour
 					SetCameraAndGrid(mainSingleWindowinUseIndex);
 					SetMissionTab(mainSingleWindowinUseIndex);
 
-					ThisWindowsComponent = AllwindowsComponent[mainSingleWindowinUseIndex];
+					ThisWindowsComponent = AllWindowsStruct[mainSingleWindowinUseIndex];
 
 					SetWindowsComponent(mainSingleWindowinUseIndex);
 				}
@@ -1281,28 +1291,28 @@ public class DragItemController : MonoBehaviour
 		{
 			case MAINCOMPONENT:
 				movement.intiAllList();
-				Debug.Log(AllwindowsComponent[index].lastChooseMainDragObjectName);
-				if (!AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseTab2ComponentLayerIndex].ContainsKey(MAINCOMPONENT))//在選擇的視窗內 且視窗內物件為空
+				Debug.Log(AllWindowsStruct[index].lastChooseMainDragObjectName);
+				if (!AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex].ContainsKey(MAINCOMPONENT))//在選擇的視窗內 且視窗內物件為空
 				{
 					CreateMainComponent(index);
 					Debug.Log("000");
 				}
 				else//視窗內物件為不為空
 				{
-					if (AllwindowsComponent[index].lastChooseMainDragObjectName != chooseDragObject.name)//如果不是拖曳同一個主物件取代原本的主物物件
+					if (AllWindowsStruct[index].lastChooseMainDragObjectName != chooseDragObject.name)//如果不是拖曳同一個主物件取代原本的主物物件
 					{
 						//紀錄操作的物件
-						if (AllwindowsComponent[index].temporateComponent.ContainsKey(chooseDragObject.name)) //有編輯過此視窗
+						if (AllWindowsStruct[index].temporateAllFloorItem.ContainsKey(chooseDragObject.name)) //有編輯過此視窗
 						{
-							AllwindowsComponent[index].HideAllComponent();
-							AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseTab2ComponentLayerIndex] = AllwindowsComponent[index].temporateComponent[chooseDragObject.name][AllwindowsComponent[index].inUseTab2ComponentLayerIndex];
-							AllwindowsComponent[index].ShowAllComponent();
+							AllWindowsStruct[index].HideAllComponent();
+							AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex] = AllWindowsStruct[index].temporateAllFloorItem[chooseDragObject.name][AllWindowsStruct[index].inUseTab2ComponentLayerIndex];
+							AllWindowsStruct[index].ShowAllComponent();
 							Debug.Log("1111");
 
 						}
 						else //沒有編輯過此視窗
 						{
-							AllwindowsComponent[index].HideAllComponent();
+							AllWindowsStruct[index].HideAllComponent();
 							CreateMainComponent(index);
 							Debug.Log("222");
 						}
@@ -1310,39 +1320,39 @@ public class DragItemController : MonoBehaviour
 					else //如果拖曳同一個主物件
 					{
 						//取代原本的主物物件 清除此視窗物件
-						AllwindowsComponent[index].ClearAllComponent();
-						AllwindowsComponent[index].temporateComponent[chooseDragObject.name][AllwindowsComponent[index].inUseTab2ComponentLayerIndex].Clear();
+						AllWindowsStruct[index].ClearAllComponent();
+						AllWindowsStruct[index].temporateAllFloorItem[chooseDragObject.name][AllWindowsStruct[index].inUseTab2ComponentLayerIndex].Clear();
 						CreateMainComponent(index);
 						Debug.Log("333");
 
 					}
 				}
-				AllwindowsComponent[index].lastChooseMainDragObjectName = chooseDragObject.name;
-				if (AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseTab2ComponentLayerIndex][MAINCOMPONENT][0].GetComponent<MeshObj>()) building.UpdateAll(AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseTab2ComponentLayerIndex][MAINCOMPONENT][0].GetComponent<MeshObj>().edgeIndex);
-				if (AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseTab2ComponentLayerIndex][MAINCOMPONENT][0].GetComponent<body2icon>())
+				AllWindowsStruct[index].lastChooseMainDragObjectName = chooseDragObject.name;
+				if (AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex][MAINCOMPONENT][0].GetComponent<MeshObj>()) building.UpdateAll(AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex][MAINCOMPONENT][0].GetComponent<MeshObj>().edgeIndex);
+				if (AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex][MAINCOMPONENT][0].GetComponent<body2icon>())
 				{
-					building.UpdateBody_B(AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseTab2ComponentLayerIndex][MAINCOMPONENT][0].GetComponent<body2icon>().isBalustrade);
-					building.UpdateBody_F(AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseTab2ComponentLayerIndex][MAINCOMPONENT][0].GetComponent<body2icon>().isFrieze);
+					building.UpdateBody_B(AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex][MAINCOMPONENT][0].GetComponent<body2icon>().isBalustrade);
+					building.UpdateBody_F(AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex][MAINCOMPONENT][0].GetComponent<body2icon>().isFrieze);
 				}
 				break;
 			case DECORATECOMPONENT:
 
-				if (AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseTab2ComponentLayerIndex].ContainsKey(MAINCOMPONENT))//如果有拖曳物件 且在選擇的視窗內 且視窗內物件為空
+				if (AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex].ContainsKey(MAINCOMPONENT))//如果有拖曳物件 且在選擇的視窗內 且視窗內物件為空
 				{
 					CreateDecorateComponent(index);
 
-					if (AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseTab2ComponentLayerIndex][MAINCOMPONENT][0].GetComponent<body2icon>())
+					if (AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex][MAINCOMPONENT][0].GetComponent<body2icon>())
 					{
 
-						if (AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseTab2ComponentLayerIndex].ContainsKey(chooseDragObject.name)) AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseTab2ComponentLayerIndex][MAINCOMPONENT][0].GetComponent<body2icon>().UpdateFunction(chooseDragObject.name);
+						if (AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex].ContainsKey(chooseDragObject.name)) AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex][MAINCOMPONENT][0].GetComponent<body2icon>().UpdateFunction(chooseDragObject.name);
 
-						building.UpdateBody_F(AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseTab2ComponentLayerIndex][MAINCOMPONENT][0].GetComponent<body2icon>().isBalustrade);
-						building.UpdateBody_B(AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseTab2ComponentLayerIndex][MAINCOMPONENT][0].GetComponent<body2icon>().isFrieze);
+						building.UpdateBody_F(AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex][MAINCOMPONENT][0].GetComponent<body2icon>().isBalustrade);
+						building.UpdateBody_B(AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex][MAINCOMPONENT][0].GetComponent<body2icon>().isFrieze);
 
 
 
-						building.Move_F(AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseTab2ComponentLayerIndex][MAINCOMPONENT][0].GetComponent<body2icon>().friezeHeight, AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseTab2ComponentLayerIndex][MAINCOMPONENT][0].GetComponent<body2icon>().ini_bodydis.y);
-						building.Move_B(AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseTab2ComponentLayerIndex][MAINCOMPONENT][0].GetComponent<body2icon>().balustradeHeight, AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseTab2ComponentLayerIndex][MAINCOMPONENT][0].GetComponent<body2icon>().ini_bodydis.y);
+						building.Move_F(AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex][MAINCOMPONENT][0].GetComponent<body2icon>().friezeHeight, AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex][MAINCOMPONENT][0].GetComponent<body2icon>().ini_bodydis.y);
+						building.Move_B(AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex][MAINCOMPONENT][0].GetComponent<body2icon>().balustradeHeight, AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex][MAINCOMPONENT][0].GetComponent<body2icon>().ini_bodydis.y);
 
 					}
 
@@ -1354,24 +1364,25 @@ public class DragItemController : MonoBehaviour
 	}
 	void SaveState2MainComponent(int index)
 	{
-		if (AllwindowsComponent[index].lastChooseMainDragObjectName != null)
+		if (AllWindowsStruct[index].lastChooseMainDragObjectName != null)
 		{
-			if (!AllwindowsComponent[index].temporateComponent.ContainsKey(AllwindowsComponent[index].lastChooseMainDragObjectName))
+			if (!AllWindowsStruct[index].temporateAllFloorItem.ContainsKey(AllWindowsStruct[index].lastChooseMainDragObjectName))
 			{
 				Debug.Log("First");
-				  Dictionary<string, List<GameObject>> copy = new Dictionary<string, List<GameObject>>(AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseTab2ComponentLayerIndex]);
+				Dictionary<string, List<GameObject>> copy = new Dictionary<string, List<GameObject>>(AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex]);
 				  List<Dictionary<string, List<GameObject>>> tmpList=new  List<Dictionary<string, List<GameObject>>>();
 				  tmpList.Add(copy);
-				  AllwindowsComponent[index].temporateComponent.Add(AllwindowsComponent[index].lastChooseMainDragObjectName, tmpList);
+				  AllWindowsStruct[index].temporateAllFloorItem.Add(AllWindowsStruct[index].lastChooseMainDragObjectName, tmpList);
 			}
 			else
 			{
 				Debug.Log("Second");
-				Dictionary<string, List<GameObject>> copy = new Dictionary<string, List<GameObject>>(AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseTab2ComponentLayerIndex]);
-				AllwindowsComponent[index].temporateComponent[AllwindowsComponent[index].lastChooseMainDragObjectName][AllwindowsComponent[index].inUseTab2ComponentLayerIndex] = copy;
+				Dictionary<string, List<GameObject>> copy = new Dictionary<string, List<GameObject>>(AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex]);
+				AllWindowsStruct[index].temporateAllFloorItem[AllWindowsStruct[index].lastChooseMainDragObjectName][AllWindowsStruct[index].inUseTab2ComponentLayerIndex] = copy;
 			}
 		}
 	}
+
 	void CreateMainComponent(int index)
 	{
 		Vector3 pos = chooseCamera.transform.position; pos.z = chooseCamera.farClipPlane / 2.0f;
@@ -1379,11 +1390,12 @@ public class DragItemController : MonoBehaviour
 		GameObject cloneCorrespondingObj = chooseDragObject.GetComponent<CorespondingDragItem>().corespondingDragItem;
 
 		GameObject clone = Instantiate(cloneCorrespondingObj, pos, cloneCorrespondingObj.transform.rotation) as GameObject;
+
 		clone.transform.parent = this.transform;
 
 		List<GameObject> allComponentList = new List<GameObject>();
 		allComponentList.Add(clone);
-		AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseTab2ComponentLayerIndex].Add(MAINCOMPONENT, allComponentList);
+		AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex].Add(MAINCOMPONENT, allComponentList);
 	}
 	void CreateDecorateComponent(int index)
 	{
@@ -1396,14 +1408,16 @@ public class DragItemController : MonoBehaviour
 			if (misstionTab.IsNotOverMaxCount(correspondingDragItemMaxCount))
 			{
 				SaveState2MainComponent(index);
-				AllwindowsComponent[index].HideAllComponent();
-				AllwindowsComponent[index].inUseTab2ComponentLayerIndex = AllwindowsComponent[index].allComponent.Count;
-				Debug.Log("CCCC" + AllwindowsComponent[index].inUseTab2ComponentLayerIndex);
+				AllWindowsStruct[index].HideAllComponent();
+				AllWindowsStruct[index].inUseTab2ComponentLayerIndex = AllWindowsStruct[index].allFloorItem.Count;
+				Debug.Log("CCCC" + AllWindowsStruct[index].inUseTab2ComponentLayerIndex);
 
 				Dictionary<string, List<GameObject>> newAllComponent = new Dictionary<string, List<GameObject>>();
-				AllwindowsComponent[index].allComponent.Add(newAllComponent);
 
-				AllwindowsComponent[index].temporateComponent[AllwindowsComponent[index].lastChooseMainDragObjectName].Add(newAllComponent);
+
+				AllWindowsStruct[index].allFloorItem.Add(newAllComponent);
+
+				AllWindowsStruct[index].temporateAllFloorItem[AllWindowsStruct[index].lastChooseMainDragObjectName].Add(newAllComponent);
 
 				misstionTab.CreateMissionTabs(this, misstionTabObj, chooseWindow);
 
@@ -1414,13 +1428,13 @@ public class DragItemController : MonoBehaviour
 		else
 		{
 
-			if (AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseTab2ComponentLayerIndex].ContainsKey(chooseDragObject.name))
+			if (AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex].ContainsKey(chooseDragObject.name))
 			{
-				if (AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseTab2ComponentLayerIndex][chooseDragObject.name].Count < correspondingDragItemMaxCount)
+				if (AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex][chooseDragObject.name].Count < correspondingDragItemMaxCount)
 				{
 					GameObject clone = Instantiate(cloneCorrespondingObj, pos, cloneCorrespondingObj.transform.rotation) as GameObject;
 					clone.transform.parent = this.transform;
-					AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseTab2ComponentLayerIndex][chooseDragObject.name].Add(clone);
+					AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex][chooseDragObject.name].Add(clone);
 				}
 				else
 					Debug.Log(chooseDragObject.name + "    Count over MaxCount");
@@ -1432,7 +1446,7 @@ public class DragItemController : MonoBehaviour
 				List<GameObject> newList = new List<GameObject>();
 				newList.Clear();
 				newList.Add(clone);
-				AllwindowsComponent[index].allComponent[AllwindowsComponent[index].inUseTab2ComponentLayerIndex].Add(chooseDragObject.name, newList);
+				AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex].Add(chooseDragObject.name, newList);
 			}
 		}
 	}
