@@ -1133,15 +1133,34 @@ public class MeshObj : MonoBehaviour
 						switch(i)
 						{
 							case 0:
+								chang_bodydis.x = -offsetVector.x;
+								chang_bodydis.y = offsetVector.y;
+								ratio_bodydis.x = chang_bodydis.x / ini_bodydis.x;
+								ratio_bodydis.y = chang_bodydis.y / ini_bodydis.y;
+								break;
 							case 1:
-							case 2:
-							case 3:
 								chang_bodydis.x = offsetVector.x;
 								chang_bodydis.y = offsetVector.y;
 								ratio_bodydis.x = chang_bodydis.x / ini_bodydis.x;
 								ratio_bodydis.y = chang_bodydis.y / ini_bodydis.y;
+								break;
+							case 2:
+								chang_bodydis.x = offsetVector.x;
+								chang_bodydis.y = -offsetVector.y;
+								ratio_bodydis.x = chang_bodydis.x / ini_bodydis.x;
+								ratio_bodydis.y = chang_bodydis.y / ini_bodydis.y;
+								break;
+							case 3:
+								chang_bodydis.x = -offsetVector.x;
+								chang_bodydis.y = -offsetVector.y;
+								ratio_bodydis.x = chang_bodydis.x / ini_bodydis.x;
+								ratio_bodydis.y = chang_bodydis.y / ini_bodydis.y;
+								break;
 							break;
 							case 4:
+								chang_mainRidgedis = -offsetVector.x;
+								ratio_mainRidgedis = chang_mainRidgedis / ini_mainRidgedis;
+								break;
 							case 5:
 								chang_mainRidgedis = offsetVector.x;
 								ratio_mainRidgedis = chang_mainRidgedis / ini_mainRidgedis;

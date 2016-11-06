@@ -1418,8 +1418,16 @@ public class body2icon : MonoBehaviour
 
 				wallIcon.AdjMesh();
 			}
-			chang_bodydis.y = dis;
-			ratio_bodydis.y = chang_bodydis.y / ini_bodydis.y;
+			
+			if (dragitemcontroller.chooseObj == columnIcon.rightColumn.upPoint)
+			{	chang_bodydis.y = dis;
+				ratio_bodydis.y = chang_bodydis.y / ini_bodydis.y;
+			}
+			if (dragitemcontroller.chooseObj == columnIcon.leftColumn.upPoint)
+			{
+				chang_bodydis.y = -dis;
+				ratio_bodydis.y = chang_bodydis.y / ini_bodydis.y;
+			}
 		}
 		else if (dragitemcontroller.chooseObj == columnIcon.rightColumn.downPoint || dragitemcontroller.chooseObj == columnIcon.leftColumn.downPoint)//RD  LD
 		{
@@ -1454,6 +1462,7 @@ public class body2icon : MonoBehaviour
 
 				wallIcon.AdjMesh();
 			}
+
 			chang_bodydis.y = dis;
 			ratio_bodydis.y = chang_bodydis.y / ini_bodydis.y;
 		}
@@ -1503,7 +1512,7 @@ public class body2icon : MonoBehaviour
 			{
 				doubleRoofIcon.AdjMesh(columnIcon, ini_doubleRoofHeight, ini_doubleRoofWidth);
 			}
-			chang_bodydis.x = dis;
+			chang_bodydis.x = -dis;
 			ratio_bodydis.x = chang_bodydis.x / ini_bodydis.x;
 		}
 		else if (dragitemcontroller.chooseObj == columnIcon.rightColumn.friezePoint || dragitemcontroller.chooseObj == columnIcon.leftColumn.friezePoint)
@@ -1563,7 +1572,7 @@ public class body2icon : MonoBehaviour
 
 			wallIcon.AdjMesh();
 
-			chang_walldis = dis;
+			chang_walldis = -dis;
 			ratio_walldis = chang_walldis / ini_wallWidth;
 		}
 		else if (dragitemcontroller.chooseObj == wallIcon.rightDownPoint)
@@ -1598,7 +1607,7 @@ public class body2icon : MonoBehaviour
 
 			wallIcon.AdjMesh();
 
-			chang_walldis = dis;
+			chang_walldis = -dis;
 			ratio_walldis = chang_walldis / ini_wallWidth;
 		}
 		else if (dragitemcontroller.chooseObj == wallIcon.rightUpWindowPoint)

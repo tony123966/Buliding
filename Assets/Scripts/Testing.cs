@@ -76,7 +76,7 @@ public class BasedRoofIcon : IconObject
 	public void AdjMesh()
 	{
 		int innerPointCount = rightRoofLine.catLine.innerPointList.Count;
-		float uvR = (1 / ((float)innerPointCount*2)) * (rightRoofLine.catLine.innerPointList[rightRoofLine.catLine.innerPointList.Count - 1].x - leftRoofLine.catLine.innerPointList[rightRoofLine.catLine.innerPointList.Count - 1].x);
+		float uvR = (rightRoofLine.catLine.innerPointList[rightRoofLine.catLine.innerPointList.Count - 1].x - leftRoofLine.catLine.innerPointList[rightRoofLine.catLine.innerPointList.Count - 1].x)/((float)innerPointCount*2);
 		mFilter.mesh.Clear();
 		Vector3[] v = new Vector3[4 * innerPointCount];
 		Vector3[] n = new Vector3[4 * innerPointCount];
@@ -97,38 +97,31 @@ public class BasedRoofIcon : IconObject
 		int index = 0;
 
 		t[index] = 0;
-		t[index + 1] = innerPointCount * 2 + innerPointCount / 2;
+		t[index + 1] = innerPointCount*3;
 		t[index + 2] = innerPointCount;
 		t[index + 3] = innerPointCount;
-		t[index + 4] = innerPointCount * 2 + innerPointCount / 2;
-		t[index + 5] = innerPointCount * 2 + innerPointCount / 2 - 1;
+		t[index + 4] = innerPointCount*3;
+		t[index + 5] = innerPointCount*3 - 1;
 		index += 6;
 
 		for (int i = 0; i < innerPointCount - 1; i++)
 		{
 			t[index] = i;
 			t[index + 1] = (i + 1);
-			t[index + 2] = (i + 1) + innerPointCount * 2 + innerPointCount / 2;
+			t[index + 2] = (i + 1) + innerPointCount *3;
 			t[index + 3] = i;
-			t[index + 4] = (i + 1) + innerPointCount * 2 + innerPointCount / 2;
-			t[index + 5] = i + innerPointCount * 2 + innerPointCount / 2;
+			t[index + 4] = (i + 1) + innerPointCount * 3;
+			t[index + 5] = i + innerPointCount * 3;
 			index += 6;
 		}
 		for (int i = 0; i < innerPointCount - 1; i++)
 		{
-		/*	t[index] = innerPointCount + i;
-			t[index + 1] = innerPointCount * 2 + innerPointCount / 2 - 1 - i;
-			t[index + 2] = innerPointCount + 1 + i;
-			t[index + 3] = innerPointCount + 1 + i;
-			t[index + 4] = innerPointCount * 2 + innerPointCount / 2 - 1 - i;
-			t[index + 5] = innerPointCount * 2 + innerPointCount / 2 - 2 - i;
-			index += 6;*/
 			t[index] = innerPointCount + i;
-			t[index + 1] = innerPointCount * 2 + (innerPointCount-1) - i;
+			t[index + 1] = innerPointCount *3-1 - i;
 			t[index + 2] = innerPointCount + 1 + i;
 			t[index + 3] = innerPointCount + 1 + i;
-			t[index + 4] = innerPointCount * 2 + (innerPointCount - 1) - i;
-			t[index + 5] = innerPointCount * 2 + (innerPointCount - 2) - i;
+			t[index + 4] = innerPointCount * 3 - 1 - i;
+			t[index + 5] = innerPointCount * 3 - 2 - i;
 			index += 6;
 		}
 		for (int i = 0; i < 4 * innerPointCount; i++)
