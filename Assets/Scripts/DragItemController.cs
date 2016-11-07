@@ -867,16 +867,24 @@ public class DragItemController : MonoBehaviour
 	//MissionTabs
 	public GameObject misstionTabObj;
 	private MisstionTab misstionTab;
+
+	//InitIconSetting
+
+	public GameObject formFractorInitDragIconObj;
+	public GameObject roofInitDragIconObj;
+	public GameObject bodyInitDragIconObj;
+	public GameObject platformInitDragIconObj;
 	void Start()
 	{
 		uICamera = GameObject.Find("UICamera").GetComponent<Camera>();
 		movement = GameObject.Find("Movement").GetComponent<Movement>();
 		building = GameObject.Find("build").GetComponent<AllInOne>();
 
-
 		InitWindowListMemorySetting();
 		InitStateSetting();
 		SwitchWindow();
+
+		InitIconSetting();
 	}
 	void Update()
 	{
@@ -915,6 +923,33 @@ public class DragItemController : MonoBehaviour
 			chooseWindow = windowsList[(int)WindowsIndex.Formfactor];
 		else if (changeLayoutIndexInWindowsSet == (int)WindowsSetIndex.SingleWindow)
 			chooseWindow = windowsList[(int)WindowsIndex.SingleWindow];
+	}
+	void InitIconSetting() 
+	{
+		if (formFractorInitDragIconObj && !AllWindowsStruct[(int)WindowsIndex.Formfactor].allFloorItem[AllWindowsStruct[(int)WindowsIndex.Formfactor].inUseTab2ComponentLayerIndex].ContainsKey(MAINCOMPONENT))
+		{
+			CreateMainComponent((int)WindowsIndex.Formfactor, formFractorInitDragIconObj);
+			AllWindowsStruct[(int)WindowsIndex.Formfactor].lastChooseMainDragObjectName = formFractorInitDragIconObj.name;
+			ThisWindowsComponent = AllWindowsStruct[(int)WindowsIndex.Formfactor];
+
+		}
+		if (roofInitDragIconObj && !AllWindowsStruct[(int)WindowsIndex.Roof].allFloorItem[AllWindowsStruct[(int)WindowsIndex.Roof].inUseTab2ComponentLayerIndex].ContainsKey(MAINCOMPONENT))
+		{
+			CreateMainComponent((int)WindowsIndex.Roof, roofInitDragIconObj);
+			AllWindowsStruct[(int)WindowsIndex.Roof].lastChooseMainDragObjectName = roofInitDragIconObj.name;
+			
+		}
+		if (bodyInitDragIconObj && !AllWindowsStruct[(int)WindowsIndex.Body].allFloorItem[AllWindowsStruct[(int)WindowsIndex.Body].inUseTab2ComponentLayerIndex].ContainsKey(MAINCOMPONENT))
+		{
+			CreateMainComponent((int)WindowsIndex.Body, bodyInitDragIconObj);
+			AllWindowsStruct[(int)WindowsIndex.Body].lastChooseMainDragObjectName = bodyInitDragIconObj.name;
+	
+		}
+		if (platformInitDragIconObj && !AllWindowsStruct[(int)WindowsIndex.Platform].allFloorItem[AllWindowsStruct[(int)WindowsIndex.Platform].inUseTab2ComponentLayerIndex].ContainsKey(MAINCOMPONENT))
+		{
+			CreateMainComponent((int)WindowsIndex.Platform, platformInitDragIconObj);
+			AllWindowsStruct[(int)WindowsIndex.Platform].lastChooseMainDragObjectName = platformInitDragIconObj.name;
+		}
 	}
 	//選控制點
 	void RayCastToChooseObj()
@@ -1382,7 +1417,20 @@ public class DragItemController : MonoBehaviour
 			}
 		}
 	}
+	void CreateMainComponent(int index, GameObject IconDragObj)
+	{
+		Vector3 pos = cameraList[index].transform.position; pos.z = cameraList[index].farClipPlane / 2.0f;
 
+		GameObject cloneCorrespondingObj = IconDragObj.GetComponent<CorespondingDragItem>().corespondingDragItem;
+
+		GameObject clone = Instantiate(cloneCorrespondingObj, pos, cloneCorrespondingObj.transform.rotation) as GameObject;
+
+		clone.transform.parent = this.transform;
+
+		List<GameObject> allComponentList = new List<GameObject>();
+		allComponentList.Add(clone);
+		AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex].Add(MAINCOMPONENT, allComponentList);
+	}
 	void CreateMainComponent(int index)
 	{
 		Vector3 pos = chooseCamera.transform.position; pos.z = chooseCamera.farClipPlane / 2.0f;

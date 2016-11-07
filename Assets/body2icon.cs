@@ -806,12 +806,10 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class RecMeshCreate : lineRendererControl
+public class RecMeshCreate : IconObject
 {
-	public List<Vector3> controlPointList = new List<Vector3>();
-	public GameObject body = null;
-	public MeshFilter mFilter;
-	public MeshRenderer mRenderer;
+	public List<Vector3> controlPointList_Vec3 = new List<Vector3>();//用於lineRenderer
+
 	public Mesh CreatRecMesh(Vector3 lu, Vector3 ru, Vector3 rd, Vector3 ld, Mesh ismesh)
 	{
 		Mesh m;
@@ -836,22 +834,22 @@ public class RecMeshCreate : lineRendererControl
 	}
 	public override void InitLineRender<T>(T thisGameObject)
 	{
-		for (int i = 0; i < controlPointList.Count; i++)
+		for (int i = 0; i < controlPointList_Vec3.Count; i++)
 		{
-			if (i != controlPointList.Count - 1)
-				CreateLineRenderer(thisGameObject, controlPointList[i], controlPointList[i + 1]);
+			if (i != controlPointList_Vec3.Count - 1)
+				CreateLineRenderer(thisGameObject, controlPointList_Vec3[i], controlPointList_Vec3[i + 1]);
 			else
-				CreateLineRenderer(thisGameObject, controlPointList[i], controlPointList[0]);
+				CreateLineRenderer(thisGameObject, controlPointList_Vec3[i], controlPointList_Vec3[0]);
 		}
 	}
 	public override void UpdateLineRender()
 	{
 		for (int i = 0; i < lineRenderList.Count; i++)
 		{
-			if (i != controlPointList.Count - 1)
-				AdjLineRenderer(i, controlPointList[i], controlPointList[i + 1]);
+			if (i != controlPointList_Vec3.Count - 1)
+				AdjLineRenderer(i, controlPointList_Vec3[i], controlPointList_Vec3[i + 1]);
 			else
-				AdjLineRenderer(i, controlPointList[i], controlPointList[0]);
+				AdjLineRenderer(i, controlPointList_Vec3[i], controlPointList_Vec3[0]);
 		}
 	}
 }
@@ -904,18 +902,18 @@ public class DoubleRoofIcon : RecMeshCreate
 	}
 	public override void InitLineRender<T>(T thisGameObject)
 	{
-		controlPointList.Add(leftUpPoint);
-		controlPointList.Add(rightUpPoint);
-		controlPointList.Add(rightDownPoint);
-		controlPointList.Add(leftDownPoint);
+		controlPointList_Vec3.Add(leftUpPoint);
+		controlPointList_Vec3.Add(rightUpPoint);
+		controlPointList_Vec3.Add(rightDownPoint);
+		controlPointList_Vec3.Add(leftDownPoint);
 		base.InitLineRender(thisGameObject);
 	}
 	public override void UpdateLineRender()
 	{
-		controlPointList[0] = (leftUpPoint);
-		controlPointList[1] = (rightUpPoint);
-		controlPointList[2] = (rightDownPoint);
-		controlPointList[3] = (leftDownPoint);
+		controlPointList_Vec3[0] = (leftUpPoint);
+		controlPointList_Vec3[1] = (rightUpPoint);
+		controlPointList_Vec3[2] = (rightDownPoint);
+		controlPointList_Vec3[3] = (leftDownPoint);
 		base.UpdateLineRender();
 	}
 	public void SetIconObjectColor()
@@ -983,18 +981,18 @@ public class FriezeIcon : RecMeshCreate
 	}
 	public override void InitLineRender<T>(T thisGameObject)
 	{
-		controlPointList.Add(leftUpPoint);
-		controlPointList.Add(rightUpPoint);
-		controlPointList.Add(rightDownPoint);
-		controlPointList.Add(leftDownPoint);
+		controlPointList_Vec3.Add(leftUpPoint);
+		controlPointList_Vec3.Add(rightUpPoint);
+		controlPointList_Vec3.Add(rightDownPoint);
+		controlPointList_Vec3.Add(leftDownPoint);
 		base.InitLineRender(thisGameObject);
 	}
 	public override void UpdateLineRender()
 	{
-		controlPointList[0] = (leftUpPoint);
-		controlPointList[1] = (rightUpPoint);
-		controlPointList[2] = (rightDownPoint);
-		controlPointList[3] = (leftDownPoint);
+		controlPointList_Vec3[0] = (leftUpPoint);
+		controlPointList_Vec3[1] = (rightUpPoint);
+		controlPointList_Vec3[2] = (rightDownPoint);
+		controlPointList_Vec3[3] = (leftDownPoint);
 		base.UpdateLineRender();
 	}
 	public void SetIconObjectColor(ColumnIcon columnIcon)
@@ -1102,18 +1100,18 @@ public class WallIcon : RecMeshCreate
 	}
 	public override void InitLineRender<T>(T thisGameObject)
 	{
-		controlPointList.Add(leftUpPoint.transform.position);
-		controlPointList.Add(rightUpPoint.transform.position);
-		controlPointList.Add(rightDownPoint.transform.position);
-		controlPointList.Add(leftDownPoint.transform.position);
+		controlPointList_Vec3.Add(leftUpPoint.transform.position);
+		controlPointList_Vec3.Add(rightUpPoint.transform.position);
+		controlPointList_Vec3.Add(rightDownPoint.transform.position);
+		controlPointList_Vec3.Add(leftDownPoint.transform.position);
 		base.InitLineRender(thisGameObject);
 	}
 	public override void UpdateLineRender()
 	{
-		controlPointList[0] = (leftUpPoint.transform.position);
-		controlPointList[1] = (rightUpPoint.transform.position);
-		controlPointList[2] = (rightDownPoint.transform.position);
-		controlPointList[3] = (leftDownPoint.transform.position);
+		controlPointList_Vec3[0] = (leftUpPoint.transform.position);
+		controlPointList_Vec3[1] = (rightUpPoint.transform.position);
+		controlPointList_Vec3[2] = (rightDownPoint.transform.position);
+		controlPointList_Vec3[3] = (leftDownPoint.transform.position);
 		base.UpdateLineRender();
 	}
 	public void SetIconObjectColor()
@@ -1189,18 +1187,18 @@ public class BalustradeIcon : RecMeshCreate
 	}
 	public override void InitLineRender<T>(T thisGameObject)
 	{
-		controlPointList.Add(leftUpPoint);
-		controlPointList.Add(rightUpPoint);
-		controlPointList.Add(rightDownPoint);
-		controlPointList.Add(leftDownPoint);
+		controlPointList_Vec3.Add(leftUpPoint);
+		controlPointList_Vec3.Add(rightUpPoint);
+		controlPointList_Vec3.Add(rightDownPoint);
+		controlPointList_Vec3.Add(leftDownPoint);
 		base.InitLineRender(thisGameObject);
 	}
 	public override void UpdateLineRender()
 	{
-		controlPointList[0] = (leftUpPoint);
-		controlPointList[1] = (rightUpPoint);
-		controlPointList[2] = (rightDownPoint);
-		controlPointList[3] = (leftDownPoint);
+		controlPointList_Vec3[0] = (leftUpPoint);
+		controlPointList_Vec3[1] = (rightUpPoint);
+		controlPointList_Vec3[2] = (rightDownPoint);
+		controlPointList_Vec3[3] = (leftDownPoint);
 		base.UpdateLineRender();
 	}
 	public void SetIconObjectColor(ColumnIcon columnIcon)
@@ -1383,11 +1381,23 @@ public class body2icon : MonoBehaviour
 		ratio_bodydis=chang_bodydis= Vector2.zero;
 		ratio_walldis =chang_walldis=0;
 		Vector3 tmp = dragitemcontroller.chooseObj.transform.position;
+		float dis=0;
 		if (dragitemcontroller.chooseObj == columnIcon.rightColumn.upPoint || dragitemcontroller.chooseObj == columnIcon.leftColumn.upPoint)//RU LU
 		{
-			float dis = (tmp.y - columnIcon.rightColumn.upPoint.transform.position.y);
-			cylinderHeight = (dragitemcontroller.chooseObj.transform.position.y - columnIcon.rightColumn.downPoint.transform.position.y);
-			cylinderHeight = Mathf.Abs(cylinderHeight);
+		
+			if(dragitemcontroller.chooseObj == columnIcon.leftColumn.upPoint)
+			{
+				dis = (tmp.y - columnIcon.rightColumn.upPoint.transform.position.y);
+				cylinderHeight = (dragitemcontroller.chooseObj.transform.position.y - columnIcon.leftColumn.downPoint.transform.position.y);
+				cylinderHeight = Mathf.Abs(cylinderHeight);
+			}
+			else if (dragitemcontroller.chooseObj == columnIcon.rightColumn.upPoint)
+			{
+				dis = (tmp.y - columnIcon.leftColumn.upPoint.transform.position.y);
+				cylinderHeight = (dragitemcontroller.chooseObj.transform.position.y - columnIcon.rightColumn.downPoint.transform.position.y);
+				cylinderHeight = Mathf.Abs(cylinderHeight);
+			}
+
 			//update point
 			columnIcon.rightColumn.upPoint.transform.position = new Vector3(columnIcon.rightColumn.upPoint.transform.position.x, tmp.y, columnIcon.rightColumn.upPoint.transform.position.z);
 			columnIcon.leftColumn.upPoint.transform.position = new Vector3(columnIcon.leftColumn.upPoint.transform.position.x, tmp.y, columnIcon.leftColumn.upPoint.transform.position.z);
@@ -1418,23 +1428,27 @@ public class body2icon : MonoBehaviour
 
 				wallIcon.AdjMesh();
 			}
-			
-			if (dragitemcontroller.chooseObj == columnIcon.rightColumn.upPoint)
-			{	chang_bodydis.y = dis;
-				ratio_bodydis.y = chang_bodydis.y / ini_bodydis.y;
-			}
-			if (dragitemcontroller.chooseObj == columnIcon.leftColumn.upPoint)
-			{
-				chang_bodydis.y = -dis;
-				ratio_bodydis.y = chang_bodydis.y / ini_bodydis.y;
-			}
+			chang_bodydis.y = dis;
+			ratio_bodydis.y = chang_bodydis.y / ini_bodydis.y;
 		}
 		else if (dragitemcontroller.chooseObj == columnIcon.rightColumn.downPoint || dragitemcontroller.chooseObj == columnIcon.leftColumn.downPoint)//RD  LD
 		{
-			float dis = (tmp.y - columnIcon.rightColumn.downPoint.transform.position.y);
+			if (dragitemcontroller.chooseObj == columnIcon.leftColumn.downPoint)
+			{
+				dis = (tmp.y - columnIcon.rightColumn.downPoint.transform.position.y);
 
-			cylinderHeight = (dragitemcontroller.chooseObj.transform.position.y - columnIcon.rightColumn.upPoint.transform.position.y);
-			cylinderHeight = Mathf.Abs(cylinderHeight);
+				cylinderHeight = (dragitemcontroller.chooseObj.transform.position.y - columnIcon.leftColumn.upPoint.transform.position.y);
+				cylinderHeight = Mathf.Abs(cylinderHeight);
+
+			}
+			else if (dragitemcontroller.chooseObj == columnIcon.rightColumn.downPoint)
+			{
+				dis = (tmp.y - columnIcon.leftColumn.downPoint.transform.position.y);
+
+				cylinderHeight = (dragitemcontroller.chooseObj.transform.position.y - columnIcon.rightColumn.upPoint.transform.position.y);
+				cylinderHeight = Mathf.Abs(cylinderHeight);
+
+			}
 
 			//update point
 			columnIcon.rightColumn.downPoint.transform.position = new Vector3(columnIcon.rightColumn.downPoint.transform.position.x, tmp.y, columnIcon.rightColumn.downPoint.transform.position.z);
@@ -1462,13 +1476,12 @@ public class body2icon : MonoBehaviour
 
 				wallIcon.AdjMesh();
 			}
-
-			chang_bodydis.y = dis;
+			chang_bodydis.y = -dis;
 			ratio_bodydis.y = chang_bodydis.y / ini_bodydis.y;
 		}
 		else if (dragitemcontroller.chooseObj == columnIcon.rightColumn.body)
 		{
-			float dis = (tmp.x - columnIcon.rightColumn.upPoint.transform.position.x);
+			dis = (tmp.x - columnIcon.rightColumn.upPoint.transform.position.x);
 			for (int i = 0; i < columnIcon.rightColumn.allObjList.Count; i++)
 			{
 				columnIcon.rightColumn.allObjList[i].transform.position = new Vector3(tmp.x, columnIcon.rightColumn.allObjList[i].transform.position.y, columnIcon.rightColumn.allObjList[i].transform.position.z);
@@ -1492,7 +1505,7 @@ public class body2icon : MonoBehaviour
 		}
 		else if (dragitemcontroller.chooseObj == columnIcon.leftColumn.body)
 		{
-			float dis = (tmp.x - columnIcon.leftColumn.upPoint.transform.position.x);
+			dis = (tmp.x - columnIcon.leftColumn.upPoint.transform.position.x);
 
 			for (int i = 0; i < columnIcon.leftColumn.allObjList.Count; i++)
 			{
@@ -1540,7 +1553,7 @@ public class body2icon : MonoBehaviour
 		}
 		else if (dragitemcontroller.chooseObj == wallIcon.rightUpPoint)
 		{
-			float dis = (tmp.x - wallIcon.rightDownPoint.transform.position.x);
+			 dis = (tmp.x - wallIcon.rightDownPoint.transform.position.x);
 
 			wallIcon.leftUpPoint.transform.position = new Vector3(wallIcon.leftUpPoint.transform.position.x - (dis), wallIcon.leftUpPoint.transform.position.y, wallIcon.leftUpPoint.transform.position.z);
 			wallIcon.leftDownPoint.transform.position = new Vector3(wallIcon.leftDownPoint.transform.position.x - (dis), wallIcon.leftDownPoint.transform.position.y, wallIcon.leftDownPoint.transform.position.z);
@@ -1559,7 +1572,7 @@ public class body2icon : MonoBehaviour
 		}
 		else if (dragitemcontroller.chooseObj == wallIcon.leftUpPoint)
 		{
-			float dis = (tmp.x - wallIcon.leftDownPoint.transform.position.x);
+			dis = (tmp.x - wallIcon.leftDownPoint.transform.position.x);
 
 			wallIcon.rightUpPoint.transform.position = new Vector3(wallIcon.rightUpPoint.transform.position.x + (dis), wallIcon.rightUpPoint.transform.position.y, wallIcon.rightUpPoint.transform.position.z);
 			wallIcon.rightDownPoint.transform.position = new Vector3(wallIcon.rightDownPoint.transform.position.x + (dis), wallIcon.rightDownPoint.transform.position.y, wallIcon.rightDownPoint.transform.position.z);
@@ -1577,7 +1590,7 @@ public class body2icon : MonoBehaviour
 		}
 		else if (dragitemcontroller.chooseObj == wallIcon.rightDownPoint)
 		{
-			float dis = (tmp.x - wallIcon.rightUpPoint.transform.position.x);
+			dis = (tmp.x - wallIcon.rightUpPoint.transform.position.x);
 
 			wallIcon.leftUpPoint.transform.position = new Vector3(wallIcon.leftUpPoint.transform.position.x - (dis), wallIcon.leftUpPoint.transform.position.y, wallIcon.leftUpPoint.transform.position.z);
 			wallIcon.leftDownPoint.transform.position = new Vector3(wallIcon.leftDownPoint.transform.position.x - (dis), wallIcon.leftDownPoint.transform.position.y, wallIcon.leftDownPoint.transform.position.z);
@@ -1595,7 +1608,7 @@ public class body2icon : MonoBehaviour
 		}
 		else if (dragitemcontroller.chooseObj == wallIcon.leftDownPoint)
 		{
-			float dis = (tmp.x - wallIcon.leftUpPoint.transform.position.x);
+			dis = (tmp.x - wallIcon.leftUpPoint.transform.position.x);
 			wallIcon.rightUpPoint.transform.position = new Vector3(wallIcon.rightUpPoint.transform.position.x + (dis), wallIcon.rightUpPoint.transform.position.y, wallIcon.rightUpPoint.transform.position.z);
 			wallIcon.rightDownPoint.transform.position = new Vector3(wallIcon.rightDownPoint.transform.position.x + (dis), wallIcon.rightDownPoint.transform.position.y, wallIcon.rightDownPoint.transform.position.z);
 			wallIcon.leftUpPoint.transform.position = new Vector3(tmp.x, wallIcon.leftUpPoint.transform.position.y, wallIcon.leftUpPoint.transform.position.z);
@@ -1612,7 +1625,7 @@ public class body2icon : MonoBehaviour
 		}
 		else if (dragitemcontroller.chooseObj == wallIcon.rightUpWindowPoint)
 		{
-			float dis = (tmp.y - wallIcon.leftUpWindowPoint.transform.position.y);
+			dis = (tmp.y - wallIcon.leftUpWindowPoint.transform.position.y);
 			wallIcon.leftUpWindowPoint.transform.position = new Vector3(wallIcon.leftUpWindowPoint.transform.position.x, wallIcon.leftUpWindowPoint.transform.position.y+(dis), wallIcon.rightUpPoint.transform.position.z);
 
 			windowHeight = wallIcon.rightUpWindowPoint.transform.position.y - wallIcon.rightDownWindowPoint.transform.position.y;
@@ -1621,7 +1634,7 @@ public class body2icon : MonoBehaviour
 		}
 		else if (dragitemcontroller.chooseObj == wallIcon.leftUpWindowPoint)
 		{
-			float dis = (tmp.y - wallIcon.rightUpWindowPoint.transform.position.y);
+			dis = (tmp.y - wallIcon.rightUpWindowPoint.transform.position.y);
 			wallIcon.rightUpWindowPoint.transform.position = new Vector3(wallIcon.rightUpWindowPoint.transform.position.x, wallIcon.rightUpWindowPoint.transform.position.y + (dis), wallIcon.rightUpWindowPoint.transform.position.z);
 
 			windowHeight = wallIcon.leftUpWindowPoint.transform.position.y - wallIcon.leftDownWindowPoint.transform.position.y;
@@ -1630,7 +1643,7 @@ public class body2icon : MonoBehaviour
 		}
 		else if (dragitemcontroller.chooseObj == wallIcon.rightDownWindowPoint)
 		{
-			float dis = (tmp.y - wallIcon.leftDownWindowPoint.transform.position.y);
+			 dis = (tmp.y - wallIcon.leftDownWindowPoint.transform.position.y);
 			wallIcon.leftDownWindowPoint.transform.position = new Vector3(wallIcon.leftDownWindowPoint.transform.position.x, wallIcon.leftDownWindowPoint.transform.position.y + (dis), wallIcon.leftDownWindowPoint.transform.position.z);
 
 			windowHeight = wallIcon.rightUpWindowPoint.transform.position.y - wallIcon.rightDownWindowPoint.transform.position.y;
@@ -1639,7 +1652,7 @@ public class body2icon : MonoBehaviour
 		}
 		else if (dragitemcontroller.chooseObj == wallIcon.leftDownWindowPoint)
 		{
-			float dis = (tmp.y - wallIcon.rightDownWindowPoint.transform.position.y);
+			 dis = (tmp.y - wallIcon.rightDownWindowPoint.transform.position.y);
 			wallIcon.rightDownWindowPoint.transform.position = new Vector3(wallIcon.rightDownWindowPoint.transform.position.x, wallIcon.rightDownWindowPoint.transform.position.y + (dis), wallIcon.rightDownWindowPoint.transform.position.z);
 
 			windowHeight = wallIcon.leftUpWindowPoint.transform.position.y - wallIcon.leftDownWindowPoint.transform.position.y;
