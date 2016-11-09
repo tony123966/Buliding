@@ -608,7 +608,12 @@ public class IconObject : lineRendererControl
 	public MeshFilter mFilter;
 	public MeshRenderer mRenderer;
 	public Vector3[] lastControlPointPosition;
-
+	public Material outLineShader;
+	public IconObject() 
+	{
+		if (Shader.Find("Outlined/Silhouetted Bumped Diffuse")) 
+			outLineShader = new Material(Shader.Find("Outlined/Silhouetted Bumped Diffuse"));
+	}
 	public Vector3 AdjPos( Vector3 tmp, int index,Vector3 center)
 	{
 		Vector3[] points2Center = new Vector3[controlPointList.Count];
@@ -638,8 +643,10 @@ public class IconObject : lineRendererControl
 	public void SetIconObjectColor() 
 	{
 		mRenderer.material.color = Color.red;
-		foreach (GameObject controlPoint in controlPointList)
+		foreach (GameObject controlPoint in controlPointList) {
+			controlPoint.GetComponent<MeshRenderer>().material=outLineShader;
 			controlPoint.GetComponent<MeshRenderer>().material.color=Color.yellow;
+		}
 	
 	}
 	public void AdjMesh()

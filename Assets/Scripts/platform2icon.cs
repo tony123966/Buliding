@@ -163,6 +163,7 @@ using System.Collections;
 using System.Collections.Generic;
 public class BasedPlatformIcon : RecMeshCreate
 {
+	public enum PointIndex { LeftUpPoint = 0, RightUpPoint = 1, RightDownPoint = 2, LeftDownPoint = 3, };
 	public GameObject rightUpPoint;
 	public GameObject rightDownPoint;
 	public GameObject leftUpPoint;
@@ -173,15 +174,15 @@ public class BasedPlatformIcon : RecMeshCreate
 		body = new GameObject(objName);
 		mFilter = body.AddComponent<MeshFilter>();
 
-		this.rightUpPoint = controlPointList[1];
-		this.rightDownPoint = controlPointList[2];
-		this.leftUpPoint = controlPointList[0];
-		this.leftDownPoint = controlPointList[3];
+		this.rightUpPoint = controlPointList[(int)PointIndex.RightUpPoint];
+		this.rightDownPoint = controlPointList[(int)PointIndex.RightDownPoint];
+		this.leftUpPoint = controlPointList[(int)PointIndex.LeftUpPoint];
+		this.leftDownPoint = controlPointList[(int)PointIndex.LeftDownPoint];
 		this.controlPointList = controlPointList;
 		mRenderer = body.AddComponent<MeshRenderer>() as MeshRenderer;
 		mFilter.mesh = CreatRecMesh(leftUpPoint.transform.position, rightUpPoint.transform.position, rightDownPoint.transform.position, leftDownPoint.transform.position, null);
 		lastControlPointPosition = mFilter.mesh.vertices;
-		Debug.Log("lastControlPointPosition:" + lastControlPointPosition.Length);
+
 		body.transform.parent = thisGameObject.transform;
 
 		InitLineRender(thisGameObject);
@@ -221,15 +222,16 @@ public class BasedPlatformIcon : RecMeshCreate
 	}
 	public override void UpdateLineRender()
 	{
-		controlPointList_Vec3[0] = (leftUpPoint.transform.position);
-		controlPointList_Vec3[1] = (rightUpPoint.transform.position);
-		controlPointList_Vec3[2] = (rightDownPoint.transform.position);
-		controlPointList_Vec3[3] = (leftDownPoint.transform.position);
+		controlPointList_Vec3[(int)PointIndex.LeftUpPoint] = (leftUpPoint.transform.position);
+		controlPointList_Vec3[(int)PointIndex.RightUpPoint] = (rightUpPoint.transform.position);
+		controlPointList_Vec3[(int)PointIndex.RightDownPoint] = (rightDownPoint.transform.position);
+		controlPointList_Vec3[(int)PointIndex.LeftDownPoint] = (leftDownPoint.transform.position);
 		base.UpdateLineRender();
 	}
 }
 public class platform2icon : MonoBehaviour
 {
+	public enum PointIndex { LeftUpPoint = 0, RightUpPoint = 1, RightDownPoint = 2, LeftDownPoint = 3, };
 	public List<GameObject> controlPointList = new List<GameObject>();
 
 
@@ -255,8 +257,8 @@ public class platform2icon : MonoBehaviour
 
 		basedPlatformIcon.BasedPlatformIconCreate(this, "BasedPlatformIcon_mesh", controlPointList);
 
-		ini_platdis.x = (controlPointList[1].transform.position.x - controlPointList[0].transform.position.x);
-		ini_platdis.y = (controlPointList[1].transform.position.y - controlPointList[2].transform.position.y);
+		ini_platdis.x = (controlPointList[(int)PointIndex.RightUpPoint].transform.position.x - controlPointList[(int)PointIndex.LeftUpPoint].transform.position.x);
+		ini_platdis.y = (controlPointList[(int)PointIndex.RightUpPoint].transform.position.y - controlPointList[(int)PointIndex.RightDownPoint].transform.position.y);
 
 		return basedPlatformIcon;
 	}
@@ -291,25 +293,25 @@ public class platform2icon : MonoBehaviour
 			float minWidth = (ini_platdis.x) * 0.4f;
 			float minHeight = (ini_platdis.y) * 0.4f;
 
-		if (dragitemcontroller.chooseObj == controlPointList[0])
+			if (dragitemcontroller.chooseObj == controlPointList[(int)PointIndex.LeftUpPoint])
 		{
-			maxClampX = controlPointList[1].transform.position.x - minWidth;
-			minClampY = controlPointList[3].transform.position.y + minHeight;
+			maxClampX = controlPointList[(int)PointIndex.RightUpPoint].transform.position.x - minWidth;
+			minClampY = controlPointList[(int)PointIndex.LeftDownPoint].transform.position.y + minHeight;
 		}
-		else if (dragitemcontroller.chooseObj == controlPointList[3])
+		else if (dragitemcontroller.chooseObj == controlPointList[(int)PointIndex.LeftDownPoint])
 		{
-			maxClampX = controlPointList[1].transform.position.x - minWidth;
-			maxClampY = controlPointList[0].transform.position.y - minHeight;
+			maxClampX = controlPointList[(int)PointIndex.RightUpPoint].transform.position.x - minWidth;
+			maxClampY = controlPointList[(int)PointIndex.LeftUpPoint].transform.position.y - minHeight;
 		}
-		else if (dragitemcontroller.chooseObj == controlPointList[1])
+			else if (dragitemcontroller.chooseObj == controlPointList[(int)PointIndex.RightUpPoint])
 		{
-			minClampX = controlPointList[0].transform.position.x + minWidth;
-			minClampY = controlPointList[2].transform.position.y + minHeight;
+			minClampX = controlPointList[(int)PointIndex.LeftUpPoint].transform.position.x + minWidth;
+			minClampY = controlPointList[(int)PointIndex.RightDownPoint].transform.position.y + minHeight;
 		}
-		else if (dragitemcontroller.chooseObj == controlPointList[2])
+			else if (dragitemcontroller.chooseObj == controlPointList[(int)PointIndex.RightDownPoint])
 		{
-			minClampX = controlPointList[0].transform.position.x + minWidth;
-			maxClampY = controlPointList[1].transform.position.y - minHeight;
+			minClampX = controlPointList[(int)PointIndex.LeftUpPoint].transform.position.x + minWidth;
+			maxClampY = controlPointList[(int)PointIndex.RightUpPoint].transform.position.y - minHeight;
 		}
 		float posX = Mathf.Clamp(inputPos.x, minClampX, maxClampX);
 		float posY = Mathf.Clamp(inputPos.y, minClampY, maxClampY);

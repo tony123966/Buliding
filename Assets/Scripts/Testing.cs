@@ -205,10 +205,12 @@ public class BasedRoofIcon : IconObject
 		mRenderer.material.color = Color.red;
 		for (int i = 0; i < rightRoofLine.bodyControlPointList.Count; i++)
 		{
+			rightRoofLine.bodyControlPointList[i].GetComponent<MeshRenderer>().material=outLineShader;
 			rightRoofLine.bodyControlPointList[i].GetComponent<MeshRenderer>().material.color = Color.yellow;
 		}
 		for (int i = 0; i < rightRoofLine.tailControlPointList.Count; i++)
 		{
+		rightRoofLine.tailControlPointList[i].GetComponent<MeshRenderer>().material=outLineShader;
 			rightRoofLine.tailControlPointList[i].GetComponent<MeshRenderer>().material.color = Color.yellow;
 		}
 	}
