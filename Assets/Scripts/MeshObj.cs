@@ -602,9 +602,10 @@ public class lineRendererControl
 }
 public class IconObject : lineRendererControl
 {
+	public enum BodyType { GeneralBody=0,CylinderBody=1,} 
 	public List<GameObject> controlPointList = new List<GameObject>();
+	public List<Vector3> controlPointList_Vec3_2_LineRender = new List<Vector3>();//用於lineRenderer的controlPoint
 	public GameObject body = null;
-	public int edgeIndex;
 	public MeshFilter mFilter;
 	public MeshRenderer mRenderer;
 	public Vector3[] lastControlPointPosition;
@@ -614,6 +615,33 @@ public class IconObject : lineRendererControl
 		if (Shader.Find("Outlined/Silhouetted Bumped Diffuse")) 
 			outLineShader = new Material(Shader.Find("Outlined/Silhouetted Bumped Diffuse"));
 	}
+	public void InitBodySetting(string objName,int bodyType)
+	{
+		switch (bodyType)
+		{
+			case (int)BodyType.GeneralBody:
+				body = new GameObject(objName);
+				mFilter = body.AddComponent<MeshFilter>();
+				mRenderer = body.AddComponent<MeshRenderer>() as MeshRenderer;
+			break;
+			case (int)BodyType.CylinderBody:
+				body = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+				mFilter = body.GetComponent<MeshFilter>();
+				mRenderer = body.GetComponent<MeshRenderer>() as MeshRenderer;
+				this.body.tag = "Cylinder";
+			break;
+		}
+		mRenderer.sortingOrder = 0;
+	}
+	public void InitControlPointList2lastControlPointPosition() 
+	{
+		lastControlPointPosition = new Vector3[controlPointList.Count];
+		for(int i=0;i<controlPointList.Count;i++)
+		{
+			lastControlPointPosition[i] = controlPointList[i].transform.position;
+		}
+	}
+	//縮放
 	public Vector3 AdjPos( Vector3 tmp, int index,Vector3 center)
 	{
 		Vector3[] points2Center = new Vector3[controlPointList.Count];
@@ -647,7 +675,6 @@ public class IconObject : lineRendererControl
 			controlPoint.GetComponent<MeshRenderer>().material=outLineShader;
 			controlPoint.GetComponent<MeshRenderer>().material.color=Color.yellow;
 		}
-	
 	}
 	public void AdjMesh()
 	{
@@ -680,20 +707,40 @@ public class IconObject : lineRendererControl
 			AdjLineRenderer(i, lineRenderList[i].startControlPoint, lineRenderList[i].endControlPoint);
 		}
 	}
-
+	public GameObject CreateControlPoint(string objName, Vector3 localScale, Vector3 pos) 
+	{
+		GameObject obj = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+		obj.tag = "ControlPoint";
+		obj.name = objName;
+		obj.transform.localScale = localScale;
+		obj.transform.position = pos;
+		return obj;
+	}
+	public void SetParent2BodyAndControlPointList<T>(T thisGameObject)
+	where T : Component 
+	{
+		if(body!=null)body.transform.parent = thisGameObject.transform;
+		for(int i=0;i<controlPointList.Count;i++)
+		{
+			controlPointList[i].transform.parent = thisGameObject.transform;
+		}
+	}
 }
 public class VerandaIcon : IconObject//廡殿頂
 {
+	public int edgeIndex = 4;
 	public void VerandaIconCreate<T>(T thisGameObject, string objName, List<GameObject> controlPointList) where T : Component
 	{
-		edgeIndex = 4;
 		body = new GameObject(objName);
+		body.transform.parent = thisGameObject.transform;
 		mFilter = body.AddComponent<MeshFilter>();
 		mRenderer = body.AddComponent<MeshRenderer>() as MeshRenderer;
 		mRenderer.sortingOrder = 0;
+
 		this.controlPointList = controlPointList;
+		InitControlPointList2lastControlPointPosition();
 		//Debug.Log("ghgfhfghgh:" + this.controlPointList.Count);
-		mFilter.mesh=new Mesh();
+		mFilter.mesh = new Mesh();
 		mFilter.mesh.vertices = new Vector3[] {
 					controlPointList [0].transform.position,
 					controlPointList [1].transform.position,
@@ -703,10 +750,7 @@ public class VerandaIcon : IconObject//廡殿頂
 					controlPointList [5].transform.position
 					};
 		mFilter.mesh.triangles = new int[] { 0, 1, 2, 0, 2, 3 };
-		lastControlPointPosition = mFilter.mesh.vertices;
 		mFilter.mesh.RecalculateNormals();
-
-		body.transform.parent = thisGameObject.transform;
 
 		InitLineRender(thisGameObject);
 		SetIconObjectColor();
@@ -765,15 +809,18 @@ public class VerandaIcon : IconObject//廡殿頂
 }
 public class ShandingIcon : IconObject//歇山頂
 {
+	public int edgeIndex = 4;
 	public void ShandingIconCreate<T>(T thisGameObject, string objName, List<GameObject> controlPointList) where T : Component
 	{
-		edgeIndex = 4;
 		body = new GameObject(objName);
+		body.transform.parent = thisGameObject.transform;
 		mFilter = body.AddComponent<MeshFilter>();
 		mRenderer = body.AddComponent<MeshRenderer>() as MeshRenderer;
 		mRenderer.sortingOrder = 0;
-		mFilter.mesh = new Mesh();
+
 		this.controlPointList = controlPointList;
+		InitControlPointList2lastControlPointPosition();
+		mFilter.mesh = new Mesh();
 		mFilter.mesh.vertices = new Vector3[] {
 					controlPointList [0].transform.position,
 					controlPointList [1].transform.position,
@@ -787,10 +834,7 @@ public class ShandingIcon : IconObject//歇山頂
 					controlPointList [9].transform.position,
 					};
 		mFilter.mesh.triangles = new int[] { 0, 1, 2, 0, 2, 3 };
-		lastControlPointPosition = mFilter.mesh.vertices;
 		mFilter.mesh.RecalculateNormals();
-
-		body.transform.parent = thisGameObject.transform;
 
 		InitLineRender(thisGameObject);
 		SetIconObjectColor();
@@ -884,16 +928,18 @@ public class ShandingIcon : IconObject//歇山頂
 
 public class TriangleIcon : IconObject//三角形
 {
+	public int edgeIndex = 3;
 	public void TriangleIconCreate<T>(T thisGameObject, string objName, List<GameObject> controlPointList) where T : Component
 	{
-		edgeIndex = 3;
 		body = new GameObject(objName);
+		body.transform.parent = thisGameObject.transform;
 		mFilter = body.AddComponent<MeshFilter>();
 		mRenderer = body.AddComponent<MeshRenderer>() as MeshRenderer;
 		mRenderer.sortingOrder = 0;
-		mFilter.mesh = new Mesh();
+
 		this.controlPointList = controlPointList;
-	
+		InitControlPointList2lastControlPointPosition();
+		mFilter.mesh = new Mesh();
 		mFilter.mesh.vertices = new Vector3[] {
 				controlPointList [0].transform.position,
 				controlPointList [1].transform.position,
@@ -901,10 +947,8 @@ public class TriangleIcon : IconObject//三角形
 			};
 		mFilter.mesh.triangles = new int[] { 0, 1, 2 };
 	
-		lastControlPointPosition = mFilter.mesh.vertices;
 		mFilter.mesh.RecalculateNormals();
 
-		body.transform.parent = thisGameObject.transform;
 
 		InitLineRender(thisGameObject);
 		SetIconObjectColor();
@@ -912,15 +956,18 @@ public class TriangleIcon : IconObject//三角形
 }
 public class RectangleIcon : IconObject//四角形
 {
+	public int edgeIndex = 4;
 	public void RectangleIconCreate<T>(T thisGameObject, string objName, List<GameObject> controlPointList) where T : Component
 	{
-		edgeIndex = 4;
 		body = new GameObject(objName);
+		body.transform.parent = thisGameObject.transform;
 		mFilter = body.AddComponent<MeshFilter>();
 		mRenderer = body.AddComponent<MeshRenderer>() as MeshRenderer;
 		mRenderer.sortingOrder = 0;
-		mFilter.mesh = new Mesh();
+
 		this.controlPointList = controlPointList;
+		InitControlPointList2lastControlPointPosition();
+		mFilter.mesh = new Mesh();
 		mFilter.mesh.vertices = new Vector3[] {
 				controlPointList [0].transform.position,
 				controlPointList [1].transform.position,
@@ -929,10 +976,8 @@ public class RectangleIcon : IconObject//四角形
 			};
 
 		mFilter.mesh.triangles = new int[] { 0, 1, 2, 0, 2, 3 };
-		lastControlPointPosition = mFilter.mesh.vertices;
 		mFilter.mesh.RecalculateNormals();
 
-		body.transform.parent = thisGameObject.transform;
 
 		InitLineRender(thisGameObject);
 		SetIconObjectColor();
@@ -940,15 +985,18 @@ public class RectangleIcon : IconObject//四角形
 }
 public class PentagonIcon : IconObject//五邊形
 {
+	public int edgeIndex = 5;
 	public void PentagonIconCreate<T>(T thisGameObject, string objName, List<GameObject> controlPointList) where T : Component
 	{
-		edgeIndex = 5;
 		body = new GameObject(objName);
+		body.transform.parent = thisGameObject.transform;
 		mFilter = body.AddComponent<MeshFilter>();
 		mRenderer = body.AddComponent<MeshRenderer>() as MeshRenderer;
 		mRenderer.sortingOrder = 0;
-		mFilter.mesh = new Mesh();
+
 		this.controlPointList = controlPointList;
+		InitControlPointList2lastControlPointPosition();
+		mFilter.mesh = new Mesh();
 		mFilter.mesh.vertices = new Vector3[] {
 				controlPointList [0].transform.position,
 				controlPointList [1].transform.position,
@@ -957,10 +1005,8 @@ public class PentagonIcon : IconObject//五邊形
 				controlPointList [4].transform.position,
 			};
 		mFilter.mesh.triangles = new int[] { 0, 1, 2, 0, 2, 3, 0, 3, 4 };
-		lastControlPointPosition = mFilter.mesh.vertices;
 		mFilter.mesh.RecalculateNormals();
 
-		body.transform.parent = thisGameObject.transform;
 
 		InitLineRender(thisGameObject);
 		SetIconObjectColor();
@@ -968,15 +1014,19 @@ public class PentagonIcon : IconObject//五邊形
 }
 public class HexagonIcon : IconObject//六邊形
 {
+	public int edgeIndex=6;
 	public void HexagonIconCreate<T>(T thisGameObject, string objName, List<GameObject> controlPointList) where T : Component
 	{
-		edgeIndex = 6;
 		body = new GameObject(objName);
+		body.transform.parent = thisGameObject.transform;
 		mFilter = body.AddComponent<MeshFilter>();
 		mRenderer = body.AddComponent<MeshRenderer>() as MeshRenderer;
 		mRenderer.sortingOrder = 0;
-		mFilter.mesh = new Mesh();
+
 		this.controlPointList = controlPointList;
+		InitControlPointList2lastControlPointPosition();
+
+		mFilter.mesh = new Mesh();
 		mFilter.mesh.vertices = new Vector3[] {
 					controlPointList [0].transform.position,
 					controlPointList [1].transform.position,
@@ -986,10 +1036,7 @@ public class HexagonIcon : IconObject//六邊形
 					controlPointList [5].transform.position
 		};
 		mFilter.mesh.triangles = new int[] { 0, 1, 2, 0, 2, 3, 0, 3, 4, 0, 4, 5 };
-		lastControlPointPosition = mFilter.mesh.vertices;
 		mFilter.mesh.RecalculateNormals();
-
-		body.transform.parent = thisGameObject.transform;
 
 		InitLineRender(thisGameObject);
 		SetIconObjectColor();

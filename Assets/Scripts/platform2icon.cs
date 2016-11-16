@@ -168,23 +168,26 @@ public class BasedPlatformIcon : RecMeshCreate
 	public GameObject rightDownPoint;
 	public GameObject leftUpPoint;
 	public GameObject leftDownPoint;
-	public void BasedPlatformIconCreate<T>(T thisGameObject, string objName, List<GameObject> controlPointList)
+	public void BasedPlatformIconCreate<T>(T thisGameObject, string objName, GameObject leftUpPoint, GameObject rightUpPoint, GameObject rightDownPoint, GameObject leftDownPoint)
 	where T : Component
 	{
-		body = new GameObject(objName);
-		mFilter = body.AddComponent<MeshFilter>();
+		InitBodySetting("BasedPlatformIcon",(int)BodyType.GeneralBody);
 
-		this.rightUpPoint = controlPointList[(int)PointIndex.RightUpPoint];
-		this.rightDownPoint = controlPointList[(int)PointIndex.RightDownPoint];
-		this.leftUpPoint = controlPointList[(int)PointIndex.LeftUpPoint];
-		this.leftDownPoint = controlPointList[(int)PointIndex.LeftDownPoint];
-		this.controlPointList = controlPointList;
-		mRenderer = body.AddComponent<MeshRenderer>() as MeshRenderer;
+		this.rightUpPoint = rightUpPoint;
+		this.rightDownPoint = rightDownPoint;
+		this.leftUpPoint = leftUpPoint;
+		this.leftDownPoint = leftDownPoint;
+
 		mFilter.mesh = CreatRecMesh(leftUpPoint.transform.position, rightUpPoint.transform.position, rightDownPoint.transform.position, leftDownPoint.transform.position, null);
-		lastControlPointPosition = mFilter.mesh.vertices;
 
-		body.transform.parent = thisGameObject.transform;
+		//初始位置
+		controlPointList.Add(leftUpPoint);
+		controlPointList.Add(rightUpPoint);
+		controlPointList.Add(rightDownPoint);
+		controlPointList.Add(leftDownPoint);
+		InitControlPointList2lastControlPointPosition();
 
+		SetParent2BodyAndControlPointList(thisGameObject);
 		InitLineRender(thisGameObject);
 		SetIconObjectColor();
 	}
@@ -211,22 +214,6 @@ public class BasedPlatformIcon : RecMeshCreate
 		  UpdateLastPos();
 		  UpdateLineRender();
 		return new Vector3(offset_x, offset_y,0);
-	}
-	public override void InitLineRender<T>(T thisGameObject)
-	{
-		controlPointList_Vec3.Add(leftUpPoint.transform.position);
-		controlPointList_Vec3.Add(rightUpPoint.transform.position);
-		controlPointList_Vec3.Add(rightDownPoint.transform.position);
-		controlPointList_Vec3.Add(leftDownPoint.transform.position);
-		base.InitLineRender(thisGameObject);
-	}
-	public override void UpdateLineRender()
-	{
-		controlPointList_Vec3[(int)PointIndex.LeftUpPoint] = (leftUpPoint.transform.position);
-		controlPointList_Vec3[(int)PointIndex.RightUpPoint] = (rightUpPoint.transform.position);
-		controlPointList_Vec3[(int)PointIndex.RightDownPoint] = (rightDownPoint.transform.position);
-		controlPointList_Vec3[(int)PointIndex.LeftDownPoint] = (leftDownPoint.transform.position);
-		base.UpdateLineRender();
 	}
 }
 public class platform2icon : MonoBehaviour
@@ -255,7 +242,7 @@ public class platform2icon : MonoBehaviour
 	{
 		BasedPlatformIcon basedPlatformIcon = new BasedPlatformIcon();
 
-		basedPlatformIcon.BasedPlatformIconCreate(this, "BasedPlatformIcon_mesh", controlPointList);
+		basedPlatformIcon.BasedPlatformIconCreate(this, "BasedPlatformIcon_mesh", controlPointList[(int)PointIndex.LeftUpPoint], controlPointList[(int)PointIndex.RightUpPoint], controlPointList[(int)PointIndex.RightDownPoint], controlPointList[(int)PointIndex.LeftDownPoint]);
 
 		ini_platdis.x = (controlPointList[(int)PointIndex.RightUpPoint].transform.position.x - controlPointList[(int)PointIndex.LeftUpPoint].transform.position.x);
 		ini_platdis.y = (controlPointList[(int)PointIndex.RightUpPoint].transform.position.y - controlPointList[(int)PointIndex.RightDownPoint].transform.position.y);

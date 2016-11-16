@@ -2268,8 +2268,6 @@ using System.Collections.Generic;
 
 public class RecMeshCreate : IconObject
 {
-	public List<Vector3> controlPointList_Vec3 = new List<Vector3>();//用於lineRenderer
-
 	public Mesh CreatRecMesh(Vector3 lu, Vector3 ru, Vector3 rd, Vector3 ld, Mesh ismesh)
 	{
 		Mesh m;
@@ -2294,22 +2292,31 @@ public class RecMeshCreate : IconObject
 	}
 	public override void InitLineRender<T>(T thisGameObject)
 	{
-		for (int i = 0; i < controlPointList_Vec3.Count; i++)
+		for (int i = 0; i < controlPointList.Count; i++)
 		{
-			if (i != controlPointList_Vec3.Count - 1)
-				CreateLineRenderer(thisGameObject, controlPointList_Vec3[i], controlPointList_Vec3[i + 1]);
+			controlPointList_Vec3_2_LineRender.Add(controlPointList[i].transform.position);
+		}
+
+		for (int i = 0; i < controlPointList_Vec3_2_LineRender.Count; i++)
+		{
+			if (i != controlPointList_Vec3_2_LineRender.Count - 1)
+				CreateLineRenderer(thisGameObject, controlPointList_Vec3_2_LineRender[i], controlPointList_Vec3_2_LineRender[i + 1]);
 			else
-				CreateLineRenderer(thisGameObject, controlPointList_Vec3[i], controlPointList_Vec3[0]);
+				CreateLineRenderer(thisGameObject, controlPointList_Vec3_2_LineRender[i], controlPointList_Vec3_2_LineRender[0]);
 		}
 	}
 	public override void UpdateLineRender()
 	{
+		for (int i = 0; i < controlPointList.Count; i++)
+		{
+			controlPointList_Vec3_2_LineRender[i] = (controlPointList[i].transform.position);
+		}
 		for (int i = 0; i < lineRenderList.Count; i++)
 		{
-			if (i != controlPointList_Vec3.Count - 1)
-				AdjLineRenderer(i, controlPointList_Vec3[i], controlPointList_Vec3[i + 1]);
+			if (i != controlPointList_Vec3_2_LineRender.Count - 1)
+				AdjLineRenderer(i, controlPointList_Vec3_2_LineRender[i], controlPointList_Vec3_2_LineRender[i + 1]);
 			else
-				AdjLineRenderer(i, controlPointList_Vec3[i], controlPointList_Vec3[0]);
+				AdjLineRenderer(i, controlPointList_Vec3_2_LineRender[i], controlPointList_Vec3_2_LineRender[0]);
 		}
 	}
 }
@@ -2325,8 +2332,10 @@ public class DoubleRoofIcon : RecMeshCreate
 	public void DoubleRoofIconCreate<T>(T thisGameObject, string objName, ColumnIcon columnIcon, float doubleRoofHeight, float doubleRoofWidth)
 	where T : Component
 	{
-		body = new GameObject(objName);
-		mFilter = body.AddComponent<MeshFilter>();
+		InitBodySetting(objName,(int)BodyType.GeneralBody);
+
+		this.doubleRoofHeight=doubleRoofHeight;
+		this.doubleRoofWidth = doubleRoofWidth;
 
 		rightDownPoint = columnIcon.rightColumn.upPoint.transform.position;
 		leftDownPoint = columnIcon.leftColumn.upPoint.transform.position;
@@ -2338,16 +2347,17 @@ public class DoubleRoofIcon : RecMeshCreate
 		rightDownPoint.x = rightDownPoint.x + doubleRoofWidth;
 		leftDownPoint.x = leftDownPoint.x - doubleRoofWidth;
 
-		mRenderer = body.AddComponent<MeshRenderer>() as MeshRenderer;
 		mFilter.mesh = CreatRecMesh(leftUpPoint, rightUpPoint, rightDownPoint, leftDownPoint, null);
 
-		body.transform.parent = thisGameObject.transform;
-
+		SetParent2BodyAndControlPointList(thisGameObject);
 		InitLineRender(thisGameObject);
 		SetIconObjectColor();
 	}
 	public void AdjMesh(ColumnIcon columnIcon, float doubleRoofHeight, float doubleRoofWidth)
 	{
+		this.doubleRoofHeight = doubleRoofHeight;
+		this.doubleRoofWidth = doubleRoofWidth;
+
 		rightDownPoint = new Vector3(columnIcon.rightColumn.upPoint.transform.position.x, columnIcon.rightColumn.upPoint.transform.position.y, columnIcon.rightColumn.upPoint.transform.position.z);
 		leftDownPoint = new Vector3(columnIcon.leftColumn.upPoint.transform.position.x, columnIcon.leftColumn.upPoint.transform.position.y, columnIcon.leftColumn.upPoint.transform.position.z);
 
@@ -2363,25 +2373,38 @@ public class DoubleRoofIcon : RecMeshCreate
 
 		UpdateLineRender();
 	}
-	public override void InitLineRender<T>(T thisGameObject)
-	{
-		controlPointList_Vec3.Add(leftUpPoint);
-		controlPointList_Vec3.Add(rightUpPoint);
-		controlPointList_Vec3.Add(rightDownPoint);
-		controlPointList_Vec3.Add(leftDownPoint);
-		base.InitLineRender(thisGameObject);
-	}
-	public override void UpdateLineRender()
-	{
-		controlPointList_Vec3[(int)PointIndex.LeftUpPoint] = (leftUpPoint);
-		controlPointList_Vec3[(int)PointIndex.RightUpPoint] = (rightUpPoint);
-		controlPointList_Vec3[(int)PointIndex.RightDownPoint] = (rightDownPoint);
-		controlPointList_Vec3[(int)PointIndex.LeftDownPoint] = (leftDownPoint);
-		base.UpdateLineRender();
-	}
 	public void SetIconObjectColor()
 	{
 		mRenderer.material.color = Color.red;
+	}
+	public override void InitLineRender<T>(T thisGameObject)
+	{
+		controlPointList_Vec3_2_LineRender.Add(leftUpPoint);
+		controlPointList_Vec3_2_LineRender.Add(rightUpPoint);
+		controlPointList_Vec3_2_LineRender.Add(rightDownPoint);
+		controlPointList_Vec3_2_LineRender.Add(leftDownPoint);
+
+		for (int i = 0; i < controlPointList_Vec3_2_LineRender.Count; i++)
+		{
+			if (i != controlPointList_Vec3_2_LineRender.Count - 1)
+				CreateLineRenderer(thisGameObject, controlPointList_Vec3_2_LineRender[i], controlPointList_Vec3_2_LineRender[i + 1]);
+			else
+				CreateLineRenderer(thisGameObject, controlPointList_Vec3_2_LineRender[i], controlPointList_Vec3_2_LineRender[0]);
+		}
+	}
+	public override void UpdateLineRender()
+	{
+		controlPointList_Vec3_2_LineRender[(int)PointIndex.LeftUpPoint] = (leftUpPoint);
+		controlPointList_Vec3_2_LineRender[(int)PointIndex.RightUpPoint] = (rightUpPoint);
+		controlPointList_Vec3_2_LineRender[(int)PointIndex.RightDownPoint] = (rightDownPoint);
+		controlPointList_Vec3_2_LineRender[(int)PointIndex.LeftDownPoint] = (leftDownPoint);
+		for (int i = 0; i < lineRenderList.Count; i++)
+		{
+			if (i != controlPointList_Vec3_2_LineRender.Count - 1)
+				AdjLineRenderer(i, controlPointList_Vec3_2_LineRender[i], controlPointList_Vec3_2_LineRender[i + 1]);
+			else
+				AdjLineRenderer(i, controlPointList_Vec3_2_LineRender[i], controlPointList_Vec3_2_LineRender[0]);
+		}
 	}
 }
 public class FriezeIcon : RecMeshCreate
@@ -2394,6 +2417,8 @@ public class FriezeIcon : RecMeshCreate
 	public float friezeHeight;
 	public void FriezeIconCreate<T>(T thisGameObject, string objName, ColumnIcon columnIcon, float ini_friezeHeight) where T : Component
 	{
+		InitBodySetting(objName, (int)BodyType.GeneralBody);
+
 		Vector3 h = new Vector3(0.0f, ini_friezeHeight, 0.0f);
 		friezeHeight = ini_friezeHeight;
 		rightUpPoint = columnIcon.rightColumn.upPoint;
@@ -2402,40 +2427,22 @@ public class FriezeIcon : RecMeshCreate
 		Vector3 leftDownPointPos = leftUpPoint.transform.position - h;
 
 		//frieze cp
-		columnIcon.rightColumn.friezePoint = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-		columnIcon.rightColumn.friezePoint.tag = "ControlPoint";
-		columnIcon.rightColumn.friezePoint.name = "FRD";
-		columnIcon.rightColumn.friezePoint.transform.localScale = columnIcon.rightColumn.downPoint.transform.localScale;
-		columnIcon.rightColumn.friezePoint.transform.position = rightDownPointPos;
-		rightDownPoint = columnIcon.rightColumn.friezePoint;
+		rightDownPoint = columnIcon.rightColumn.friezePoint = CreateControlPoint("FRD", columnIcon.rightColumn.downPoint.transform.localScale, rightDownPointPos);
+		leftDownPoint = columnIcon.leftColumn.friezePoint = CreateControlPoint("FLD", columnIcon.rightColumn.downPoint.transform.localScale, leftDownPointPos); ;
 
-		columnIcon.leftColumn.friezePoint = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-		columnIcon.leftColumn.friezePoint.tag = "ControlPoint";
-		columnIcon.leftColumn.friezePoint.name = "FLD";
-		columnIcon.leftColumn.friezePoint.transform.localScale = columnIcon.rightColumn.downPoint.transform.localScale;
-		columnIcon.leftColumn.friezePoint.transform.position = leftDownPointPos;
-		leftDownPoint = columnIcon.leftColumn.friezePoint;
 
-		body = new GameObject(objName);
-
-		mFilter = body.AddComponent<MeshFilter>();
 		mFilter.mesh = CreatRecMesh(leftUpPoint.transform.position, rightUpPoint.transform.position, rightDownPoint.transform.position, leftDownPoint.transform.position, null);
 		//初始位置
 		controlPointList.Add(leftUpPoint);
 		controlPointList.Add(rightUpPoint);
 		controlPointList.Add(rightDownPoint);
 		controlPointList.Add(leftDownPoint);
-		lastControlPointPosition = mFilter.mesh.vertices;
+		InitControlPointList2lastControlPointPosition();
 
 		columnIcon.leftColumn.controlPointList.Add(columnIcon.leftColumn.friezePoint);
 		columnIcon.rightColumn.controlPointList.Add(columnIcon.rightColumn.friezePoint);
 
-		mRenderer = body.AddComponent<MeshRenderer>() as MeshRenderer;
-
-		body.transform.parent = thisGameObject.transform;
-		columnIcon.rightColumn.friezePoint.transform.parent = thisGameObject.transform;
-		columnIcon.leftColumn.friezePoint.transform.parent = thisGameObject.transform;
-
+		SetParent2BodyAndControlPointList(thisGameObject);
 		InitLineRender(thisGameObject);
 		SetIconObjectColor();
 	}
@@ -2450,22 +2457,6 @@ public class FriezeIcon : RecMeshCreate
 
 		UpdateLineRender();
 
-	}
-	public override void InitLineRender<T>(T thisGameObject)
-	{
-		controlPointList_Vec3.Add(leftUpPoint.transform.position);
-		controlPointList_Vec3.Add(rightUpPoint.transform.position);
-		controlPointList_Vec3.Add(rightDownPoint.transform.position);
-		controlPointList_Vec3.Add(leftDownPoint.transform.position);
-		base.InitLineRender(thisGameObject);
-	}
-	public override void UpdateLineRender()
-	{
-		controlPointList_Vec3[(int)PointIndex.LeftUpPoint] = (leftUpPoint.transform.position);
-		controlPointList_Vec3[(int)PointIndex.RightUpPoint] = (rightUpPoint.transform.position);
-		controlPointList_Vec3[(int)PointIndex.RightDownPoint] = (rightDownPoint.transform.position);
-		controlPointList_Vec3[(int)PointIndex.LeftDownPoint] = (leftDownPoint.transform.position);
-		base.UpdateLineRender();
 	}
 	public void SetIconObjectColor()
 	{
@@ -2502,65 +2493,27 @@ public class WallIcon : RecMeshCreate
 
 	public void WallIconCreate<T>(T thisGameObject, string objName, ColumnIcon columnIcon, float ini_wallWidth, float ini_windowsHeight) where T : Component
 	{
+		InitBodySetting(objName, (int)BodyType.GeneralBody);
+
 		Vector3 wallOffset = new Vector3(Mathf.Abs(columnIcon.rightColumn.upPoint.transform.transform.position.x - columnIcon.leftColumn.upPoint.transform.transform.position.x) / 2.0f - ini_wallWidth, 0, 0);
 		float columnHeight = columnIcon.rightColumn.upPoint.transform.transform.position.y - columnIcon.rightColumn.downPoint.transform.transform.position.y;
 		Vector3 windowsOffset = new Vector3(0, columnHeight / 2.0f - ini_windowsHeight / 2.0f, 0);
 
-		wallWidth=ini_wallWidth;
-		windowHeight=ini_windowsHeight;
+		wallWidth = ini_wallWidth;
+		windowHeight = ini_windowsHeight;
 		//WallIcon cp
-		rightUpPoint = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-		rightUpPoint.tag = "ControlPoint";
-		rightUpPoint.name = "WRU";
-		rightUpPoint.transform.localScale = columnIcon.rightColumn.upPoint.transform.localScale;
-		rightUpPoint.transform.position = columnIcon.rightColumn.upPoint.transform.transform.position - wallOffset;
+		rightUpPoint = CreateControlPoint("WRU", columnIcon.rightColumn.upPoint.transform.localScale, columnIcon.rightColumn.upPoint.transform.transform.position - wallOffset);
+		rightDownPoint = CreateControlPoint("WRD", columnIcon.rightColumn.downPoint.transform.localScale, columnIcon.rightColumn.downPoint.transform.transform.position - wallOffset);
+		leftUpPoint = CreateControlPoint("WLU", columnIcon.leftColumn.upPoint.transform.localScale, columnIcon.leftColumn.upPoint.transform.transform.position + wallOffset);
+		leftDownPoint = CreateControlPoint("WLD", columnIcon.leftColumn.downPoint.transform.localScale, columnIcon.leftColumn.downPoint.transform.transform.position + wallOffset);
+		rightUpWindowPoint = CreateControlPoint("WWRU", columnIcon.rightColumn.upPoint.transform.localScale, columnIcon.rightColumn.upPoint.transform.transform.position - windowsOffset - wallOffset);
+		rightDownWindowPoint = CreateControlPoint("WWRD", columnIcon.rightColumn.downPoint.transform.localScale, columnIcon.rightColumn.downPoint.transform.transform.position + windowsOffset - wallOffset);
+		leftUpWindowPoint = CreateControlPoint("WWLU", columnIcon.leftColumn.upPoint.transform.localScale, columnIcon.leftColumn.upPoint.transform.transform.position - windowsOffset + wallOffset);
+		leftDownWindowPoint = CreateControlPoint("WWLD", columnIcon.leftColumn.downPoint.transform.localScale, columnIcon.leftColumn.downPoint.transform.transform.position + windowsOffset + wallOffset);
 
-		rightDownPoint = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-		rightDownPoint.tag = "ControlPoint";
-		rightDownPoint.name = "WRD";
-		rightDownPoint.transform.localScale = columnIcon.rightColumn.downPoint.transform.localScale;
-		rightDownPoint.transform.position = columnIcon.rightColumn.downPoint.transform.transform.position - wallOffset;
 
-		leftUpPoint = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-		leftUpPoint.tag = "ControlPoint";
-		leftUpPoint.name = "WLU";
-		leftUpPoint.transform.localScale = columnIcon.leftColumn.upPoint.transform.localScale;
-		leftUpPoint.transform.position = columnIcon.leftColumn.upPoint.transform.transform.position + wallOffset;
-
-		leftDownPoint = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-		leftDownPoint.tag = "ControlPoint";
-		leftDownPoint.name = "WLD";
-		leftDownPoint.transform.localScale = columnIcon.leftColumn.downPoint.transform.localScale;
-		leftDownPoint.transform.position = columnIcon.leftColumn.downPoint.transform.transform.position + wallOffset;
-
-		rightUpWindowPoint = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-		rightUpWindowPoint.tag = "ControlPoint";
-		rightUpWindowPoint.name = "WWRU";
-		rightUpWindowPoint.transform.localScale = columnIcon.rightColumn.upPoint.transform.localScale;
-		rightUpWindowPoint.transform.position = columnIcon.rightColumn.upPoint.transform.transform.position - windowsOffset - wallOffset;
-
-		rightDownWindowPoint = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-		rightDownWindowPoint.tag = "ControlPoint";
-		rightDownWindowPoint.name = "WWRD";
-		rightDownWindowPoint.transform.localScale = columnIcon.rightColumn.downPoint.transform.localScale;
-		rightDownWindowPoint.transform.position = columnIcon.rightColumn.downPoint.transform.transform.position + windowsOffset - wallOffset;
-
-		leftUpWindowPoint = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-		leftUpWindowPoint.tag = "ControlPoint";
-		leftUpWindowPoint.name = "WWLU";
-		leftUpWindowPoint.transform.localScale = columnIcon.leftColumn.upPoint.transform.localScale;
-		leftUpWindowPoint.transform.position = columnIcon.leftColumn.upPoint.transform.transform.position - windowsOffset + wallOffset;
-
-		leftDownWindowPoint = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-		leftDownWindowPoint.tag = "ControlPoint";
-		leftDownWindowPoint.name = "WWLD";
-		leftDownWindowPoint.transform.localScale = columnIcon.leftColumn.downPoint.transform.localScale;
-		leftDownWindowPoint.transform.position = columnIcon.leftColumn.downPoint.transform.transform.position + windowsOffset + wallOffset;
-
-		body = new GameObject(objName);
-
-		mFilter = body.AddComponent<MeshFilter>();
 		mFilter.mesh = CreatRecMesh(leftUpPoint.transform.position, rightUpPoint.transform.position, rightDownPoint.transform.position, leftDownPoint.transform.position, null);
+
 		controlPointList.Add(leftUpPoint);
 		controlPointList.Add(rightUpPoint);
 		controlPointList.Add(rightDownPoint);
@@ -2569,31 +2522,10 @@ public class WallIcon : RecMeshCreate
 		controlPointList.Add(rightUpWindowPoint);
 		controlPointList.Add(rightDownWindowPoint);
 		controlPointList.Add(leftDownWindowPoint);
-		lastControlPointPosition = new Vector3[controlPointList.Count];
-		lastControlPointPosition[(int)PointIndex.LeftUpPoint] = leftUpPoint.transform.position;
-		lastControlPointPosition[(int)PointIndex.RightUpPoint] = rightUpPoint.transform.position;
-		lastControlPointPosition[(int)PointIndex.RightDownPoint] = rightDownPoint.transform.position;
-		lastControlPointPosition[(int)PointIndex.LeftDownPoint] = leftDownPoint.transform.position;
-		lastControlPointPosition[(int)PointIndex.LeftUpWindowPoint] = leftUpWindowPoint.transform.position;
-		lastControlPointPosition[(int)PointIndex.RightUpWindowPoint] = rightUpPoint.transform.position;
-		lastControlPointPosition[(int)PointIndex.RightDownWindowPoint] =rightDownWindowPoint.transform.position;
-		lastControlPointPosition[(int)PointIndex.LeftDownWindowPoint] = leftDownWindowPoint.transform.position;
+		InitControlPointList2lastControlPointPosition();
 
 
-		mRenderer = body.AddComponent<MeshRenderer>() as MeshRenderer;
-
-		body.transform.parent = thisGameObject.transform;
-
-		leftUpPoint.transform.parent = thisGameObject.transform;
-		leftDownPoint.transform.parent = thisGameObject.transform;
-		rightUpPoint.transform.parent = thisGameObject.transform;
-		rightDownPoint.transform.parent = thisGameObject.transform;
-
-		leftUpWindowPoint.transform.parent = thisGameObject.transform;
-		leftDownWindowPoint.transform.parent = thisGameObject.transform;
-		rightUpWindowPoint.transform.parent = thisGameObject.transform;
-		rightDownWindowPoint.transform.parent = thisGameObject.transform;
-
+		SetParent2BodyAndControlPointList(thisGameObject);
 		InitLineRender(thisGameObject);
 		SetIconObjectColor();
 	}
@@ -2606,19 +2538,31 @@ public class WallIcon : RecMeshCreate
 	}
 	public override void InitLineRender<T>(T thisGameObject)
 	{
-		controlPointList_Vec3.Add(leftUpPoint.transform.position);
-		controlPointList_Vec3.Add(rightUpPoint.transform.position);
-		controlPointList_Vec3.Add(rightDownPoint.transform.position);
-		controlPointList_Vec3.Add(leftDownPoint.transform.position);
-		base.InitLineRender(thisGameObject);
+		controlPointList_Vec3_2_LineRender.Add(leftUpPoint.transform.position);
+		controlPointList_Vec3_2_LineRender.Add(rightUpPoint.transform.position);
+		controlPointList_Vec3_2_LineRender.Add(rightDownPoint.transform.position);
+		controlPointList_Vec3_2_LineRender.Add(leftDownPoint.transform.position);
+		for (int i = 0; i < controlPointList_Vec3_2_LineRender.Count; i++)
+		{
+			if (i != controlPointList_Vec3_2_LineRender.Count - 1)
+				CreateLineRenderer(thisGameObject, controlPointList_Vec3_2_LineRender[i], controlPointList_Vec3_2_LineRender[i + 1]);
+			else
+				CreateLineRenderer(thisGameObject, controlPointList_Vec3_2_LineRender[i], controlPointList_Vec3_2_LineRender[0]);
+		}
 	}
 	public override void UpdateLineRender()
 	{
-		controlPointList_Vec3[(int)PointIndex.LeftUpPoint] = (leftUpPoint.transform.position);
-		controlPointList_Vec3[(int)PointIndex.RightUpPoint] = (rightUpPoint.transform.position);
-		controlPointList_Vec3[(int)PointIndex.RightDownPoint] = (rightDownPoint.transform.position);
-		controlPointList_Vec3[(int)PointIndex.LeftDownPoint] = (leftDownPoint.transform.position);
-		base.UpdateLineRender();
+		controlPointList_Vec3_2_LineRender[(int)PointIndex.LeftUpPoint] = (leftUpPoint.transform.position);
+		controlPointList_Vec3_2_LineRender[(int)PointIndex.RightUpPoint] = (rightUpPoint.transform.position);
+		controlPointList_Vec3_2_LineRender[(int)PointIndex.RightDownPoint] = (rightDownPoint.transform.position);
+		controlPointList_Vec3_2_LineRender[(int)PointIndex.LeftDownPoint] = (leftDownPoint.transform.position);
+		for (int i = 0; i < lineRenderList.Count; i++)
+		{
+			if (i != controlPointList_Vec3_2_LineRender.Count - 1)
+				AdjLineRenderer(i, controlPointList_Vec3_2_LineRender[i], controlPointList_Vec3_2_LineRender[i + 1]);
+			else
+				AdjLineRenderer(i, controlPointList_Vec3_2_LineRender[i], controlPointList_Vec3_2_LineRender[0]);
+		}
 	}
 	public void SetIconObjectColor()
 	{
@@ -2637,88 +2581,85 @@ public class WallIcon : RecMeshCreate
 	{
 		float OffsetX = 0;
 		float OffsetY = 0;
-		int index=0;
-		for(int i=0;i<controlPointList.Count;i++)
+		if (chooseGameObject == leftUpPoint)
 		{
-			if (chooseGameObject == controlPointList[i])
-			{
-				index=i;
-				break;
-			}
+			OffsetX = (tmp.x - lastControlPointPosition[(int)PointIndex.LeftUpPoint].x);
+			rightUpPoint.transform.position = new Vector3(rightUpPoint.transform.position.x + (OffsetX), rightUpPoint.transform.position.y, rightUpPoint.transform.position.z);
+			rightDownPoint.transform.position = new Vector3(rightDownPoint.transform.position.x + (OffsetX), rightDownPoint.transform.position.y, rightDownPoint.transform.position.z);
+			leftDownPoint.transform.position = new Vector3(tmp.x, leftDownPoint.transform.position.y, leftDownPoint.transform.position.z);
+
+			rightUpWindowPoint.transform.position = new Vector3(rightUpWindowPoint.transform.position.x + (OffsetX), rightUpWindowPoint.transform.position.y, rightUpWindowPoint.transform.position.z);
+			rightDownWindowPoint.transform.position = new Vector3(rightDownWindowPoint.transform.position.x + (OffsetX), rightDownWindowPoint.transform.position.y, rightDownWindowPoint.transform.position.z);
+			leftUpWindowPoint.transform.position = new Vector3(tmp.x, leftUpWindowPoint.transform.position.y, leftUpWindowPoint.transform.position.z);
+			leftDownWindowPoint.transform.position = new Vector3(tmp.x, leftDownWindowPoint.transform.position.y, leftDownWindowPoint.transform.position.z);
+			wallWidth = (rightUpPoint.transform.position.x - leftUpPoint.transform.position.x) / 2.0f;
 		}
-		switch (index)
+		else if (chooseGameObject == rightUpPoint)
 		{
-			case (int)PointIndex.LeftUpPoint:
-				OffsetX = (tmp.x - lastControlPointPosition[(int)PointIndex.LeftUpPoint].x);
-				rightUpPoint.transform.position = new Vector3(rightUpPoint.transform.position.x + (OffsetX), rightUpPoint.transform.position.y, rightUpPoint.transform.position.z);
-				rightDownPoint.transform.position = new Vector3(rightDownPoint.transform.position.x + (OffsetX), rightDownPoint.transform.position.y, rightDownPoint.transform.position.z);
-				leftDownPoint.transform.position = new Vector3(tmp.x, leftDownPoint.transform.position.y, leftDownPoint.transform.position.z);
+			OffsetX = (tmp.x - lastControlPointPosition[(int)PointIndex.RightUpPoint].x);
 
-				rightUpWindowPoint.transform.position = new Vector3(rightUpWindowPoint.transform.position.x + (OffsetX), rightUpWindowPoint.transform.position.y, rightUpWindowPoint.transform.position.z);
-				rightDownWindowPoint.transform.position = new Vector3(rightDownWindowPoint.transform.position.x + (OffsetX), rightDownWindowPoint.transform.position.y, rightDownWindowPoint.transform.position.z);
-				leftUpWindowPoint.transform.position = new Vector3(tmp.x, leftUpWindowPoint.transform.position.y, leftUpWindowPoint.transform.position.z);
-				leftDownWindowPoint.transform.position = new Vector3(tmp.x, leftDownWindowPoint.transform.position.y, leftDownWindowPoint.transform.position.z);
-				wallWidth = (rightUpPoint.transform.position.x - leftUpPoint.transform.position.x)/2.0f;
-				break;
-			case (int)PointIndex.RightUpPoint:
-				OffsetX = (tmp.x - lastControlPointPosition[(int)PointIndex.RightUpPoint].x);
-
-				leftUpPoint.transform.position = new Vector3(leftUpPoint.transform.position.x - (OffsetX), leftUpPoint.transform.position.y, leftUpPoint.transform.position.z);
-				leftDownPoint.transform.position = new Vector3(leftDownPoint.transform.position.x - (OffsetX), leftDownPoint.transform.position.y, leftDownPoint.transform.position.z);
-				rightDownPoint.transform.position = new Vector3(tmp.x, rightDownPoint.transform.position.y, rightDownPoint.transform.position.z);
+			leftUpPoint.transform.position = new Vector3(leftUpPoint.transform.position.x - (OffsetX), leftUpPoint.transform.position.y, leftUpPoint.transform.position.z);
+			leftDownPoint.transform.position = new Vector3(leftDownPoint.transform.position.x - (OffsetX), leftDownPoint.transform.position.y, leftDownPoint.transform.position.z);
+			rightDownPoint.transform.position = new Vector3(tmp.x, rightDownPoint.transform.position.y, rightDownPoint.transform.position.z);
 
 
-				leftUpWindowPoint.transform.position = new Vector3(leftUpWindowPoint.transform.position.x - (OffsetX), leftUpWindowPoint.transform.position.y, leftUpWindowPoint.transform.position.z);
-				leftDownWindowPoint.transform.position = new Vector3(leftDownWindowPoint.transform.position.x - (OffsetX), leftDownWindowPoint.transform.position.y, leftDownWindowPoint.transform.position.z);
-				rightDownWindowPoint.transform.position = new Vector3(tmp.x, rightDownWindowPoint.transform.position.y, rightDownWindowPoint.transform.position.z);
-				rightUpWindowPoint.transform.position = new Vector3(tmp.x, rightUpWindowPoint.transform.position.y, rightUpWindowPoint.transform.position.z);
-				wallWidth = (rightUpPoint.transform.position.x - leftUpPoint.transform.position.x) / 2.0f;
-				break;
-			case (int)PointIndex.RightDownPoint:
-				OffsetX = (tmp.x - lastControlPointPosition[(int)PointIndex.RightDownPoint].x);
+			leftUpWindowPoint.transform.position = new Vector3(leftUpWindowPoint.transform.position.x - (OffsetX), leftUpWindowPoint.transform.position.y, leftUpWindowPoint.transform.position.z);
+			leftDownWindowPoint.transform.position = new Vector3(leftDownWindowPoint.transform.position.x - (OffsetX), leftDownWindowPoint.transform.position.y, leftDownWindowPoint.transform.position.z);
+			rightDownWindowPoint.transform.position = new Vector3(tmp.x, rightDownWindowPoint.transform.position.y, rightDownWindowPoint.transform.position.z);
+			rightUpWindowPoint.transform.position = new Vector3(tmp.x, rightUpWindowPoint.transform.position.y, rightUpWindowPoint.transform.position.z);
+			wallWidth = (rightUpPoint.transform.position.x - leftUpPoint.transform.position.x) / 2.0f;
+		}
+		else if (chooseGameObject == rightDownPoint)
+		{
+			OffsetX = (tmp.x - lastControlPointPosition[(int)PointIndex.RightDownPoint].x);
 
-				leftUpPoint.transform.position = new Vector3(leftUpPoint.transform.position.x - (OffsetX), leftUpPoint.transform.position.y, leftUpPoint.transform.position.z);
-				leftDownPoint.transform.position = new Vector3(leftDownPoint.transform.position.x - (OffsetX), leftDownPoint.transform.position.y, leftDownPoint.transform.position.z);
-				rightUpPoint.transform.position = new Vector3(tmp.x, rightUpPoint.transform.position.y, rightUpPoint.transform.position.z);
+			leftUpPoint.transform.position = new Vector3(leftUpPoint.transform.position.x - (OffsetX), leftUpPoint.transform.position.y, leftUpPoint.transform.position.z);
+			leftDownPoint.transform.position = new Vector3(leftDownPoint.transform.position.x - (OffsetX), leftDownPoint.transform.position.y, leftDownPoint.transform.position.z);
+			rightUpPoint.transform.position = new Vector3(tmp.x, rightUpPoint.transform.position.y, rightUpPoint.transform.position.z);
 
-				leftUpWindowPoint.transform.position = new Vector3(leftUpWindowPoint.transform.position.x - (OffsetX), leftUpWindowPoint.transform.position.y, leftUpWindowPoint.transform.position.z);
-				leftDownWindowPoint.transform.position = new Vector3(leftDownWindowPoint.transform.position.x - (OffsetX), leftDownWindowPoint.transform.position.y, leftDownWindowPoint.transform.position.z);
-				rightUpWindowPoint.transform.position = new Vector3(tmp.x, rightUpWindowPoint.transform.position.y, rightUpWindowPoint.transform.position.z);
-				rightDownWindowPoint.transform.position = new Vector3(tmp.x, rightDownWindowPoint.transform.position.y, rightDownWindowPoint.transform.position.z);
-				wallWidth = (rightUpPoint.transform.position.x - leftUpPoint.transform.position.x) / 2.0f;
-				break;
-			case (int)PointIndex.LeftDownPoint:
-				OffsetX = (tmp.x - lastControlPointPosition[(int)PointIndex.LeftDownPoint].x);
-				rightUpPoint.transform.position = new Vector3(rightUpPoint.transform.position.x + (OffsetX), rightUpPoint.transform.position.y, rightUpPoint.transform.position.z);
-				rightDownPoint.transform.position = new Vector3(rightDownPoint.transform.position.x + (OffsetX), rightDownPoint.transform.position.y, rightDownPoint.transform.position.z);
-				leftUpPoint.transform.position = new Vector3(tmp.x, leftUpPoint.transform.position.y, leftUpPoint.transform.position.z);
+			leftUpWindowPoint.transform.position = new Vector3(leftUpWindowPoint.transform.position.x - (OffsetX), leftUpWindowPoint.transform.position.y, leftUpWindowPoint.transform.position.z);
+			leftDownWindowPoint.transform.position = new Vector3(leftDownWindowPoint.transform.position.x - (OffsetX), leftDownWindowPoint.transform.position.y, leftDownWindowPoint.transform.position.z);
+			rightUpWindowPoint.transform.position = new Vector3(tmp.x, rightUpWindowPoint.transform.position.y, rightUpWindowPoint.transform.position.z);
+			rightDownWindowPoint.transform.position = new Vector3(tmp.x, rightDownWindowPoint.transform.position.y, rightDownWindowPoint.transform.position.z);
+			wallWidth = (rightUpPoint.transform.position.x - leftUpPoint.transform.position.x) / 2.0f;
+		}
+		else if (chooseGameObject == leftDownPoint)
+		{
+			OffsetX = (tmp.x - lastControlPointPosition[(int)PointIndex.LeftDownPoint].x);
+			rightUpPoint.transform.position = new Vector3(rightUpPoint.transform.position.x + (OffsetX), rightUpPoint.transform.position.y, rightUpPoint.transform.position.z);
+			rightDownPoint.transform.position = new Vector3(rightDownPoint.transform.position.x + (OffsetX), rightDownPoint.transform.position.y, rightDownPoint.transform.position.z);
+			leftUpPoint.transform.position = new Vector3(tmp.x, leftUpPoint.transform.position.y, leftUpPoint.transform.position.z);
 
-				rightUpWindowPoint.transform.position = new Vector3(rightUpWindowPoint.transform.position.x + (OffsetX), rightUpWindowPoint.transform.position.y, rightUpWindowPoint.transform.position.z);
-				rightDownWindowPoint.transform.position = new Vector3(rightDownWindowPoint.transform.position.x + (OffsetX), rightDownWindowPoint.transform.position.y, rightDownWindowPoint.transform.position.z);
-				leftUpWindowPoint.transform.position = new Vector3(tmp.x, leftUpWindowPoint.transform.position.y, leftUpWindowPoint.transform.position.z);
-				leftDownWindowPoint.transform.position = new Vector3(tmp.x, leftDownWindowPoint.transform.position.y, leftDownWindowPoint.transform.position.z);
-				wallWidth = (rightUpPoint.transform.position.x - leftUpPoint.transform.position.x) / 2.0f;
-				break;
-			case (int)PointIndex.LeftUpWindowPoint:
-				OffsetY = (tmp.y - lastControlPointPosition[(int)PointIndex.LeftUpWindowPoint].y);
-				rightUpWindowPoint.transform.position = new Vector3(rightUpWindowPoint.transform.position.x, rightUpWindowPoint.transform.position.y + (OffsetY), rightUpWindowPoint.transform.position.z);
-				windowHeight = (rightUpPoint.transform.position.x - leftUpPoint.transform.position.x) / 2.0f;
-				break;
-			case (int)PointIndex.RightUpWindowPoint:
-				OffsetY = (tmp.y - lastControlPointPosition[(int)PointIndex.RightUpWindowPoint].y);
-				leftUpWindowPoint.transform.position = new Vector3(leftUpWindowPoint.transform.position.x, leftUpWindowPoint.transform.position.y + (OffsetY), rightUpPoint.transform.position.z);
-				windowHeight = (rightUpPoint.transform.position.x - leftUpPoint.transform.position.x) / 2.0f;
-				break;
-			case (int)PointIndex.RightDownWindowPoint:
-				OffsetY = (tmp.y - lastControlPointPosition[(int)PointIndex.RightDownWindowPoint].y);
-				leftDownWindowPoint.transform.position = new Vector3(leftDownWindowPoint.transform.position.x, leftDownWindowPoint.transform.position.y + (OffsetY), leftDownWindowPoint.transform.position.z);
-				windowHeight = (rightUpPoint.transform.position.x - leftUpPoint.transform.position.x) / 2.0f;
-				break;
-			case (int)PointIndex.LeftDownWindowPoint:
-				OffsetY = (tmp.y - lastControlPointPosition[(int)PointIndex.LeftDownWindowPoint].y);
-				rightDownWindowPoint.transform.position = new Vector3(rightDownWindowPoint.transform.position.x, rightDownWindowPoint.transform.position.y + (OffsetY), rightDownWindowPoint.transform.position.z);
-				windowHeight = (rightUpPoint.transform.position.x - leftUpPoint.transform.position.x) / 2.0f;
-				break;
+			rightUpWindowPoint.transform.position = new Vector3(rightUpWindowPoint.transform.position.x + (OffsetX), rightUpWindowPoint.transform.position.y, rightUpWindowPoint.transform.position.z);
+			rightDownWindowPoint.transform.position = new Vector3(rightDownWindowPoint.transform.position.x + (OffsetX), rightDownWindowPoint.transform.position.y, rightDownWindowPoint.transform.position.z);
+			leftUpWindowPoint.transform.position = new Vector3(tmp.x, leftUpWindowPoint.transform.position.y, leftUpWindowPoint.transform.position.z);
+			leftDownWindowPoint.transform.position = new Vector3(tmp.x, leftDownWindowPoint.transform.position.y, leftDownWindowPoint.transform.position.z);
+			wallWidth = (rightUpPoint.transform.position.x - leftUpPoint.transform.position.x) / 2.0f;
+		}
+		else if (chooseGameObject == leftUpWindowPoint)
+		{
+			OffsetY = (tmp.y - lastControlPointPosition[(int)PointIndex.LeftUpWindowPoint].y);
+			rightUpWindowPoint.transform.position = new Vector3(rightUpWindowPoint.transform.position.x, rightUpWindowPoint.transform.position.y + (OffsetY), rightUpWindowPoint.transform.position.z);
+			windowHeight = (rightUpPoint.transform.position.x - leftUpPoint.transform.position.x) / 2.0f;
+
+		}
+		else if (chooseGameObject == rightUpWindowPoint)
+		{
+			OffsetY = (tmp.y - lastControlPointPosition[(int)PointIndex.RightUpWindowPoint].y);
+			leftUpWindowPoint.transform.position = new Vector3(leftUpWindowPoint.transform.position.x, leftUpWindowPoint.transform.position.y + (OffsetY), rightUpPoint.transform.position.z);
+			windowHeight = (rightUpPoint.transform.position.x - leftUpPoint.transform.position.x) / 2.0f;
+		}
+		else if (chooseGameObject == rightDownWindowPoint)
+		{
+			OffsetY = (tmp.y - lastControlPointPosition[(int)PointIndex.RightDownWindowPoint].y);
+			leftDownWindowPoint.transform.position = new Vector3(leftDownWindowPoint.transform.position.x, leftDownWindowPoint.transform.position.y + (OffsetY), leftDownWindowPoint.transform.position.z);
+			windowHeight = (rightUpPoint.transform.position.x - leftUpPoint.transform.position.x) / 2.0f;
+		}
+		else if (chooseGameObject == leftDownWindowPoint)
+		{
+			OffsetY = (tmp.y - lastControlPointPosition[(int)PointIndex.LeftDownWindowPoint].y);
+			rightDownWindowPoint.transform.position = new Vector3(rightDownWindowPoint.transform.position.x, rightDownWindowPoint.transform.position.y + (OffsetY), rightDownWindowPoint.transform.position.z);
+			windowHeight = (rightUpPoint.transform.position.x - leftUpPoint.transform.position.x) / 2.0f;
 		}
 		UpdateLastPos();
 	}
@@ -2733,6 +2674,8 @@ public class BalustradeIcon : RecMeshCreate
 	public float balustradeHeight;
 	public void BalustradeIconCreate<T>(T thisGameObject, string objName, ColumnIcon columnIcon, float ini_balustradeHeight) where T : Component
 	{
+		InitBodySetting(objName, (int)BodyType.GeneralBody);
+
 		Vector3 h = new Vector3(0.0f, ini_balustradeHeight, 0.0f);
 		balustradeHeight = ini_balustradeHeight;
 		rightDownPoint = columnIcon.rightColumn.downPoint;
@@ -2741,40 +2684,22 @@ public class BalustradeIcon : RecMeshCreate
 		Vector3 leftUpPointPos = leftDownPoint.transform.position + h;
 
 		//right
-		columnIcon.rightColumn.balustradePoint = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-		columnIcon.rightColumn.balustradePoint.tag = "ControlPoint";
-		columnIcon.rightColumn.balustradePoint.name = "BRU";
-		columnIcon.rightColumn.balustradePoint.transform.localScale = columnIcon.rightColumn.downPoint.transform.localScale;
-		columnIcon.rightColumn.balustradePoint.transform.position = rightUpPointPos;
-		rightUpPoint = columnIcon.rightColumn.balustradePoint;
+		rightUpPoint = columnIcon.rightColumn.balustradePoint = CreateControlPoint("BRU", columnIcon.rightColumn.downPoint.transform.localScale, rightUpPointPos);
 		//left
-		columnIcon.leftColumn.balustradePoint = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-		columnIcon.leftColumn.balustradePoint.tag = "ControlPoint";
-		columnIcon.leftColumn.balustradePoint.name = "BLU";
-		columnIcon.leftColumn.balustradePoint.transform.localScale = columnIcon.rightColumn.downPoint.transform.localScale;
-		columnIcon.leftColumn.balustradePoint.transform.position = leftUpPointPos;
-		leftUpPoint = columnIcon.leftColumn.balustradePoint;
-		//body
-		body = new GameObject(objName);
+		leftUpPoint = columnIcon.leftColumn.balustradePoint = CreateControlPoint("BLU", columnIcon.rightColumn.downPoint.transform.localScale, leftUpPointPos);
 
-		mFilter = body.AddComponent<MeshFilter>();
 		mFilter.mesh = CreatRecMesh(leftUpPoint.transform.position, rightUpPoint.transform.position, rightDownPoint.transform.position, leftDownPoint.transform.position, null);
 		//初始位置
 		controlPointList.Add(leftUpPoint);
 		controlPointList.Add(rightUpPoint);
 		controlPointList.Add(rightDownPoint);
 		controlPointList.Add(leftDownPoint);
-		lastControlPointPosition = mFilter.mesh.vertices;
+		InitControlPointList2lastControlPointPosition();
 
 		columnIcon.leftColumn.controlPointList.Add(columnIcon.leftColumn.balustradePoint);
 		columnIcon.rightColumn.controlPointList.Add(columnIcon.rightColumn.balustradePoint);
 
-		mRenderer = body.AddComponent<MeshRenderer>() as MeshRenderer;
-
-		body.transform.parent = thisGameObject.transform;
-		columnIcon.rightColumn.balustradePoint.transform.parent = thisGameObject.transform;
-		columnIcon.leftColumn.balustradePoint.transform.parent = thisGameObject.transform;
-
+		SetParent2BodyAndControlPointList(thisGameObject);
 		InitLineRender(thisGameObject);
 		SetIconObjectColor(columnIcon);
 	}
@@ -2787,22 +2712,6 @@ public class BalustradeIcon : RecMeshCreate
 		mFilter.mesh = CreatRecMesh(leftUpPoint.transform.position, rightUpPoint.transform.position, rightDownPoint.transform.position, leftDownPoint.transform.position, mFilter.mesh);
 
 		UpdateLineRender();
-	}
-	public override void InitLineRender<T>(T thisGameObject)
-	{
-		controlPointList_Vec3.Add(leftUpPoint.transform.position);
-		controlPointList_Vec3.Add(rightUpPoint.transform.position);
-		controlPointList_Vec3.Add(rightDownPoint.transform.position);
-		controlPointList_Vec3.Add(leftDownPoint.transform.position);
-		base.InitLineRender(thisGameObject);
-	}
-	public override void UpdateLineRender()
-	{
-		controlPointList_Vec3[(int)PointIndex.LeftUpPoint] = (leftUpPoint.transform.position);
-		controlPointList_Vec3[(int)PointIndex.RightUpPoint] = (rightUpPoint.transform.position);
-		controlPointList_Vec3[(int)PointIndex.RightDownPoint] = (rightDownPoint.transform.position);
-		controlPointList_Vec3[(int)PointIndex.LeftDownPoint] = (leftDownPoint.transform.position);
-		base.UpdateLineRender();
 	}
 	public void SetIconObjectColor(ColumnIcon columnIcon)
 	{
@@ -2825,8 +2734,8 @@ public class BalustradeIcon : RecMeshCreate
 }
 public class ColumnIcon : IconObject
 {
-	public enum PointIndex { LeftUpPoint = 0, RightUpPoint = 1, RightDownPoint = 2, LeftDownPoint = 3, LeftColumnBody = 4, RightColumnBody = 5, };
-
+	public enum PointIndex { LeftUpPoint = 0, RightUpPoint = 1, RightDownPoint = 2, LeftDownPoint = 3, };
+	public List<GameObject> body=new List<GameObject>();
 	public Column leftColumn;
 	public Column rightColumn;
 
@@ -2843,21 +2752,20 @@ public class ColumnIcon : IconObject
 	{
 		leftColumn = new Column(leftUpPoint, leftDownPoint, columnHeight);
 		rightColumn = new Column(rightUpPoint, rightDownPoint, columnHeight);
+		this.columnHeight = columnHeight;
 
-		this.columnHeight=columnHeight;
-
-		leftColumn.body.transform.parent = thisGameObject.transform;
-		rightColumn.body.transform.parent = thisGameObject.transform;
+		body.Add(leftColumn.body);
+		body.Add(rightColumn.body);
 
 		controlPointList.Add(leftColumn.upPoint);
 		controlPointList.Add(rightColumn.upPoint);
 		controlPointList.Add(rightColumn.downPoint);
 		controlPointList.Add(leftColumn.downPoint);
-		lastControlPointPosition = new Vector3[controlPointList.Count];
-		lastControlPointPosition[(int)PointIndex.LeftUpPoint] = leftColumn.upPoint.transform.position;
-		lastControlPointPosition[(int)PointIndex.RightUpPoint] = rightColumn.upPoint.transform.position;
-		lastControlPointPosition[(int)PointIndex.RightDownPoint] = rightColumn.downPoint.transform.position;
-		lastControlPointPosition[(int)PointIndex.LeftDownPoint] = leftColumn.downPoint.transform.position;
+		InitControlPointList2lastControlPointPosition();
+
+		leftColumn.body.transform.parent = thisGameObject.transform;
+		rightColumn.body.transform.parent = thisGameObject.transform;
+
 	}
 	public void CreateWall<T>(T thisGameObject, string objName, float ini_wallWidth, float ini_windowHeight) where T : Component
 	{
@@ -2878,129 +2786,121 @@ public class ColumnIcon : IconObject
 	public void AdjPos(Vector3 tmp, GameObject chooseObject)
 	{
 		float OffsetX = 0;
-		int index=0;
-		for(int i=0;i<controlPointList.Count;i++)
+		if (chooseObject == leftColumn.upPoint || chooseObject == rightColumn.upPoint)
 		{
-			if (chooseObject == controlPointList[i])
+			columnHeight = (tmp.y - rightColumn.downPoint.transform.position.y);
+			columnHeight = Mathf.Abs(columnHeight);
+			//update point
+			rightColumn.upPoint.transform.position = new Vector3(rightColumn.upPoint.transform.position.x, tmp.y, rightColumn.upPoint.transform.position.z);
+			leftColumn.upPoint.transform.position = new Vector3(leftColumn.upPoint.transform.position.x, tmp.y, leftColumn.upPoint.transform.position.z);
+
+			rightColumn.body.transform.position = new Vector3(rightColumn.upPoint.transform.position.x, rightColumn.upPoint.transform.position.y - columnHeight / 2.0f, rightColumn.upPoint.transform.position.z);
+
+			leftColumn.body.transform.position = new Vector3(leftColumn.upPoint.transform.position.x, leftColumn.upPoint.transform.position.y - columnHeight / 2.0f, leftColumn.upPoint.transform.position.z);
+
+			rightColumn.body.transform.localScale = new Vector3(rightColumn.radius, columnHeight / 2.0f, rightColumn.radius);
+			leftColumn.body.transform.localScale = new Vector3(leftColumn.radius, columnHeight / 2.0f, leftColumn.radius);
+
+
+			if (friezeIcon.body != null)
 			{
-				index=i;
-				break;
+				rightColumn.friezePoint.transform.position = new Vector3(rightColumn.upPoint.transform.position.x, tmp.y - friezeIcon.friezeHeight, rightColumn.upPoint.transform.position.z);
+				leftColumn.friezePoint.transform.position = new Vector3(leftColumn.upPoint.transform.position.x, tmp.y - friezeIcon.friezeHeight, leftColumn.upPoint.transform.position.z);
+
+				friezeIcon.AdjMesh();
+			}
+			if (doubleRoofIcon.body != null)
+			{
+				doubleRoofIcon.AdjMesh(this, doubleRoofIcon.doubleRoofHeight, doubleRoofIcon.doubleRoofWidth);
+			}
+			if (wallIcon.body != null)
+			{
+				wallIcon.rightUpPoint.transform.position = new Vector3(wallIcon.rightUpPoint.transform.position.x, tmp.y, wallIcon.rightUpPoint.transform.position.z);
+				wallIcon.leftUpPoint.transform.position = new Vector3(wallIcon.leftUpPoint.transform.position.x, tmp.y, wallIcon.leftUpPoint.transform.position.z);
+
+
+				wallIcon.AdjMesh();
 			}
 		}
-		switch (index)
+		else if (chooseObject == leftColumn.downPoint || chooseObject == rightColumn.downPoint)
 		{
-			case (int)PointIndex.LeftUpPoint:
-			case (int)PointIndex.RightUpPoint:
-				columnHeight = (tmp.y - rightColumn.downPoint.transform.position.y);
-				columnHeight = Mathf.Abs(columnHeight);
-				//update point
-				rightColumn.upPoint.transform.position = new Vector3(rightColumn.upPoint.transform.position.x, tmp.y, rightColumn.upPoint.transform.position.z);
-				leftColumn.upPoint.transform.position = new Vector3(leftColumn.upPoint.transform.position.x, tmp.y, leftColumn.upPoint.transform.position.z);
-
-				rightColumn.body.transform.position = new Vector3(rightColumn.upPoint.transform.position.x, rightColumn.upPoint.transform.position.y - columnHeight / 2.0f, rightColumn.upPoint.transform.position.z);
-
-				leftColumn.body.transform.position = new Vector3(leftColumn.upPoint.transform.position.x, leftColumn.upPoint.transform.position.y - columnHeight / 2.0f, leftColumn.upPoint.transform.position.z);
-
-				rightColumn.body.transform.localScale = new Vector3(rightColumn.radius, columnHeight / 2.0f, rightColumn.radius);
-				leftColumn.body.transform.localScale = new Vector3(leftColumn.radius, columnHeight / 2.0f, leftColumn.radius);
+			columnHeight = (tmp.y - rightColumn.upPoint.transform.position.y);
+			columnHeight = Mathf.Abs(columnHeight);
+			//update point
+			rightColumn.downPoint.transform.position = new Vector3(rightColumn.downPoint.transform.position.x, tmp.y, rightColumn.downPoint.transform.position.z);
+			leftColumn.downPoint.transform.position = new Vector3(leftColumn.downPoint.transform.position.x, tmp.y, rightColumn.downPoint.transform.position.z);
+			rightColumn.body.transform.position = new Vector3(rightColumn.upPoint.transform.position.x, rightColumn.upPoint.transform.position.y - columnHeight / 2.0f, rightColumn.upPoint.transform.position.z);
+			leftColumn.body.transform.position = new Vector3(leftColumn.upPoint.transform.position.x, leftColumn.upPoint.transform.position.y - columnHeight / 2.0f, leftColumn.upPoint.transform.position.z);
 
 
-				if (friezeIcon.body != null)
-				{
-					rightColumn.friezePoint.transform.position = new Vector3(rightColumn.upPoint.transform.position.x, tmp.y - friezeIcon.friezeHeight, rightColumn.upPoint.transform.position.z);
-					leftColumn.friezePoint.transform.position = new Vector3(leftColumn.upPoint.transform.position.x, tmp.y - friezeIcon.friezeHeight, leftColumn.upPoint.transform.position.z);
-
-					friezeIcon.AdjMesh();
-				}
-				if (doubleRoofIcon.body != null)
-				{
-					doubleRoofIcon.AdjMesh(this, doubleRoofIcon.doubleRoofHeight, doubleRoofIcon.doubleRoofWidth);
-				}
-				if (wallIcon.body != null)
-				{
-					wallIcon.rightUpPoint.transform.position = new Vector3(wallIcon.rightUpPoint.transform.position.x, tmp.y, wallIcon.rightUpPoint.transform.position.z);
-					wallIcon.leftUpPoint.transform.position = new Vector3(wallIcon.leftUpPoint.transform.position.x, tmp.y, wallIcon.leftUpPoint.transform.position.z);
+			rightColumn.body.transform.localScale = new Vector3(rightColumn.radius, columnHeight / 2.0f, rightColumn.radius);
+			leftColumn.body.transform.localScale = new Vector3(leftColumn.radius, columnHeight / 2.0f, leftColumn.radius);
 
 
-					wallIcon.AdjMesh();
-				}
-				break;
-			case (int)PointIndex.RightDownPoint:
-			case (int)PointIndex.LeftDownPoint:
-				columnHeight = (tmp.y - rightColumn.upPoint.transform.position.y);
-				columnHeight=Mathf.Abs(columnHeight);
-				//update point
-				rightColumn.downPoint.transform.position = new Vector3(rightColumn.downPoint.transform.position.x, tmp.y, rightColumn.downPoint.transform.position.z);
-				leftColumn.downPoint.transform.position = new Vector3(leftColumn.downPoint.transform.position.x, tmp.y, rightColumn.downPoint.transform.position.z);
-				rightColumn.body.transform.position = new Vector3(rightColumn.upPoint.transform.position.x, rightColumn.upPoint.transform.position.y - columnHeight / 2.0f, rightColumn.upPoint.transform.position.z);
-				leftColumn.body.transform.position = new Vector3(leftColumn.upPoint.transform.position.x, leftColumn.upPoint.transform.position.y - columnHeight / 2.0f, leftColumn.upPoint.transform.position.z);
+			if (balustradeIcon.body != null)
+			{
+				rightColumn.balustradePoint.transform.position = new Vector3(rightColumn.downPoint.transform.position.x, tmp.y + balustradeIcon.balustradeHeight, rightColumn.upPoint.transform.position.z);
+				leftColumn.balustradePoint.transform.position = new Vector3(leftColumn.downPoint.transform.position.x, tmp.y + balustradeIcon.balustradeHeight, leftColumn.upPoint.transform.position.z);
 
+				balustradeIcon.AdjMesh();
+			}
+			if (wallIcon.body != null)
+			{
+				wallIcon.rightDownPoint.transform.position = new Vector3(wallIcon.rightDownPoint.transform.position.x, tmp.y, wallIcon.rightDownPoint.transform.position.z);
+				wallIcon.leftDownPoint.transform.position = new Vector3(wallIcon.leftDownPoint.transform.position.x, tmp.y, wallIcon.leftDownPoint.transform.position.z);
 
-				rightColumn.body.transform.localScale = new Vector3(rightColumn.radius, columnHeight / 2.0f, rightColumn.radius);
-				leftColumn.body.transform.localScale = new Vector3(leftColumn.radius, columnHeight / 2.0f, leftColumn.radius);
+				wallIcon.AdjMesh();
+			}
+		}
+		else if (chooseObject == leftColumn.body)
+		{
+			OffsetX = (tmp.x - lastControlPointPosition[(int)PointIndex.LeftUpPoint].x);
+			for (int i = 0; i < rightColumn.controlPointList.Count; i++)
+			{
+				leftColumn.controlPointList[i].transform.position = new Vector3(tmp.x, leftColumn.controlPointList[i].transform.position.y, leftColumn.controlPointList[i].transform.position.z);
+				rightColumn.controlPointList[i].transform.position = new Vector3(rightColumn.controlPointList[i].transform.position.x - (OffsetX), rightColumn.controlPointList[i].transform.position.y, rightColumn.controlPointList[i].transform.position.z);
+			}
 
+			leftColumn.body.transform.position = new Vector3(tmp.x, leftColumn.body.transform.position.y, leftColumn.body.transform.position.z);
+			rightColumn.body.transform.position = new Vector3(rightColumn.body.transform.position.x - (OffsetX), rightColumn.body.transform.position.y, rightColumn.body.transform.position.z);
+			if (friezeIcon.body != null)
+			{
+				friezeIcon.AdjMesh();
+				friezeIcon.UpdateLastPos();
+			}
+			if (balustradeIcon.body != null)
+			{
+				balustradeIcon.AdjMesh();
+				balustradeIcon.UpdateLastPos();
+			}
+			if (doubleRoofIcon.body != null)
+			{
+				doubleRoofIcon.AdjMesh(this, doubleRoofIcon.doubleRoofHeight, doubleRoofIcon.doubleRoofWidth);
+			}
+		}
+		else if (chooseObject == rightColumn.body)
+		{
+			OffsetX = (tmp.x - lastControlPointPosition[(int)PointIndex.RightUpPoint].x);
+			for (int i = 0; i < leftColumn.controlPointList.Count; i++)
+			{
+				rightColumn.controlPointList[i].transform.position = new Vector3(tmp.x, rightColumn.controlPointList[i].transform.position.y, rightColumn.controlPointList[i].transform.position.z);
+				leftColumn.controlPointList[i].transform.position = new Vector3(leftColumn.controlPointList[i].transform.position.x - (OffsetX), leftColumn.controlPointList[i].transform.position.y, leftColumn.controlPointList[i].transform.position.z);
 
-				if (balustradeIcon.body != null)
-				{
-					rightColumn.balustradePoint.transform.position = new Vector3(rightColumn.downPoint.transform.position.x, tmp.y + balustradeIcon.balustradeHeight, rightColumn.upPoint.transform.position.z);
-					leftColumn.balustradePoint.transform.position = new Vector3(leftColumn.downPoint.transform.position.x, tmp.y + balustradeIcon.balustradeHeight, leftColumn.upPoint.transform.position.z);
-
-					balustradeIcon.AdjMesh();
-				}
-				if (wallIcon.body != null)
-				{
-					wallIcon.rightDownPoint.transform.position = new Vector3(wallIcon.rightDownPoint.transform.position.x, tmp.y, wallIcon.rightDownPoint.transform.position.z);
-					wallIcon.leftDownPoint.transform.position = new Vector3(wallIcon.leftDownPoint.transform.position.x, tmp.y, wallIcon.leftDownPoint.transform.position.z);
-
-					wallIcon.AdjMesh();
-				}
-				break;
-			case (int)PointIndex.LeftColumnBody:
-				OffsetX = (tmp.x - lastControlPointPosition[(int)PointIndex.LeftUpPoint].x);
-				for (int i = 0; i < rightColumn.controlPointList.Count; i++)
-				{
-					leftColumn.controlPointList[i].transform.position = new Vector3(tmp.x, leftColumn.controlPointList[i].transform.position.y, leftColumn.controlPointList[i].transform.position.z);
-					rightColumn.controlPointList[i].transform.position = new Vector3(rightColumn.controlPointList[i].transform.position.x - (OffsetX), rightColumn.controlPointList[i].transform.position.y, rightColumn.controlPointList[i].transform.position.z);
-				}
-				if (friezeIcon.body != null)
-				{
-					friezeIcon.AdjMesh();
-					friezeIcon.UpdateLastPos();
-				}
-				if (balustradeIcon.body != null)
-				{
-					balustradeIcon.AdjMesh();
-					balustradeIcon.UpdateLastPos();
-				}
-				if (doubleRoofIcon.body != null)
-				{
-					doubleRoofIcon.AdjMesh(this, doubleRoofIcon.doubleRoofHeight, doubleRoofIcon.doubleRoofWidth);
-				}
-				break;
-			case (int)PointIndex.RightColumnBody:
-				OffsetX = (tmp.x - lastControlPointPosition[(int)PointIndex.RightUpPoint].x);
-				for (int i = 0; i < leftColumn.controlPointList.Count; i++)
-				{
-					rightColumn.controlPointList[i].transform.position = new Vector3(tmp.x, rightColumn.controlPointList[i].transform.position.y, rightColumn.controlPointList[i].transform.position.z);
-					leftColumn.controlPointList[i].transform.position = new Vector3(leftColumn.controlPointList[i].transform.position.x - (OffsetX), leftColumn.controlPointList[i].transform.position.y, leftColumn.controlPointList[i].transform.position.z);
-
-				}
-				if (friezeIcon.body != null)
-				{
-					friezeIcon.AdjMesh();
-					friezeIcon.UpdateLastPos();
-				}
-				if (balustradeIcon.body != null)
-				{
-					balustradeIcon.AdjMesh();
-					balustradeIcon.UpdateLastPos();
-				}
-				if (doubleRoofIcon.body != null)
-				{
-					doubleRoofIcon.AdjMesh(this, doubleRoofIcon.doubleRoofHeight, doubleRoofIcon.doubleRoofWidth);
-				}
-				break;
-
+			}
+			if (friezeIcon.body != null)
+			{
+				friezeIcon.AdjMesh();
+				friezeIcon.UpdateLastPos();
+			}
+			if (balustradeIcon.body != null)
+			{
+				balustradeIcon.AdjMesh();
+				balustradeIcon.UpdateLastPos();
+			}
+			if (doubleRoofIcon.body != null)
+			{
+				doubleRoofIcon.AdjMesh(this, doubleRoofIcon.doubleRoofHeight, doubleRoofIcon.doubleRoofWidth);
+			}
 		}
 		UpdateLastPos();
 	}
@@ -3015,33 +2915,23 @@ public class Column : IconObject
 	public float radius = 0.01f;
 	public Column(GameObject upPoint, GameObject downPoint, float columnHeight)
 	{
+
+		InitBodySetting("Cylinder", (int)BodyType.CylinderBody);
+		body.transform.localScale = new Vector3(radius, columnHeight / 2.0f, radius);
+		body.transform.position = new Vector3(upPoint.transform.position.x, upPoint.transform.position.y - columnHeight / 2.0f, upPoint.transform.position.z);
+
 		this.upPoint = upPoint;
 		this.downPoint = downPoint;
-
-		this.body = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-		mFilter = body.GetComponent<MeshFilter>();
-		mRenderer = body.GetComponent<MeshRenderer>();
-		mRenderer.sortingOrder = 0;
 
 		controlPointList.Add(upPoint);
 		controlPointList.Add(downPoint);
 		controlPointList.Add(body);
-		lastControlPointPosition = new Vector3[controlPointList.Count];
-		lastControlPointPosition[(int)PointIndex.UpPoint] = upPoint.transform.position;
-		lastControlPointPosition[(int)PointIndex.DownPoint] = downPoint.transform.position;
-
-		this.body.transform.localScale = new Vector3(radius, columnHeight / 2.0f, radius);
-		this.body.transform.position = new Vector3(upPoint.transform.position.x, upPoint.transform.position.y - columnHeight / 2.0f, upPoint.transform.position.z);
-
-		this.body.tag = "Cylinder";
-
-		lastControlPointPosition[(int)PointIndex.Body] = this.body.transform.position;
+		InitControlPointList2lastControlPointPosition();
 
 		SetIconObjectColor();
 	}
 	public void SetIconObjectColor()
 	{
-
 		mRenderer.material = outLineShader;
 		mRenderer.material.color = Color.red;
 		upPoint.GetComponent<MeshRenderer>().material = outLineShader;
@@ -3119,7 +3009,7 @@ public class body2icon : MonoBehaviour
 		ratio_bodydis = chang_bodydis = Vector2.zero;
 		ratio_walldis = chang_walldis = 0;
 		Vector3 tmp = dragitemcontroller.chooseObj.transform.position;
-		GameObject chooseObj=dragitemcontroller.chooseObj;
+		GameObject chooseObj = dragitemcontroller.chooseObj;
 		float dis = 0;
 		if (chooseObj == columnIcon.rightColumn.upPoint || chooseObj == columnIcon.leftColumn.upPoint)//RU LU
 		{
