@@ -877,11 +877,14 @@ public class MisstionTab : MonoBehaviour
 	public List<GameObject> missionTabsList = new List<GameObject>();
 	public GameObject deleteButton = null;
 	public int inUseIndex;
+	Bounds windowsBounds;
+	Bounds tabsBounds;
+	float offset;
 	public void CreateMissionTabs<T>(T thisGameObject, GameObject missionTabObj, GameObject chooseWindow) where T : Component
 	{
-		Bounds windowsBounds = NGUIMath.CalculateAbsoluteWidgetBounds(chooseWindow.transform);
-		Bounds tabsBounds = NGUIMath.CalculateAbsoluteWidgetBounds(missionTabObj.transform);
-		float offset = tabsBounds.size.x * 0.01f;
+		windowsBounds = NGUIMath.CalculateAbsoluteWidgetBounds(chooseWindow.transform);
+		tabsBounds = NGUIMath.CalculateAbsoluteWidgetBounds(missionTabObj.transform);
+		offset = tabsBounds.size.x * 0.01f;
 		GameObject clone;
 		Vector3 pos;
 		//加入樓icon要加入兩個missionTab按鈕 控制一、二層
@@ -937,7 +940,7 @@ public class MisstionTab : MonoBehaviour
 		}
 		if (deleteButton) deleteButton.SetActive(isActive);
 	}
-	public void DeleteMisstionTab()
+	public void DeleteLastMisstionTab()
 	{
 		if (missionTabsList.Count >= 2)//剩二層時要刪除 要一次刪兩層
 		{
@@ -956,25 +959,56 @@ public class MisstionTab : MonoBehaviour
 			}
 		}
 	}
+	public void DeleteCurrentMisstionTab()
+	{
+		if (missionTabsList.Count >= 2)//剩二層時要刪除 要一次刪兩層
+		{
+			GameObject tmp = missionTabsList[inUseIndex];
+			Destroy(tmp);
+			missionTabsList.RemoveAt(inUseIndex);
+			if (inUseIndex!=0) inUseIndex--;
+			if (missionTabsList.Count == 1)
+			{
+				tmp = deleteButton;
+				deleteButton = null;
+				Destroy(tmp);
 
+				tmp = missionTabsList[missionTabsList.Count - 1];
+				Destroy(tmp);
+				missionTabsList.RemoveAt(missionTabsList.Count - 1);
+				inUseIndex--;
+			}
+		}
+		SortMisstionTabPosition();
+	}
+	public void SortMisstionTabPosition() 
+	{ 
+		for(int i=0;i<missionTabsList.Count;i++)
+		{
+			missionTabsList[i].transform.position=windowsBounds.min + new Vector3((i * (tabsBounds.size.x + offset)) + tabsBounds.extents.x, tabsBounds.extents.y, 0.0f);
+		}
+	}
 }
 public class WindowsList : MonoBehaviour//視窗
 {
 	//視窗中正在使用的components
 	[SerializeField]
 	public List<Dictionary<string, List<GameObject>>> allFloorItem;
-	//allComponent[第幾層樓][(物件名稱)MAINCOMPONENT].Count:第幾層樓的主物件有幾個
+	//allFloorItem[第幾層樓][(物件名稱)MAINCOMPONENT].Count:第幾層樓的主物件有幾個
 	[SerializeField]
 	//暫存視窗中所有曾經編輯的components
 	public Dictionary<string, List<Dictionary<string, List<GameObject>>>> temporateAllFloorItem;
 	//temporateAllFloorItem[曾編輯過的主物件][第幾層樓][(物件名稱)MAINCOMPONENT].Count:第幾層樓的主物件有幾個
 	//上次選用的MainIcon
 	public string lastChooseMainDragObjectName = null;
-	//第幾號allComponent 用於樓層
+	//第幾號allFloorItem 用於樓層
 	public int inUseTab2ComponentLayerIndex = 0;
 
 	public MisstionTab misstionTab;
 
+	public GameObject deleteIconButton = null;
+
+	public GameObject inUseComponentObject = null;
 	public WindowsList()
 	{
 		misstionTab = new MisstionTab();
@@ -1002,7 +1036,6 @@ public class WindowsList : MonoBehaviour//視窗
 	{
 		Debug.Log("AllComponent : " + allFloorItem.Count);
 
-		//Dictionary<string, List<GameObject>
 		foreach (KeyValuePair<string, List<GameObject>> kvp in allFloorItem[index])
 		{
 			Debug.Log("enterDeleteAll");
@@ -1053,6 +1086,7 @@ public class DragItemController : MonoBehaviour
 	public enum WindowsIndex { Formfactor = 0, Roof = 1, Body = 2, Platform = 3, SingleWindow = 4, };
 	public enum WindowsSetIndex { FourBaseWindows = 0, SingleWindow = 1, };
 	//選定的物件
+	public GameObject lastChooseIconObject=null;
 	public GameObject chooseDragObject = null;
 	public GameObject chooseObj = null;
 	public GameObject chooseWindow;
@@ -1083,12 +1117,11 @@ public class DragItemController : MonoBehaviour
 	//
 	private Movement movement;
 	private AllInOne building;
-	//MissionTabs
+	//MissionTabButton
 	public GameObject misstionTabObj;
-
-
+	//DeleteIconButton
+	public GameObject deleteIconObj;
 	//InitIconSetting
-
 	public GameObject formFractorInitDragIconObj;
 	public GameObject roofInitDragIconObj;
 	public GameObject bodyInitDragIconObj;
@@ -1285,14 +1318,14 @@ public class DragItemController : MonoBehaviour
 							SetMissionTab(index);
 							//選擇視窗
 							chooseWindow = windowsList[index];
-							if (index == (int)WindowsIndex.Body || index == (int)WindowsIndex.Platform)
+							if (AllWindowsStruct[index].allFloorItem.Count>0)
 							{
 								inUseTab = AllWindowsStruct[index].misstionTab.ChooseInUseMissionTabsIndex(mousePos2World);
 								if (inUseTab != -1) SetInUseTabIndex2Window(index, inUseTab);
 								if (AllWindowsStruct[index].misstionTab.deleteButton && AllWindowsStruct[index].misstionTab.ChooseMissionTabsDeleteButton(mousePos2World))
 								{
-									AllWindowsStruct[index].misstionTab.DeleteMisstionTab();
-									ClearLastTab2Window(index);
+									AllWindowsStruct[index].misstionTab.DeleteCurrentMisstionTab();
+									ClearCurrentTab2Window(index);
 								}
 							}
 
@@ -1313,16 +1346,15 @@ public class DragItemController : MonoBehaviour
 							}
 
 						}
-						if (mainSingleWindowinUseIndex == (int)WindowsIndex.Body || mainSingleWindowinUseIndex == (int)WindowsIndex.Platform)
+						if (AllWindowsStruct[mainSingleWindowinUseIndex].allFloorItem.Count > 0)
 						{
 							//視窗中是否有missionTab 有的話切換missionTab 並設定AllwindowsComponent內容
 							inUseTab = AllWindowsStruct[mainSingleWindowinUseIndex].misstionTab.ChooseInUseMissionTabsIndex(mousePos2World);
 							if (inUseTab != -1) SetInUseTabIndex2Window(mainSingleWindowinUseIndex, inUseTab);
 							if (AllWindowsStruct[mainSingleWindowinUseIndex].misstionTab.deleteButton && AllWindowsStruct[mainSingleWindowinUseIndex].misstionTab.ChooseMissionTabsDeleteButton(mousePos2World))
 							{
-								AllWindowsStruct[mainSingleWindowinUseIndex].misstionTab.DeleteMisstionTab();
-								ClearLastTab2Window(mainSingleWindowinUseIndex);
-
+								AllWindowsStruct[mainSingleWindowinUseIndex].misstionTab.DeleteCurrentMisstionTab();
+								ClearCurrentTab2Window(mainSingleWindowinUseIndex);
 							}
 						}
 
@@ -1376,9 +1408,7 @@ public class DragItemController : MonoBehaviour
 							}
 						}
 					}
-
 				}
-
 			}
 		}
 	}
@@ -1511,8 +1541,6 @@ public class DragItemController : MonoBehaviour
 		{
 			//刪除最後一個
 
-			Debug.Log("last:" + (AllWindowsStruct[index].allFloorItem.Count - 1));
-
 			AllWindowsStruct[index].DeleteAllComponent(AllWindowsStruct[index].allFloorItem.Count - 1);
 			//顯示前一個
 			AllWindowsStruct[index].inUseTab2ComponentLayerIndex--;
@@ -1526,6 +1554,23 @@ public class DragItemController : MonoBehaviour
 
 			AllWindowsStruct[index].DeleteAllComponent(AllWindowsStruct[index].allFloorItem.Count - 1);
 		}
+	}
+	//按下刪除鈕後，清除選用視窗當前的missionTab對應的commponent內容
+	void ClearCurrentTab2Window(int index)
+	{
+		SaveState2MainComponent(index);
+		AllWindowsStruct[index].temporateAllFloorItem[AllWindowsStruct[index].lastChooseMainDragObjectName][AllWindowsStruct[index].inUseTab2ComponentLayerIndex].Clear();
+		AllWindowsStruct[index].temporateAllFloorItem[AllWindowsStruct[index].lastChooseMainDragObjectName].RemoveAt(AllWindowsStruct[index].inUseTab2ComponentLayerIndex);
+		AllWindowsStruct[index].DeleteAllComponent(AllWindowsStruct[index].inUseTab2ComponentLayerIndex);
+		//刪除當前的那一個
+		if (AllWindowsStruct[index].inUseTab2ComponentLayerIndex>0)
+		{
+			AllWindowsStruct[index].inUseTab2ComponentLayerIndex--;
+
+		}
+		AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex] = AllWindowsStruct[index].temporateAllFloorItem[AllWindowsStruct[index].lastChooseMainDragObjectName][AllWindowsStruct[index].inUseTab2ComponentLayerIndex];
+		AllWindowsStruct[index].ShowAllComponent();
+
 	}
 	//
 	void SwitchWindow()
@@ -1655,7 +1700,6 @@ public class DragItemController : MonoBehaviour
 		{
 			if (!AllWindowsStruct[index].temporateAllFloorItem.ContainsKey(AllWindowsStruct[index].lastChooseMainDragObjectName))
 			{
-				Debug.Log("First");
 				Dictionary<string, List<GameObject>> copy = new Dictionary<string, List<GameObject>>(AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex]);
 				List<Dictionary<string, List<GameObject>>> tmpList = new List<Dictionary<string, List<GameObject>>>();
 				tmpList.Add(copy);
@@ -1663,7 +1707,6 @@ public class DragItemController : MonoBehaviour
 			}
 			else
 			{
-				Debug.Log("Second");
 				Dictionary<string, List<GameObject>> copy = new Dictionary<string, List<GameObject>>(AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex]);
 				AllWindowsStruct[index].temporateAllFloorItem[AllWindowsStruct[index].lastChooseMainDragObjectName][AllWindowsStruct[index].inUseTab2ComponentLayerIndex] = copy;
 			}
