@@ -45,12 +45,16 @@ public class uppoint : MonoBehaviour {
 
             up.reset();
 
+
+
+
+            
             eavecontrol.reset();
             
             roofcontrol.reset();
             roofcontrol2.reset();
             roofcontrolS.reset();
-
+            
 
             //20160829
             ridgecontrol.GetComponent<RidgeControl>().ridgemanage[0].GetComponent<catline>().ResetCatmullRom();
@@ -63,14 +67,14 @@ public class uppoint : MonoBehaviour {
         
 
        
-        
+        /*
         eavecontrol.reset();
         up.reset();
         roofcontrol.reset();
 
         roofcontrol2.reset();
         roofcontrolS.reset();
-         
+         */
         
 
 

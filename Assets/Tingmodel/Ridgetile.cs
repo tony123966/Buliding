@@ -2,11 +2,14 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class Ridgetile : MonoBehaviour {
+public class Ridgetile : MonoBehaviour
+{
 
-   
-    
-    public float tilelong = 0.03f;
+
+
+   // public float tilelong = 0.03f;
+
+    public float tilelong = 0.02f;
     public float tilelong2 = 0.0140f;
 
     public List<GameObject> tileds = new List<GameObject>();
@@ -14,8 +17,20 @@ public class Ridgetile : MonoBehaviour {
     public GameObject mridge;
 
 
+    public Vector3 right;
+    public Vector3 down;
+    public Vector3 left;
+    public Vector3 up;
+
     void Awake()
     {
+
+        right = new Vector3(1, 0, 0);
+        down = new Vector3(0, 0, -1);
+        left = new Vector3(-1, 0, 0);
+        up = new Vector3(0, 0, 1);
+
+
 
 
         mridge = GameObject.Find("main_ridge");
@@ -26,11 +41,11 @@ public class Ridgetile : MonoBehaviour {
     // Use this for initialization
     void Start()
     {
-     
-       
+
+
         creat();
-       
-       
+
+
 
     }
 
@@ -41,27 +56,80 @@ public class Ridgetile : MonoBehaviour {
     }
 
 
-
-
-
-   public void creat()
+    float haha(Vector3 a)
     {
 
-       
-       // int ui = transform.parent.parent.parent.GetChild(1).GetComponent<UIcontrol>().numberslidervalue;
+        float aa = Mathf.Min(Vector3.Angle(right, a), Vector3.Angle(down, a));
+        float bb = Mathf.Min(Vector3.Angle(left, a), Vector3.Angle(up, a));
+
+        float cc = Mathf.Min(aa, bb);
+
+
+        if (cc == Vector3.Angle(right, a))
+        {
+            float dd = Mathf.Min(Vector3.Angle(up, a), Vector3.Angle(down, a));
+            if (dd == Vector3.Angle(up, a))
+            {
+                return 360 - Vector3.Angle(right, a) - 90;
+            }
+            else
+            {
+                return Vector3.Angle(right, a) - 90;
+            }
+
+        }
+        else if (cc == Vector3.Angle(down, a))
+        {
+            return Vector3.Angle(right, a) - 90;
+        }
+        else if (cc == Vector3.Angle(left, a))
+        {
+            float dd = Mathf.Min(Vector3.Angle(up, a), Vector3.Angle(down, a));
+            if (dd == Vector3.Angle(up, a))
+            {
+                return 360 - Vector3.Angle(right, a) - 90;
+            }
+            else
+            {
+                return Vector3.Angle(right, a) - 90;
+            }
+        }
+        else if (cc == Vector3.Angle(up, a))
+        {
+            return 360 - Vector3.Angle(right, a) - 90;
+        }
+
+        return 0;
+
+    }
+
+
+
+    public void creat()
+    {
+
+
+        Vector3 up = transform.GetChild(0).transform.position;
+        Vector3 down = transform.GetChild(transform.childCount-1).transform.position;
+
+        Vector3 NowRight = new Vector3(down.x - up.x, 0, down.z - up.z);
+
+        haha(NowRight);
+
+        // int ui = transform.parent.parent.parent.GetChild(1).GetComponent<UIcontrol>().numberslidervalue;
 
         //mridge = GameObject.Find("main_ridge");
 
 
-        int ui = transform.parent.parent.parent.GetChild(1).GetComponent<roofcontrol>().numberslidervalue;
-        RidgeControl r2 = this.transform.parent.GetChild(0).GetComponent<RidgeControl>();
+        //int ui = transform.parent.parent.parent.GetChild(1).GetComponent<roofcontrol>().numberslidervalue;
+        //RidgeControl r2 = this.transform.parent.GetChild(0).GetComponent<RidgeControl>();
 
         circlecut1 pla = transform.GetComponent<circlecut1>();
         //midplanecut pla = transform.GetComponent<midplanecut>();
 
         // cir.anchorpointlist
 
-       
+
 
         for (int i = 0; i < pla.anchorpointlist.Count - 2; i++)
         {
@@ -81,12 +149,13 @@ public class Ridgetile : MonoBehaviour {
             float zz = 0f;
             if (i == 0)
             {
-                
-                GameObject tile = Instantiate( mridge , (ori + letter) / 2, Quaternion.identity) as GameObject;
-               
-              
+
+                GameObject tile = Instantiate(mridge, (ori + letter) / 2, Quaternion.identity) as GameObject;
+
+
                 tile.transform.parent = this.transform;
-                int angle = r2.ridgemanage.IndexOf(this.transform.gameObject);
+                
+                //int angle = r2.ridgemanage.IndexOf(this.transform.gameObject);
 
                 //int x = int.Parse(neew.transform.name.Substring(16, 1));
                 int y = i;
@@ -98,12 +167,17 @@ public class Ridgetile : MonoBehaviour {
                 */
 
 
-                int j = angle;
+                //int j = angle;
                 /*
                 tile.transform.GetChild(2).transform.Rotate(-6, 0, 0);
                 tile.transform.GetChild(4).transform.Rotate(-6, 0, 0);
                  * */
-                tile.transform.Rotate(oo, -90 + (360 / ui) * (j), 0);
+
+
+
+                tile.transform.Rotate(oo, haha(NowRight), 0);
+
+                //tile.transform.Rotate(oo, -90 + (360 / ui) * (j), 0);
 
                 tile.transform.localScale = new Vector3(tilelong, 0.02f, tilelong2);
                 tileds.Add(tile);
@@ -112,11 +186,11 @@ public class Ridgetile : MonoBehaviour {
 
             else if (i == pla.anchorpointlist.Count - 3)
             {
-                
+
                 GameObject tile = Instantiate(mridge, (ori + letter) / 2, Quaternion.identity) as GameObject;
-                
+
                 tile.transform.parent = this.transform;
-                int angle = r2.ridgemanage.IndexOf(this.transform.gameObject);
+                //int angle = r2.ridgemanage.IndexOf(this.transform.gameObject);
 
 
                 //int x = int.Parse(neew.transform.name.Substring(16, 1));
@@ -131,10 +205,10 @@ public class Ridgetile : MonoBehaviour {
 
 
 
-                int j = angle;
+                //int j = angle;
 
-                tile.transform.Rotate(oo, -90 + (360 / ui) * (j), 0);
-               
+                tile.transform.Rotate(oo, haha(NowRight), 0);
+
                 tile.transform.localScale = new Vector3(tilelong, 0.02f, tilelong2);
 
                 tileds.Add(tile);
@@ -142,12 +216,12 @@ public class Ridgetile : MonoBehaviour {
 
             else
             {
-               
+
 
                 GameObject tile = Instantiate(mridge, (ori + letter) / 2, Quaternion.identity) as GameObject;
-                
+
                 tile.transform.parent = this.transform;
-                int angle = r2.ridgemanage.IndexOf(this.transform.gameObject);
+                //int angle = r2.ridgemanage.IndexOf(this.transform.gameObject);
 
 
                 //int x = int.Parse(neew.transform.name.Substring(16, 1));
@@ -162,9 +236,9 @@ public class Ridgetile : MonoBehaviour {
 
 
 
-                int j = angle;
+                //int j = angle;
 
-                tile.transform.Rotate(oo, -90+(360 / ui) * (j), 0);
+                tile.transform.Rotate(oo, haha(NowRight), 0);
 
                 tile.transform.localScale = new Vector3(tilelong, 0.02f, tilelong2);
                 tileds.Add(tile);
@@ -182,7 +256,7 @@ public class Ridgetile : MonoBehaviour {
             Destroy(tileds[i]);
 
         }
-        
+
 
         tileds.Clear();
         creat();
@@ -202,7 +276,7 @@ public class Ridgetile : MonoBehaviour {
 
 
         tileds.Clear();
-   
+
 
     }
 

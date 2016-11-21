@@ -966,7 +966,7 @@ public class MisstionTab : MonoBehaviour
 			GameObject tmp = missionTabsList[inUseIndex];
 			Destroy(tmp);
 			missionTabsList.RemoveAt(inUseIndex);
-			if (inUseIndex!=0) inUseIndex--;
+			if (inUseIndex != 0) inUseIndex--;
 			if (missionTabsList.Count == 1)
 			{
 				tmp = deleteButton;
@@ -981,11 +981,11 @@ public class MisstionTab : MonoBehaviour
 		}
 		SortMisstionTabPosition();
 	}
-	public void SortMisstionTabPosition() 
-	{ 
-		for(int i=0;i<missionTabsList.Count;i++)
+	public void SortMisstionTabPosition()
+	{
+		for (int i = 0; i < missionTabsList.Count; i++)
 		{
-			missionTabsList[i].transform.position=windowsBounds.min + new Vector3((i * (tabsBounds.size.x + offset)) + tabsBounds.extents.x, tabsBounds.extents.y, 0.0f);
+			missionTabsList[i].transform.position = windowsBounds.min + new Vector3((i * (tabsBounds.size.x + offset)) + tabsBounds.extents.x, tabsBounds.extents.y, 0.0f);
 		}
 	}
 }
@@ -1021,7 +1021,7 @@ public class WindowsList : MonoBehaviour//視窗
 		}
 	}
 
-	public void ClearAllComponent()
+	public void ClearAllComponent()//清除當前樓層Component
 	{
 		foreach (KeyValuePair<string, List<GameObject>> kvp in allFloorItem[inUseTab2ComponentLayerIndex])
 		{
@@ -1032,7 +1032,7 @@ public class WindowsList : MonoBehaviour//視窗
 		}
 		allFloorItem[inUseTab2ComponentLayerIndex].Clear();
 	}
-	public void DeleteAllComponent(int index)
+	public void DeleteAllComponent(int index)//清除當前樓層Component 並減少一層樓
 	{
 		Debug.Log("AllComponent : " + allFloorItem.Count);
 
@@ -1078,15 +1078,18 @@ public class WindowsList : MonoBehaviour//視窗
 }
 public class DragItemController : MonoBehaviour
 {
+	//重要的tag
 	const string MAINCOMPONENT = "MainComponent";
-	const string CONTROLPOINT = "ControlPoint";
-	const string CYLINDER = "Cylinder";
 	const string DECORATECOMPONENT = "DecorateComponent";
-
+	const string CONTROLPOINT = "ControlPoint";
+	const string MESHBODYCOLLIDER = "MeshBodyCollider";
+	const string ICONMENUBUTTON = "IconMenuButton";
+	//四大視窗編號
 	public enum WindowsIndex { Formfactor = 0, Roof = 1, Body = 2, Platform = 3, SingleWindow = 4, };
+	//兩種windowSet模式編號
 	public enum WindowsSetIndex { FourBaseWindows = 0, SingleWindow = 1, };
 	//選定的物件
-	public GameObject lastChooseIconObject=null;
+	public GameObject lastChooseIconObject = null;
 	public GameObject chooseDragObject = null;
 	public GameObject chooseObj = null;
 	public GameObject chooseWindow;
@@ -1098,10 +1101,10 @@ public class DragItemController : MonoBehaviour
 	public List<GameObject> windowsList = new List<GameObject>();
 	public List<GameObject> gridList = new List<GameObject>();
 	public List<Camera> cameraList = new List<Camera>();
-	//
+	//windowSetList
 	public List<GameObject> windowSetList = new List<GameObject>();
-	//
-	public List<GameObject> buttonList = new List<GameObject>();
+	//windowSwitchButtonList
+	public List<GameObject> windowSwitchButtonList = new List<GameObject>();
 
 	//四個視窗中的物件集合
 	private WindowsList[] AllWindowsStruct;
@@ -1114,13 +1117,14 @@ public class DragItemController : MonoBehaviour
 	public int changeLayoutIndexInWindowsSet = 0;
 	//單個視窗
 	private int mainSingleWindowinUseIndex;
-	//
+	//script
 	private Movement movement;
 	private AllInOne building;
 	//MissionTabButton
 	public GameObject misstionTabObj;
-	//DeleteIconButton
-	public GameObject deleteIconObj;
+	//IconControlMenuPanel
+	public GameObject IconControlMenuPanel;
+	private Bounds IconControlMenuPanelBounds;
 	//InitIconSetting
 	public GameObject formFractorInitDragIconObj;
 	public GameObject roofInitDragIconObj;
@@ -1134,18 +1138,13 @@ public class DragItemController : MonoBehaviour
 
 		InitWindowListMemorySetting();
 		InitStateSetting();
-		SwitchWindow();
+		InitWindowSetSetting();
 
 		InitIconSetting();
 	}
 	void Update()
 	{
 		RayCastToChooseObj();
-		if (Input.GetKeyDown(KeyCode.C))
-		{
-			Debug.Log(ThisWindowsComponent.allFloorItem.Count);
-			Debug.Log(ThisWindowsComponent.temporateAllFloorItem.Count);
-		}
 	}
 	void InitWindowListMemorySetting()
 	{
@@ -1204,6 +1203,7 @@ public class DragItemController : MonoBehaviour
 			CreateMainComponent((int)WindowsIndex.Platform, platformInitDragIconObj);
 			AllWindowsStruct[(int)WindowsIndex.Platform].lastChooseMainDragObjectName = platformInitDragIconObj.name;
 		}
+
 	}
 	//設定鏡頭、Grid
 	void InitCameraSetting()
@@ -1234,14 +1234,31 @@ public class DragItemController : MonoBehaviour
 		Vector2 mousePos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
 		Vector2 mousePos2World = uICamera.ScreenToWorldPoint(mousePos);
 
+
 		if (chooseObj)//已選到控制點
 		{
 			if (Input.GetMouseButtonUp(0))//放開選到的控制點
 			{
 				chooseObj.GetComponent<Collider>().enabled = true;
+
+				if (chooseObj.transform.parent.GetComponent<MeshObj>())
+				{
+
+					building.rectangle_column();
+
+					building.rectangle_Platform(building.roof_tall, building.roof_long);
+
+				}
+
+				if (chooseObj.transform.parent.GetComponent<Testing>())
+				{
+
+					building.UpdateRoof();
+
+				}
+
 				chooseObj = null;
-				//
-				building.UpdateRoof();
+
 				return;
 			}
 			else//若在選定視窗內移動控制點
@@ -1263,19 +1280,41 @@ public class DragItemController : MonoBehaviour
 						//移動控制點
 						movement.Move(loc);
 
+
+						//判斷是否上面MeshObj
+
+						if (chooseObj.transform.parent.GetComponent<MeshObj>())
+						{
+
+
+							building.ChangeRoof(0, -chooseObj.transform.parent.GetComponent<MeshObj>().chang_mainRidgedis * (building.ini_roof_tall / chooseObj.transform.parent.GetComponent<MeshObj>().ini_mainRidgedis), -chooseObj.transform.parent.GetComponent<MeshObj>().chang_mainRidgedis * (building.ini_roof_tall / chooseObj.transform.parent.GetComponent<MeshObj>().ini_mainRidgedis));
+
+
+
+
+							//print(chooseObj.transform.parent.GetComponent<MeshObj>().chang_mainRidgedis);
+							building.ChangeRoof(2, chooseObj.transform.parent.GetComponent<MeshObj>().chang_bodydis.x * (building.ini_roof_tall / chooseObj.transform.parent.GetComponent<MeshObj>().ini_bodydis.x), chooseObj.transform.parent.GetComponent<MeshObj>().chang_bodydis.x * (building.ini_roof_tall / chooseObj.transform.parent.GetComponent<MeshObj>().ini_bodydis.x));
+
+
+
+							building.ChangeRoof(2, chooseObj.transform.parent.GetComponent<MeshObj>().chang_bodydis.y * (building.ini_roof_long / chooseObj.transform.parent.GetComponent<MeshObj>().ini_bodydis.y), -chooseObj.transform.parent.GetComponent<MeshObj>().chang_bodydis.y * (building.ini_roof_long / chooseObj.transform.parent.GetComponent<MeshObj>().ini_bodydis.y));
+
+						}
+
 						//判斷是否為body
 						if (chooseObj.transform.parent.GetComponent<body2icon>())
 						{
 							building.MoveBody(chooseObj.transform.parent.GetComponent<body2icon>().ratio_bodydis.x);
 
-
-							building.UpdateBody_B(chooseObj.transform.parent.GetComponent<body2icon>().isBalustrade);
-							building.UpdateBody_F(chooseObj.transform.parent.GetComponent<body2icon>().isFrieze);
-
-							//20160916
+							building.moveBOBODY(chooseObj.transform.parent.GetComponent<body2icon>().ratio_walldis);
 
 							building.Move_F(chooseObj.transform.parent.GetComponent<body2icon>().friezeHeight, chooseObj.transform.parent.GetComponent<body2icon>().ini_bodydis.y);
+
 							building.Move_B(chooseObj.transform.parent.GetComponent<body2icon>().balustradeHeight, chooseObj.transform.parent.GetComponent<body2icon>().ini_bodydis.y);
+
+							building.bodytall(chooseObj.transform.parent.GetComponent<body2icon>().ratio_bodydis.y);
+
+
 						}
 
 						//判斷是否為plat
@@ -1302,69 +1341,162 @@ public class DragItemController : MonoBehaviour
 				}
 			}
 		}
-		else
+		else//沒選到控制點
 		{
 			if (Input.GetMouseButtonDown(0))//選擇視窗
 			{
-				int inUseTab;
-				switch (changeLayoutIndexInWindowsSet)
+				if (!IconControlMenuPanelBounds.Contains(mousePos2World) && IconControlMenuPanel.activeSelf)
 				{
-					case (int)WindowsSetIndex.FourBaseWindows://四個視窗
-						int index = ChooseWindow();
-						if (index != -1)
+					IconControlMenuPanel.SetActive(false);
+
+				}
+				else if (IconControlMenuPanelBounds.Contains(mousePos2World))
+				{
+					Ray ray = uICamera.ScreenPointToRay(mousePos);
+					RaycastHit srsHit;
+					if (Physics.Raycast(ray, out srsHit))
+					{
+						if (srsHit.collider.gameObject.tag == ICONMENUBUTTON)
 						{
-							ThisWindowsComponent = AllWindowsStruct[index];
-							SetCameraAndGrid(index);
-							SetMissionTab(index);
-							//選擇視窗
-							chooseWindow = windowsList[index];
-							if (AllWindowsStruct[index].allFloorItem.Count>0)
+							IconControlMenuPanel.SetActive(true);
+						}
+					}
+				}
+				if( !IconControlMenuPanel.activeSelf)
+				{
+					int inUseTab = 0;
+					int index = 0;
+					switch (changeLayoutIndexInWindowsSet)
+					{
+						case (int)WindowsSetIndex.FourBaseWindows://四個視窗
+							index = ChooseWindow();
+							if (index != -1)
 							{
-								inUseTab = AllWindowsStruct[index].misstionTab.ChooseInUseMissionTabsIndex(mousePos2World);
-								if (inUseTab != -1) SetInUseTabIndex2Window(index, inUseTab);
-								if (AllWindowsStruct[index].misstionTab.deleteButton && AllWindowsStruct[index].misstionTab.ChooseMissionTabsDeleteButton(mousePos2World))
+								ThisWindowsComponent = AllWindowsStruct[index];
+								SetCameraAndGrid(index);
+								SetMissionTab(index);
+								//選擇視窗
+								chooseWindow = windowsList[index];
+								if (AllWindowsStruct[index].allFloorItem.Count > 0)
 								{
-									AllWindowsStruct[index].misstionTab.DeleteCurrentMisstionTab();
-									ClearCurrentTab2Window(index);
+									inUseTab = AllWindowsStruct[index].misstionTab.ChooseInUseMissionTabsIndex(mousePos2World);
+									if (inUseTab != -1) SetInUseTabIndex2Window(index, inUseTab);
+									if (AllWindowsStruct[index].misstionTab.deleteButton && AllWindowsStruct[index].misstionTab.ChooseMissionTabsDeleteButton(mousePos2World))
+									{
+										AllWindowsStruct[index].misstionTab.DeleteCurrentMisstionTab();
+										ClearCurrentTab2Window(index);
+									}
+								}
+
+							}
+							break;
+						case (int)WindowsSetIndex.SingleWindow://單個視窗
+							for (index = 0; index < windowSwitchButtonList.Count; index++)
+							{
+								Bounds bounds = NGUIMath.CalculateAbsoluteWidgetBounds(windowSwitchButtonList[index].transform);
+								if (bounds.Contains(mousePos2World))
+								{
+									chooseWindow.GetComponent<UITexture>().mainTexture = windowsList[index].GetComponent<UITexture>().mainTexture;
+									ThisWindowsComponent = AllWindowsStruct[index];
+									SetCameraAndGrid(index);
+									SetMissionTab(index);
+									SortWindowSwitchButtonList2MainSingleWindow(index);
+									break;
+								}
+
+							}
+							if (AllWindowsStruct[mainSingleWindowinUseIndex].allFloorItem.Count > 0)
+							{
+								//視窗中是否有missionTab 有的話切換missionTab 並設定AllwindowsComponent內容
+								inUseTab = AllWindowsStruct[mainSingleWindowinUseIndex].misstionTab.ChooseInUseMissionTabsIndex(mousePos2World);
+								if (inUseTab != -1)
+								{
+
+									SetInUseTabIndex2Window(mainSingleWindowinUseIndex, inUseTab);
+
+									building.changeLayer(inUseTab);
+
+								}
+								if (AllWindowsStruct[mainSingleWindowinUseIndex].misstionTab.deleteButton && AllWindowsStruct[mainSingleWindowinUseIndex].misstionTab.ChooseMissionTabsDeleteButton(mousePos2World))
+								{
+
+									building.DeleteLayer(AllWindowsStruct[mainSingleWindowinUseIndex].inUseTab2ComponentLayerIndex);
+
+
+									AllWindowsStruct[mainSingleWindowinUseIndex].misstionTab.DeleteCurrentMisstionTab();
+									ClearCurrentTab2Window(mainSingleWindowinUseIndex);
+
+									//building.DeleteLayer(AllWindowsStruct[mainSingleWindowinUseIndex].allFloorItem.Count);
+
+
 								}
 							}
 
-						}
-						break;
-					case (int)WindowsSetIndex.SingleWindow://單個視窗
-						for (int i = 0; i < buttonList.Count; i++)
+							break;
+
+					}
+
+					if (chooseWindow != null)//選擇控制點
+					{
+
+						Bounds bounds = NGUIMath.CalculateAbsoluteWidgetBounds(chooseWindow.transform);
+
+						if (bounds.Contains(mousePos2World))
 						{
-							Bounds bounds = NGUIMath.CalculateAbsoluteWidgetBounds(buttonList[i].transform);
-							if (bounds.Contains(mousePos2World))
+
+							Vector2 hitLocalUV;
+							Vector3 localHit = mousePos2World;
+							// normalize
+							hitLocalUV.x = (localHit.x - bounds.min.x) / (bounds.size.x);
+							hitLocalUV.y = (localHit.y - bounds.min.y) / (bounds.size.y);
+							//從圖片位置到世界相機座標選取點
+							Ray srsRay = chooseCamera.ScreenPointToRay(new Vector2(hitLocalUV.x * chooseCamera.pixelWidth, hitLocalUV.y * chooseCamera.pixelHeight));
+							RaycastHit srsHit;
+							if (Physics.Raycast(srsRay, out srsHit))
 							{
-								chooseWindow.GetComponent<UITexture>().mainTexture = windowsList[i].GetComponent<UITexture>().mainTexture;
-								ThisWindowsComponent = AllWindowsStruct[i];
-								SetCameraAndGrid(i);
-								SetMissionTab(i);
-								SortButtonListTomainSingleWindow(i);
-								break;
+								if (srsHit.collider.gameObject.tag == CONTROLPOINT)
+								{
+									chooseObj = srsHit.collider.gameObject;
+									movement.intiAllList();
+									if (chooseObj.transform.parent.GetComponent<MeshObj>())
+									{
+										chooseObj.transform.parent.GetComponent<MeshObj>().addpoint();
+									}
+									if (chooseObj.transform.parent.GetComponent<platform2icon>())
+									{
+										chooseObj.transform.parent.GetComponent<platform2icon>().addpoint();
+									}
+									if (chooseObj.transform.parent.GetComponent<body2icon>())
+									{
+										chooseObj.transform.parent.GetComponent<body2icon>().addpoint();
+									}
+									if (chooseObj.transform.parent.GetComponent<rooficon>())
+									{
+										chooseObj.transform.parent.GetComponent<rooficon>().addpoint();
+									}
+									if (chooseObj.transform.parent.GetComponent<Testing>())
+									{
+										chooseObj.transform.parent.GetComponent<Testing>().addpoint();
+									}
+									chooseObj.GetComponent<Collider>().enabled = false;
+									//寫成lastChooseIconObject = chooseObj.transform.parent.gameObject會出錯??????????????
+									//lastChooseIconObject = srsHit.collider.transform.parent.gameObject;
+									lastChooseIconObject = srsHit.collider.transform.gameObject;
+								}
+								else if (srsHit.collider.gameObject.tag == MESHBODYCOLLIDER)
+								{
+									lastChooseIconObject = srsHit.collider.transform.gameObject;
+								}
 							}
-
 						}
-						if (AllWindowsStruct[mainSingleWindowinUseIndex].allFloorItem.Count > 0)
-						{
-							//視窗中是否有missionTab 有的話切換missionTab 並設定AllwindowsComponent內容
-							inUseTab = AllWindowsStruct[mainSingleWindowinUseIndex].misstionTab.ChooseInUseMissionTabsIndex(mousePos2World);
-							if (inUseTab != -1) SetInUseTabIndex2Window(mainSingleWindowinUseIndex, inUseTab);
-							if (AllWindowsStruct[mainSingleWindowinUseIndex].misstionTab.deleteButton && AllWindowsStruct[mainSingleWindowinUseIndex].misstionTab.ChooseMissionTabsDeleteButton(mousePos2World))
-							{
-								AllWindowsStruct[mainSingleWindowinUseIndex].misstionTab.DeleteCurrentMisstionTab();
-								ClearCurrentTab2Window(mainSingleWindowinUseIndex);
-							}
-						}
-
-						break;
-
+					}
 				}
-
-				if (chooseWindow != null)//選擇控制點
+			
+			}
+			else if (Input.GetMouseButtonDown(1))//右鍵
 				{
-
+					IconControlMenuPanelBounds = NGUIMath.CalculateAbsoluteWidgetBounds(IconControlMenuPanel.transform);
+					IconControlMenuPanel.SetActive(false);
 					Bounds bounds = NGUIMath.CalculateAbsoluteWidgetBounds(chooseWindow.transform);
 
 					if (bounds.Contains(mousePos2World))
@@ -1380,42 +1512,69 @@ public class DragItemController : MonoBehaviour
 						RaycastHit srsHit;
 						if (Physics.Raycast(srsRay, out srsHit))
 						{
-							if (srsHit.collider.gameObject.tag == CONTROLPOINT || srsHit.collider.gameObject.tag == CYLINDER)
+							if (srsHit.collider.gameObject.tag == CONTROLPOINT || srsHit.collider.gameObject.tag == MESHBODYCOLLIDER)
 							{
-								chooseObj = srsHit.collider.gameObject;
-								movement.intiAllList();
-								if (chooseObj.transform.parent.GetComponent<MeshObj>())
-								{
-									chooseObj.transform.parent.GetComponent<MeshObj>().addpoint();
-								}
-								if (chooseObj.transform.parent.GetComponent<platform2icon>())
-								{
-									chooseObj.transform.parent.GetComponent<platform2icon>().addpoint();
-								}
-								if (chooseObj.transform.parent.GetComponent<body2icon>())
-								{
-									chooseObj.transform.parent.GetComponent<body2icon>().addpoint();
-								}
-								if (chooseObj.transform.parent.GetComponent<rooficon>())
-								{
-									chooseObj.transform.parent.GetComponent<rooficon>().addpoint();
-								}
-								if (chooseObj.transform.parent.GetComponent<Testing>())
-								{
-									chooseObj.transform.parent.GetComponent<Testing>().addpoint();
-								}
-								chooseObj.GetComponent<Collider>().enabled = false;
+								lastChooseIconObject = srsHit.collider.transform.gameObject;
+								IconControlMenuPanel.SetActive(true);
+								IconControlMenuPanel.transform.position = new Vector3(mousePos2World.x + IconControlMenuPanelBounds.size.x / 2.0f, mousePos2World.y - IconControlMenuPanelBounds.size.y / 2.0f, 0);
 							}
 						}
 					}
 				}
+
+		}
+
+
+
+
+	}
+	public void IConMenu2DeleteChooseIcon()
+	{
+		Debug.Log("press");
+		SaveState2MainComponent(mainSingleWindowinUseIndex);
+		//如果只有一個MainComponent
+
+		if (AllWindowsStruct[mainSingleWindowinUseIndex].allFloorItem[AllWindowsStruct[mainSingleWindowinUseIndex].inUseTab2ComponentLayerIndex].Count > 1)//有兩個以上的component
+		{
+			Debug.Log("fdfdf");
+			Debug.Log("lastChooseIconObject" + lastChooseIconObject.name);
+			foreach (KeyValuePair<string, List<GameObject>> kvp in AllWindowsStruct[mainSingleWindowinUseIndex].allFloorItem[AllWindowsStruct[mainSingleWindowinUseIndex].inUseTab2ComponentLayerIndex])
+			{
+				if (kvp.Key == MAINCOMPONENT) continue;
+				for (int i = 0; i < kvp.Value.Count; i++)
+				{
+					Debug.Log("kvp.key" + kvp.Key);
+					Debug.Log("kvp.Value[i].name" + kvp.Value[i].name);
+					Transform[] obj = kvp.Value[i].GetComponentsInChildren<Transform>(true) as Transform[];
+					for (int j = 0; j < obj.Length; j++)
+					{
+						if (obj[j].gameObject == kvp.Value[i])continue;
+						Debug.Log("obj[j].gameObject.name" + obj[j].gameObject.name);
+						if (lastChooseIconObject == obj[j].gameObject)
+						{
+							Destroy(kvp.Value[i]);
+							kvp.Value.RemoveAt(i);
+							AllWindowsStruct[mainSingleWindowinUseIndex].allFloorItem[AllWindowsStruct[mainSingleWindowinUseIndex].inUseTab2ComponentLayerIndex][kvp.Key].Clear();
+							break;
+						}
+					}
+
+				}
 			}
 		}
+		else
+		{
+			Debug.Log("clear()");
+			AllWindowsStruct[mainSingleWindowinUseIndex].ClearAllComponent();
+		}
+
+		IconControlMenuPanel.SetActive(false);
+
 	}
 	//隱藏開啟MissionTab
 	void SetMissionTab(int index)
 	{
-		if (changeLayoutIndexInWindowsSet == (int)WindowsSetIndex.SingleWindow) 
+		if (changeLayoutIndexInWindowsSet == (int)WindowsSetIndex.SingleWindow)
 		{
 			AllWindowsStruct[(int)WindowsIndex.Body].misstionTab.SetAllMisstionTabsActive(false);
 			AllWindowsStruct[(int)WindowsIndex.Platform].misstionTab.SetAllMisstionTabsActive(false);
@@ -1433,16 +1592,18 @@ public class DragItemController : MonoBehaviour
 		a.transform.position = b.transform.position;
 		b.transform.position = temp;
 	}
-	void SwapButtonTomainSingleWindow(int index)
+	//單純視窗按鈕交換
+	void SwapButton2MainSingleWindow(int index)
 	{
 		if (mainSingleWindowinUseIndex == index) return;
 
-		SwapGameObject(buttonList[index], buttonList[mainSingleWindowinUseIndex]);
+		SwapGameObject(windowSwitchButtonList[index], windowSwitchButtonList[mainSingleWindowinUseIndex]);
 
 		mainSingleWindowinUseIndex = index;
 
 	}
-	void SortButtonListTomainSingleWindow(int index)
+	//依照四大視窗按鈕順序
+	void SortWindowSwitchButtonList2MainSingleWindow(int index)
 	{
 		if (mainSingleWindowinUseIndex == index) return;
 
@@ -1454,18 +1615,18 @@ public class DragItemController : MonoBehaviour
 			{
 				for (int i = 0; i < diff - 1; i++)
 				{
-					SwapGameObject(buttonList[index], buttonList[index - 1 - i]);
+					SwapGameObject(windowSwitchButtonList[index], windowSwitchButtonList[index - 1 - i]);
 				}
 			}
 			else if (mainSingleWindowinUseIndex > index)
 			{
 				for (int i = 0; i < diff - 1; i++)
 				{
-					SwapGameObject(buttonList[index], buttonList[index + 1 + i]);
+					SwapGameObject(windowSwitchButtonList[index], windowSwitchButtonList[index + 1 + i]);
 				}
 			}
 		}
-		SwapGameObject(buttonList[index], buttonList[mainSingleWindowinUseIndex]);
+		SwapGameObject(windowSwitchButtonList[index], windowSwitchButtonList[mainSingleWindowinUseIndex]);
 
 		mainSingleWindowinUseIndex = index;
 	}
@@ -1535,6 +1696,7 @@ public class DragItemController : MonoBehaviour
 	{
 
 		SaveState2MainComponent(index);
+		//減少一層樓 清除記憶體
 		AllWindowsStruct[index].temporateAllFloorItem[AllWindowsStruct[index].lastChooseMainDragObjectName][AllWindowsStruct[index].allFloorItem.Count - 1].Clear();
 		AllWindowsStruct[index].temporateAllFloorItem[AllWindowsStruct[index].lastChooseMainDragObjectName].RemoveAt(AllWindowsStruct[index].allFloorItem.Count - 1);
 		if (AllWindowsStruct[index].inUseTab2ComponentLayerIndex == AllWindowsStruct[index].allFloorItem.Count - 1)//最後一個missionTab對應的commponent內容正在編輯
@@ -1550,7 +1712,6 @@ public class DragItemController : MonoBehaviour
 		else//最後一個missionTab對應的commponent內容沒有正在編輯
 		{
 			//刪除最後一個
-			Debug.Log("last:" + (AllWindowsStruct[index].allFloorItem.Count - 1));
 
 			AllWindowsStruct[index].DeleteAllComponent(AllWindowsStruct[index].allFloorItem.Count - 1);
 		}
@@ -1559,11 +1720,12 @@ public class DragItemController : MonoBehaviour
 	void ClearCurrentTab2Window(int index)
 	{
 		SaveState2MainComponent(index);
+		//減少一層樓 清除記憶體
 		AllWindowsStruct[index].temporateAllFloorItem[AllWindowsStruct[index].lastChooseMainDragObjectName][AllWindowsStruct[index].inUseTab2ComponentLayerIndex].Clear();
 		AllWindowsStruct[index].temporateAllFloorItem[AllWindowsStruct[index].lastChooseMainDragObjectName].RemoveAt(AllWindowsStruct[index].inUseTab2ComponentLayerIndex);
 		AllWindowsStruct[index].DeleteAllComponent(AllWindowsStruct[index].inUseTab2ComponentLayerIndex);
 		//刪除當前的那一個
-		if (AllWindowsStruct[index].inUseTab2ComponentLayerIndex>0)
+		if (AllWindowsStruct[index].inUseTab2ComponentLayerIndex > 0)
 		{
 			AllWindowsStruct[index].inUseTab2ComponentLayerIndex--;
 
@@ -1573,7 +1735,7 @@ public class DragItemController : MonoBehaviour
 
 	}
 	//
-	void SwitchWindow()
+	void InitWindowSetSetting()
 	{
 		for (int i = 0; i < windowSetList.Count; i++)
 		{
@@ -1653,7 +1815,6 @@ public class DragItemController : MonoBehaviour
 					{
 						//取代原本的主物物件 清除此視窗物件
 						AllWindowsStruct[index].ClearAllComponent();
-						AllWindowsStruct[index].temporateAllFloorItem[chooseDragObject.name][AllWindowsStruct[index].inUseTab2ComponentLayerIndex].Clear();
 						CreateMainComponent(index);
 						Debug.Log("333");
 
@@ -1671,21 +1832,32 @@ public class DragItemController : MonoBehaviour
 
 				if (AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex].ContainsKey(MAINCOMPONENT))//如果有拖曳物件 且在選擇的視窗內 且視窗內物件為空
 				{
-					CreateDecorateComponent(index);
+					GameObject correspondingDragItemObject = CreateDecorateComponent(index);
 
 					if (AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex][MAINCOMPONENT][0].GetComponent<body2icon>())
 					{
 
-						if (AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex].ContainsKey(chooseDragObject.name)) AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex][MAINCOMPONENT][0].GetComponent<body2icon>().UpdateFunction(chooseDragObject.name);
-
-						building.UpdateBody_F(AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex][MAINCOMPONENT][0].GetComponent<body2icon>().isBalustrade);
-						building.UpdateBody_B(AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex][MAINCOMPONENT][0].GetComponent<body2icon>().isFrieze);
+						if (AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex].ContainsKey(chooseDragObject.name)) AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex][MAINCOMPONENT][0].GetComponent<body2icon>().UpdateFunction(chooseDragObject.name, correspondingDragItemObject);
 
 
 
+						if (chooseDragObject.name == "Balustrade")
+						{
+
+							//building.UpdateBody_F(AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex][MAINCOMPONENT][0].GetComponent<body2icon>().isFrieze);
+							building.UpdateBody_F(true);
+						}
+
+						if (chooseDragObject.name == "Frieze")
+						{
+							//building.UpdateBody_B(AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex][MAINCOMPONENT][0].GetComponent<body2icon>().isBalustrade);
+							building.UpdateBody_B(true);
+						}
+
+						/*
 						building.Move_F(AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex][MAINCOMPONENT][0].GetComponent<body2icon>().friezeHeight, AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex][MAINCOMPONENT][0].GetComponent<body2icon>().ini_bodydis.y);
 						building.Move_B(AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex][MAINCOMPONENT][0].GetComponent<body2icon>().balustradeHeight, AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex][MAINCOMPONENT][0].GetComponent<body2icon>().ini_bodydis.y);
-
+						*/
 					}
 
 					//frieze ＆ Balustrade
@@ -1720,7 +1892,7 @@ public class DragItemController : MonoBehaviour
 
 		GameObject clone = Instantiate(cloneCorrespondingObj, pos, cloneCorrespondingObj.transform.rotation) as GameObject;
 
-		clone.transform.parent = this.transform;
+		//clone.transform.parent = this.transform;
 
 		List<GameObject> allComponentList = new List<GameObject>();
 		allComponentList.Add(clone);
@@ -1734,16 +1906,20 @@ public class DragItemController : MonoBehaviour
 
 		GameObject clone = Instantiate(cloneCorrespondingObj, pos, cloneCorrespondingObj.transform.rotation) as GameObject;
 
-		clone.transform.parent = this.transform;
+		//clone.transform.parent = this.transform;
 
 		List<GameObject> allComponentList = new List<GameObject>();
 		allComponentList.Add(clone);
 		AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex].Add(MAINCOMPONENT, allComponentList);
 	}
-	void CreateDecorateComponent(int index)
+	GameObject CreateDecorateComponent(int index)
 	{
+		GameObject clone = null;
 		Vector3 pos = chooseCamera.transform.position; pos.z = chooseCamera.farClipPlane / 2.0f;
-		GameObject cloneCorrespondingObj = chooseDragObject.GetComponent<CorespondingDragItem>().corespondingDragItem;
+		GameObject cloneCorrespondingObj=null;
+		if (chooseDragObject.GetComponent<CorespondingDragItem>().corespondingDragItem!=null)
+			cloneCorrespondingObj = chooseDragObject.GetComponent<CorespondingDragItem>().corespondingDragItem;
+
 		int correspondingDragItemMaxCount = chooseDragObject.GetComponent<CorespondingDragItem>().correspondingDragItemMaxCount;
 		switch (chooseDragObject.name)
 		{
@@ -1755,7 +1931,7 @@ public class DragItemController : MonoBehaviour
 						SaveState2MainComponent(index);
 						AllWindowsStruct[index].HideAllComponent();
 						AllWindowsStruct[index].inUseTab2ComponentLayerIndex = AllWindowsStruct[index].allFloorItem.Count;
-
+						//增加
 						Dictionary<string, List<GameObject>> newAllComponent = new Dictionary<string, List<GameObject>>();
 
 						AllWindowsStruct[index].allFloorItem.Add(newAllComponent);
@@ -1765,6 +1941,8 @@ public class DragItemController : MonoBehaviour
 						AllWindowsStruct[index].misstionTab.CreateMissionTabs(this, misstionTabObj, chooseWindow);
 
 						CreateMainComponent(index);
+
+						building.upup(17.5f);
 					}
 				}
 				break;
@@ -1794,8 +1972,15 @@ public class DragItemController : MonoBehaviour
 				{
 					if (AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex][chooseDragObject.name].Count < correspondingDragItemMaxCount)
 					{
-						GameObject clone = Instantiate(cloneCorrespondingObj, pos, cloneCorrespondingObj.transform.rotation) as GameObject;
-						clone.transform.parent = this.transform;
+						if (cloneCorrespondingObj!=null)
+							clone = Instantiate(cloneCorrespondingObj, pos, cloneCorrespondingObj.transform.rotation) as GameObject;
+						else
+						{
+							clone=new GameObject();
+							clone.transform.position=pos;		
+						}
+						//clone.transform.parent = this.transform;
+						clone.transform.parent = AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex][MAINCOMPONENT][0].transform;
 						AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex][chooseDragObject.name].Add(clone);
 					}
 					else
@@ -1803,14 +1988,33 @@ public class DragItemController : MonoBehaviour
 				}
 				else
 				{
-					GameObject clone = Instantiate(cloneCorrespondingObj, pos, cloneCorrespondingObj.transform.rotation) as GameObject;
-					clone.transform.parent = this.transform;
+					if (cloneCorrespondingObj != null)
+						clone = Instantiate(cloneCorrespondingObj, pos, cloneCorrespondingObj.transform.rotation) as GameObject;
+					else
+					{
+						clone = new GameObject();
+						clone.transform.position = pos;
+					}
+					//clone.transform.parent = this.transform;
+					clone.transform.parent = AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex][MAINCOMPONENT][0].transform;
 					List<GameObject> newList = new List<GameObject>();
 					newList.Clear();
 					newList.Add(clone);
 					AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex].Add(chooseDragObject.name, newList);
 				}
+
+				if (chooseDragObject.name == "Wall")
+				{
+					building.Bodytruefalse(true);
+				}
+
+				if (chooseDragObject.name == "DoubleRoof")
+				{
+					building.Double_Eave();
+				}
+
 				break;
 		}
+		return clone;
 	}
 }

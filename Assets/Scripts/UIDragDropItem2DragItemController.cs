@@ -26,5 +26,14 @@ public class UIDragDropItem2DragItemController : UIDragDropItem
 			dragItemController.SetObjInWindows();
 			dragItemController.chooseDragObject = null;
 		}
+
+		// Re-enable the drag scroll view script
+		if (mDragScrollView != null)
+			StartCoroutine(EnableDragScrollView());
+	}
+	protected override void OnDragDropEnd()
+	{
+		if (mDragScrollView != null)
+			StartCoroutine(EnableDragScrollView());
 	}
 }

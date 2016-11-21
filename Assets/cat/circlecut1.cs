@@ -32,6 +32,7 @@ public class circlecut1 : MonoBehaviour {
         for (int k = 0; k < cat.innerPointList.Count; k++)
         {
 
+
             if (k == 0)
             {
                 /*

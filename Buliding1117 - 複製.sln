@@ -1,0 +1,29 @@
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2008
+
+Project("{9F3EB576-BC1E-94AF-F0D2-1B18FD569F49}") = "Buliding1117 - 複製", "Assembly-CSharp.csproj", "{DAC41802-FC68-E11A-7911-F31685797EC1}"
+EndProject
+Project("{9F3EB576-BC1E-94AF-F0D2-1B18FD569F49}") = "Buliding1117 - 複製", "Assembly-CSharp-Editor.csproj", "{5B79CB20-74D1-6F58-4E83-59C70CF99764}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DAC41802-FC68-E11A-7911-F31685797EC1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DAC41802-FC68-E11A-7911-F31685797EC1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DAC41802-FC68-E11A-7911-F31685797EC1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DAC41802-FC68-E11A-7911-F31685797EC1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5B79CB20-74D1-6F58-4E83-59C70CF99764}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5B79CB20-74D1-6F58-4E83-59C70CF99764}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5B79CB20-74D1-6F58-4E83-59C70CF99764}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5B79CB20-74D1-6F58-4E83-59C70CF99764}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = Assembly-CSharp.csproj
+	EndGlobalSection
+EndGlobal

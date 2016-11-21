@@ -178,7 +178,7 @@ public class BasedPlatformIcon : RecMeshCreate
 		this.leftUpPoint = leftUpPoint;
 		this.leftDownPoint = leftDownPoint;
 
-		mFilter.mesh = CreatRecMesh(leftUpPoint.transform.position, rightUpPoint.transform.position, rightDownPoint.transform.position, leftDownPoint.transform.position, null);
+		mFilter.mesh = CreatRecMesh(leftUpPoint.transform.position, rightUpPoint.transform.position, rightDownPoint.transform.position, leftDownPoint.transform.position, mFilter.mesh);
 
 		//初始位置
 		controlPointList.Add(leftUpPoint);

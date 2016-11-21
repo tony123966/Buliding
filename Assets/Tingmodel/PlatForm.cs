@@ -331,6 +331,51 @@ public class PlatForm : MonoBehaviour
 
 
 
+    public void build3(float a, float b)
+    {
+
+        int angle = ucit.numberslidervalue;
+        
+     
+            GameObject haha = GameObject.Find("0" + angle + "_platform");
+            Vector3 v0 = transform.parent.GetChild(3).transform.position;
+            Vector3 v3 = transform.parent.parent.GetChild(0).transform.position;
+            v0.y = clc.columnmanage[0].transform.GetChild(3).transform.position.y - 2f;
+
+            Vector3 v4 = new Vector3(v3.x, v0.y, v3.z);
+
+
+            GameObject plat = Instantiate(haha, v4, Quaternion.identity) as GameObject;
+            plat.transform.parent = this.transform;
+            platform.Add(plat);
+
+            Vector3 v1 = clc.columnmanage[0].transform.GetChild(3).transform.position;
+            Vector3 v2 = v1 - v3;
+
+            float ssize = (percent) * 2.0f;
+
+
+            float xxb = plat.transform.GetChild(0).GetComponent<MeshRenderer>().bounds.size.x;
+            float yyb = plat.transform.GetChild(0).GetComponent<MeshRenderer>().bounds.size.y;
+            float zzb = plat.transform.GetChild(0).GetComponent<MeshRenderer>().bounds.size.z;
+
+            Vector3 scale = plat.transform.GetChild(0).transform.localScale;
+
+            scale.x = (a+2f) * scale.x / xxb;
+            scale.y = 2f  * scale.y / yyb;
+            scale.z = (b+2f) * scale.z / zzb;
+
+            plat.transform.GetChild(0).transform.localScale = scale;
+
+            plat.transform.Rotate(0, 45, 0);
+        
+        
+
+
+    }
+
+
+
 
 
 
@@ -392,6 +437,27 @@ public class PlatForm : MonoBehaviour
 	}
 
 
+    public void para3reset(float a, float b)
+    {
+
+        //parayn = true;
+
+
+
+
+        for (int i = 0; i < platform.Count; i++)
+        {
+
+            Destroy(platform[0]);
+        }
+        platform.Clear();
+
+
+
+
+
+        build3(a, b);
+    }
 
 
 

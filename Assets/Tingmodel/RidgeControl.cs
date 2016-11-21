@@ -14,8 +14,14 @@ public class RidgeControl : MonoBehaviour {
     public roofsurcontrol2 rfconS;
 
 
+    public GameObject aio;        
+
+
     public float Height;
     public float Wide;
+
+
+
 
 
     // Use this for initialization
@@ -43,9 +49,9 @@ public class RidgeControl : MonoBehaviour {
         rfconS.build();
        */
 
-        /*
-        GameObject.Find("bao-ding").transform.position =this.transform.GetChild(0).transform.position;
-         */
+        
+        
+         
     }
 	
 	// Update is called once per frame
@@ -141,9 +147,127 @@ public class RidgeControl : MonoBehaviour {
 
 
 
+        if (angle == 4)
+        {
+            for (int i = 2; i <= angle; i++)
+            {
+                GameObject go = Instantiate(ridgemanage[0], ridgemanage[0].transform.position, Quaternion.identity) as GameObject;
+
+                Destroy(go.GetComponent<RidgeControl>());
+
+                Destroy(go.transform.GetChild(0).GetComponent<mouseevent>());
+                Destroy(go.transform.GetChild(0).GetComponent<topmove>());
+                Destroy(go.transform.GetChild(0).GetComponent<MeshRenderer>());
+                Destroy(go.transform.GetChild(0).GetComponent<SphereCollider>());
+
+                Destroy(go.transform.GetChild(1).GetComponent<fourmove>());
+                Destroy(go.transform.GetChild(1).GetComponent<mouseevent>());
+                Destroy(go.transform.GetChild(1).GetComponent<MeshRenderer>());
+                Destroy(go.transform.GetChild(1).GetComponent<SphereCollider>());
+
+                Destroy(go.transform.GetChild(2).GetComponent<MeshRenderer>());
+                Destroy(go.transform.GetChild(2).GetComponent<SphereCollider>());
 
 
 
+                if(i==2)
+                {
+                    go.transform.GetChild(0).transform.position = Xmirrow(ridgemanage[0].transform.GetChild(0).transform.position);
+                    go.transform.GetChild(1).transform.position = Xmirrow(ridgemanage[0].transform.GetChild(1).transform.position);
+                    go.transform.GetChild(2).transform.position = Xmirrow(ridgemanage[0].transform.GetChild(2).transform.position);
+                }
+
+                if (i == 3)
+                {
+                    go.transform.GetChild(0).transform.position = Xmirrow(ridgemanage[0].transform.GetChild(0).transform.position);
+                    go.transform.GetChild(0).transform.position = Ymirrow(go.transform.GetChild(0).transform.position);
+
+                    go.transform.GetChild(1).transform.position = Xmirrow(ridgemanage[0].transform.GetChild(1).transform.position);
+                    go.transform.GetChild(1).transform.position = Ymirrow(go.transform.GetChild(1).transform.position);
+
+                    go.transform.GetChild(2).transform.position = Xmirrow(ridgemanage[0].transform.GetChild(2).transform.position);
+                    go.transform.GetChild(2).transform.position = Ymirrow(go.transform.GetChild(2).transform.position);
+                }
+
+                if (i == 4)
+                {
+                    go.transform.GetChild(0).transform.position = Ymirrow(ridgemanage[0].transform.GetChild(0).transform.position);
+                    go.transform.GetChild(1).transform.position = Ymirrow(ridgemanage[0].transform.GetChild(1).transform.position);
+                    go.transform.GetChild(2).transform.position = Ymirrow(ridgemanage[0].transform.GetChild(2).transform.position);
+                }
+
+
+
+                /*
+                Vector3 a = this.transform.GetChild(2).transform.position - this.transform.GetChild(0).transform.position;
+
+                float x = Vector3.Angle(new Vector3(a.x, 0, a.z), new Vector3(1, 0, 0));
+                
+                print(this.transform.GetChild(2).transform.position - this.transform.GetChild(0).transform.position + "   fu  " + x);
+                 
+                if (this.transform.GetChild(2).transform.position.x >= 0)
+                {
+                    if (i == 2)
+                    {
+                        go.transform.RotateAround(uict.center.transform.position, Vector3.up, 90+2*x);
+                    }
+                    if (i == 3)
+                    {
+                        go.transform.RotateAround(uict.center.transform.position, Vector3.up, 180);
+                    }
+                    if (i == 4)
+                    {
+                        go.transform.RotateAround(uict.center.transform.position, Vector3.up, 270+2*x);
+                    }
+                }
+                else
+                {
+
+                    if (i == 2)
+                    {
+                        go.transform.RotateAround(uict.center.transform.position, Vector3.up, 90 + 2 * x);
+                    }
+                    if (i == 3)
+                    {
+                        go.transform.RotateAround(uict.center.transform.position, Vector3.up, 180);
+                    }
+                    if (i == 4)
+                    {
+                        go.transform.RotateAround(uict.center.transform.position, Vector3.up, 270 + 2 * x);
+                    }
+
+
+                }
+                */
+
+                go.name = ("Ridge" + i);
+
+                //go.AddComponent<catline>();
+
+
+                go.GetComponent<catline>().ResetCatmullRom();
+
+
+                //this.GetComponent<circlecut1>().reset();
+                go.GetComponent<circlecut1>().reset();
+
+
+                go.GetComponent<Ridgetile>().reset();
+                //go.GetComponent<catline>().AddControlPoint(go.transform.GetChild(0).gameObject);
+                //go.GetComponent<catline>().AddControlPoint(go.transform.GetChild(1).gameObject);
+                //go.GetComponent<catline>().AddControlPoint(go.transform.GetChild(2).gameObject);
+
+                go.transform.parent = this.gameObject.transform.parent;
+                ridgemanage.Add(go);
+
+            }
+
+
+
+        }
+
+        else
+        {
 
             for (int i = 2; i <= angle; i++)
             {
@@ -187,7 +311,7 @@ public class RidgeControl : MonoBehaviour {
                 ridgemanage.Add(go);
 
             }
-
+        }
 
 
 
@@ -211,7 +335,27 @@ public class RidgeControl : MonoBehaviour {
 
     }
 
-     public void reset()
+
+
+    Vector3 Xmirrow(Vector3 a)
+    {
+           return new Vector3(-a.z,a.y,-a.x);
+           
+    }
+
+    Vector3 Ymirrow(Vector3 a)
+    {
+
+            return new Vector3(a.z, a.y, a.x);
+
+    }
+
+
+
+
+
+
+    public void reset()
     {
 
         //this.GetComponent<circlecut1>().kill();

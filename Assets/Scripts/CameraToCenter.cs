@@ -16,7 +16,7 @@ public class CameraToCenter : MonoBehaviour
 	public float maxDistance = 300.0f;
 
 
-	private Vector3 point;//the coord to the point where the camera looks at
+	private Vector3 targetPoint;//the coord to the point where the camera looks at
 	private float x = 0;
 	private float y = 0;
 	private int isClamp = 0;
@@ -26,8 +26,8 @@ public class CameraToCenter : MonoBehaviour
 	{//Set up things on the start method
 		uICamera = GameObject.Find("UICamera").GetComponent<Camera>();
 		bounds = NGUIMath.CalculateAbsoluteWidgetBounds(constraintArea.transform);
-		point = target.transform.position;//get target's coords
-		transform.LookAt(point);//makes the camera look to it
+		targetPoint = target.transform.position;//get target's coords
+		transform.LookAt(targetPoint);//makes the camera look to it
 	}
 
 	void Update()
@@ -56,7 +56,7 @@ public class CameraToCenter : MonoBehaviour
 					isClamp = 1;
 					x += Input.GetAxis("Mouse X") * dragSpeedMod * Time.smoothDeltaTime;
 
-					transform.RotateAround(point, target.transform.up, x);
+					transform.RotateAround(targetPoint, target.transform.up, x);
 
 				}
 				else if (Mathf.Abs(Input.GetAxis("Mouse X")) < Mathf.Abs(Input.GetAxis("Mouse Y")) && isClamp != 1)
@@ -64,15 +64,15 @@ public class CameraToCenter : MonoBehaviour
 					isClamp = -1;
 
 					y += Input.GetAxis("Mouse Y") * dragSpeedMod * Time.smoothDeltaTime;
-					transform.RotateAround(point, -transform.right, y);
+					transform.RotateAround(targetPoint, -transform.right, y);
 				}
 			}
 			else
 			{
 				x += Input.GetAxis("Mouse X") * dragSpeedMod * Time.smoothDeltaTime;
 				y += Input.GetAxis("Mouse Y") * dragSpeedMod * Time.smoothDeltaTime;
-				transform.RotateAround(point, target.transform.up, x);
-				transform.RotateAround(point, -transform.right, y);
+				transform.RotateAround(targetPoint, target.transform.up, x);
+				transform.RotateAround(targetPoint, -transform.right, y);
 			}
 
 		}

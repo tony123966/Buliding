@@ -75,6 +75,8 @@ public class UIDragDropItem : MonoBehaviour
 	[System.NonSerialized]
 	protected UICamera.MouseOrTouch mTouch;
 
+	[System.NonSerialized]
+	protected DragItemController dragItemController;
 	/// <summary>
 	/// Cache the transform.
 	/// </summary>
@@ -286,6 +288,7 @@ public class UIDragDropItem : MonoBehaviour
 		if (mTable != null) mTable.repositionNow = true;
 		if (mGrid != null) mGrid.repositionNow = true;
 
+
 	}
 
 	/// <summary>
@@ -364,7 +367,7 @@ public class UIDragDropItem : MonoBehaviour
 
 	protected IEnumerator EnableDragScrollView()
 	{
-		if (mDragScrollView != null) mDragScrollView.enabled = true;
 		yield return new WaitForEndOfFrame();
+		if (mDragScrollView != null) mDragScrollView.enabled = true;
 	}
 }

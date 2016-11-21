@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
+//using UnityEditor;
 public class FixedWindows : MonoBehaviour
 {
 	public GameObject cameraWindows;

@@ -96,7 +96,9 @@ public class roofsurcontrol : MonoBehaviour {
         }
 
 
-        GameObject rfson2 = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+       // GameObject rfson2 = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        GameObject rfson2 = new GameObject();
+
 
         rfson2.transform.parent = a.transform;
         rfson2.transform.position = v3;
@@ -133,7 +135,7 @@ public class roofsurcontrol : MonoBehaviour {
         Vector3 v1 = ridgeControl.ridgemanage[0].transform.GetChild(0).transform.position;
         Vector3 v2 = eaveControl.eavemanage[0].transform.GetChild(3).transform.position;
         Vector3 v3 = (ridgeControl.ridgemanage[0].transform.GetChild(1).transform.position + ridgeControl.ridgemanage[1].transform.GetChild(1).transform.position)/2;
-        //Vector3 v4 = (v1 + v3) / 2;
+      
         v3.y = v3.y - 2f;
 
   
@@ -159,7 +161,9 @@ public class roofsurcontrol : MonoBehaviour {
         }
 
 
-        GameObject rfson2 = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+       // GameObject rfson2 = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        GameObject rfson2 = new GameObject();
+
 
         rfson2.transform.parent = rf.transform;
         rfson2.transform.position = v3;
@@ -181,15 +185,12 @@ public class roofsurcontrol : MonoBehaviour {
         roofsurfacemanage.Add(rf);
 
         rf.GetComponent<catline>().ResetCatmullRom();
-        //rf.GetComponent<LineRenderer>().material = new Material(Shader.Find("GUI/Text Shader"));
-        /*
-        rf.AddComponent<midplanecut>();
-        rf.AddComponent<tiledM>();
-        */
+       
     }
 
     public void selfini()
     {
+
         Vector3 v1 = ridgeControl.ridgemanage[0].transform.GetChild(0).transform.position;
         Vector3 v2 = eaveControl.eavemanage[0].transform.GetChild(3).transform.position;
         Vector3 v3 = (ridgeControl.ridgemanage[0].transform.GetChild(1).transform.position + ridgeControl.ridgemanage[1].transform.GetChild(1).transform.position) / 2;
@@ -219,13 +220,9 @@ public class roofsurcontrol : MonoBehaviour {
         }
 
 
+        //GameObject rfson2 = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        GameObject rfson2 = new GameObject();
 
-
-        
-
-
-
-        GameObject rfson2 = GameObject.CreatePrimitive(PrimitiveType.Sphere);
 
         rfson2.transform.parent = rf.transform;
         rfson2.transform.position = r2p;
@@ -256,8 +253,94 @@ public class roofsurcontrol : MonoBehaviour {
 
     public void build()
     {
+
         int angle = uict.numberslidervalue;
 
+        //new
+
+        Vector3 v1;
+        Vector3 v2;
+        Vector3 v3;
+
+
+        
+        for (int i = 2; i <= angle; i++)
+        {
+
+
+
+
+        if(i==angle)
+        {
+            v1 = ridgeControl.ridgemanage[i - 1].transform.GetChild(0).transform.position;
+            v2 = eaveControl.eavemanage[i - 1].transform.GetChild(3).transform.position;
+            v3 = (ridgeControl.ridgemanage[i - 1].transform.GetChild(1).transform.position + ridgeControl.ridgemanage[0].transform.GetChild(1).transform.position) / 2;
+        }
+        else
+        { 
+
+
+         v1 = ridgeControl.ridgemanage[i-1].transform.GetChild(0).transform.position;
+         v2 = eaveControl.eavemanage[i - 1].transform.GetChild(3).transform.position;
+         v3 = (ridgeControl.ridgemanage[i - 1].transform.GetChild(1).transform.position + ridgeControl.ridgemanage[i].transform.GetChild(1).transform.position) / 2;
+        
+        }
+        v3.y = v3.y - 2f;
+
+
+
+
+        GameObject rf = new GameObject();
+        rf.AddComponent<catline>();
+        rf.name = ("roofsurface"+i);
+        rf.transform.parent = this.transform;
+
+
+        GameObject rfson1 = new GameObject();
+
+        rfson1.transform.parent = rf.transform;
+
+        if (uict.upridge == true)
+        {
+            rfson1.transform.position = up.upridgemanage[i - 1].transform.GetChild(1).transform.position;
+        }
+        else
+        {
+            rfson1.transform.position = v1;
+        }
+
+
+        // GameObject rfson2 = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        GameObject rfson2 = new GameObject();
+
+
+        rfson2.transform.parent = rf.transform;
+        rfson2.transform.position = v3;
+        rfson2.AddComponent<mouseevent>();
+        rfson2.AddComponent<rsfourmove>();
+
+        r2p = v3;
+
+        GameObject rfson3 = new GameObject();
+
+        rfson3.transform.parent = rf.transform;
+        rfson3.transform.position = v2;
+
+        rf.GetComponent<catline>().AddControlPoint(rfson3);
+        rf.GetComponent<catline>().AddControlPoint(rfson2);
+        rf.GetComponent<catline>().AddControlPoint(rfson1);
+
+
+        roofsurfacemanage.Add(rf);
+
+        rf.GetComponent<catline>().ResetCatmullRom();
+
+
+
+        }
+        
+
+        /*
         for (int i = 2; i <= angle; i++)
         {
 
@@ -278,7 +361,7 @@ public class roofsurcontrol : MonoBehaviour {
 
             roofsurfacemanage.Add(go);
         }
-
+        */
         
         for (int i = 0; i < roofsurfacemanage.Count; i++)
         {
@@ -319,7 +402,10 @@ public class roofsurcontrol : MonoBehaviour {
         }
         roofsurfacemanage.Clear();
 
-        selfini();
+
+
+        ini();
+
         build();
 
     }

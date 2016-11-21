@@ -43,6 +43,8 @@ public class Columntile : MonoBehaviour {
 
         // cir.anchorpointlist
 
+        GameObject haha = GameObject.Find("cylinder");
+        //GameObject tile = Instantiate(haha, (ori + letter) / 2, Quaternion.identity) as GameObject;
 
 
         for (int i = 0; i < pla.anchorpointlist.Count - 2; i++)
@@ -60,7 +62,7 @@ public class Columntile : MonoBehaviour {
             float zz = 0f;
             if (i == 0)
             {
-                GameObject haha = GameObject.Find("cylinder");
+                
                 GameObject tile = Instantiate(haha, (ori + letter) / 2, Quaternion.identity) as GameObject;
                 tile.tag = ("PIG");
                 tile.transform.parent = this.transform;
@@ -76,7 +78,7 @@ public class Columntile : MonoBehaviour {
                 */
 
 
-
+                tile.transform.Rotate(oo, 0, 0);
 
                 tile.transform.localScale = new Vector3(0.8f, 0.8f, 1.6f);
                 tileds.Add(tile);
@@ -85,7 +87,7 @@ public class Columntile : MonoBehaviour {
 
             else if (i == pla.anchorpointlist.Count - 3)
             {
-                GameObject haha = GameObject.Find("cylinder");
+               
                 GameObject tile = Instantiate(haha, (ori + letter) / 2, Quaternion.identity) as GameObject;
                 tile.tag = ("PIG");
                 tile.transform.parent = this.transform;
@@ -114,7 +116,7 @@ public class Columntile : MonoBehaviour {
 
             else
             {
-                GameObject haha = GameObject.Find("cylinder");
+               
                 GameObject tile = Instantiate(haha, (ori + letter) / 2, Quaternion.identity) as GameObject;
                 tile.tag = ("PIG");
                 tile.transform.parent = this.transform;

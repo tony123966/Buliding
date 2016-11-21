@@ -1,0 +1,29 @@
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2008
+
+Project("{004C5B95-AF85-0652-BC61-5D7AF16109CC}") = "Buliding1102 - 複製 - 複製 - 複製", "Assembly-CSharp.csproj", "{BCAF3D2A-BC19-7E85-7B72-733CAB875496}"
+EndProject
+Project("{004C5B95-AF85-0652-BC61-5D7AF16109CC}") = "Buliding1102 - 複製 - 複製 - 複製", "Assembly-CSharp-Editor.csproj", "{F7FE9BBA-692E-0D44-3BE2-E82B1FB2BC7C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BCAF3D2A-BC19-7E85-7B72-733CAB875496}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BCAF3D2A-BC19-7E85-7B72-733CAB875496}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BCAF3D2A-BC19-7E85-7B72-733CAB875496}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BCAF3D2A-BC19-7E85-7B72-733CAB875496}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F7FE9BBA-692E-0D44-3BE2-E82B1FB2BC7C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F7FE9BBA-692E-0D44-3BE2-E82B1FB2BC7C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F7FE9BBA-692E-0D44-3BE2-E82B1FB2BC7C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F7FE9BBA-692E-0D44-3BE2-E82B1FB2BC7C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = Assembly-CSharp.csproj
+	EndGlobalSection
+EndGlobal

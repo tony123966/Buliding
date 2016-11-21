@@ -18,9 +18,17 @@ public class UIcontrol : MonoBehaviour
     */
 
     public ColumnControl columncontrol;
+
+    public ColumnControl columncontrol_b;
+
     public BC bc;
     public FC fc;
+
+    public bigbon bb;
+    public ColumnBody body;
+
     public PlatForm plat;
+
    // public RidgetailControl rtc;
 
    // public upridge up;
@@ -39,6 +47,7 @@ public class UIcontrol : MonoBehaviour
 
    public  bool isf;
     public bool isb;
+    public bool isCb;
 
 	// Use this for initialization
 	void Start () 
@@ -50,6 +59,7 @@ public class UIcontrol : MonoBehaviour
 
         isf = false;
         isb = false;
+        isCb = false;
         //ohohv = (int)ohoh.value;
 
         setnumberslidervalue();
@@ -142,8 +152,10 @@ public class UIcontrol : MonoBehaviour
         }
          
          */
+
         if (columncontrol)
         {
+
             columncontrol.reset();
 
 
@@ -158,6 +170,24 @@ public class UIcontrol : MonoBehaviour
             }
             
         }
+        if (columncontrol_b)
+        {
+            columncontrol_b.reset();
+        }
+
+
+
+
+        if (bb)
+        {
+            bb.reset();
+        }
+
+        if (isCb==true)
+        { 
+            body.reset();
+        }
+
 
         
         if (plat)
@@ -180,7 +210,7 @@ public class UIcontrol : MonoBehaviour
             plat.reset();
 
 
-                print(plat.parayn);
+                //print(plat.parayn);
 
 
 

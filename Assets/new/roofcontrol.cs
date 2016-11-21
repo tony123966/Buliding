@@ -97,7 +97,7 @@ public class roofcontrol : MonoBehaviour
         if (transform.parent.GetChild(0).childCount>2)
         {
             transform.parent.GetChild(0).GetChild(1).GetChild(0).GetComponent<catline>().ResetCatmullRom();
-            print("dgdgdfgdfgdgdfg "+transform.parent.GetChild(0).GetChild(1).GetChild(0).name);
+            //print("dgdgdfgdfgdgdfg "+transform.parent.GetChild(0).GetChild(1).GetChild(0).name);
         
         }
 
@@ -109,7 +109,7 @@ public class roofcontrol : MonoBehaviour
 
 
 
-            print("~~~~~~~~bababababa~~~~~~~~~     " + (center.transform.position.x - transform.parent.GetChild(0).GetChild(0).GetChild(0).GetChild(0).transform.position.x));
+            //print("~~~~~~~~bababababa~~~~~~~~~     " + (center.transform.position.x - transform.parent.GetChild(0).GetChild(0).GetChild(0).GetChild(0).transform.position.x));
             if (Mathf.Abs(center.transform.position.x - transform.parent.GetChild(0).GetChild(0).GetChild(0).GetChild(0).transform.position.x) >1)
             {
                
@@ -121,7 +121,8 @@ public class roofcontrol : MonoBehaviour
             }
             else
             {
-                upridge = false;
+               // upridge = false;
+                upridge = true;
             }
 
 
@@ -156,10 +157,8 @@ public class roofcontrol : MonoBehaviour
 
         float length = Vector3.Distance(ridgecontrol.ridgemanage[0].transform.GetChild(2).transform.position, ridgecontrol.ridgemanage[1].transform.GetChild(2).transform.position);
 
-        print("lenght1  " + length);
-        print("lenght2  " + length / 2);
-        print("lenght3  " + Mathf.RoundToInt(length / 2));
-        twvalue =  Mathf.RoundToInt(length / 2);
+       
+        twvalue =  Mathf.RoundToInt(length / 2f);
 
        
 

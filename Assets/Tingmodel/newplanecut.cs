@@ -25,7 +25,10 @@ public class newplanecut : MonoBehaviour {
        
         int i =(r2.roofsurface2manage.IndexOf(this.transform.parent.gameObject));
 
+
+
         Vector3 v1 =r1.ridgemanage[i].transform.GetChild(0).transform.position;
+
         Vector3 v2 = r1.ridgemanage[i].transform.GetChild(2).transform.position;
        // Vector3 v3 = r1.ridgemanage[i+1].transform.GetChild(2).transform.position;
         Vector3 v4 = r1.ridgemanage[0].transform.GetChild(2).transform.position;

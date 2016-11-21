@@ -16,12 +16,9 @@ public class BasedRoofIcon : IconObject
 	int sliceUnit2LineRender = 80;
 	public void CreateBasedRoofIcon<T>(T thisGameObject, string objName, List<GameObject> bodyControlPointList, List<GameObject> tailControlPointList, Vector3 centerPos) where T : Component
 	{
+		InitBodySetting(objName, (int)BodyType.GeneralBody);
+
 		this.centerPos = centerPos;
-		body = new GameObject(objName);
-		body.transform.parent = thisGameObject.transform;
-		mFilter = body.AddComponent<MeshFilter>();
-		mFilter.mesh = new Mesh();
-		mRenderer = body.AddComponent<MeshRenderer>() as MeshRenderer;
 
 		rightRoofLine.bodyControlPointList = bodyControlPointList;
 		rightRoofLine.tailControlPointList = tailControlPointList;
@@ -58,9 +55,14 @@ public class BasedRoofIcon : IconObject
 		}
 
 		leftRoofLine.catLine.ResetCatmullRom();
-		AdjMesh();
-		InitLineRender<T>(thisGameObject);
+
+		SetParent2BodyAndControlPointList(thisGameObject);
+		InitLineRender(thisGameObject);
+
 		SetIconObjectColor();
+
+
+		AdjMesh();
 	}
 	public void AdjPos()
 	{
@@ -70,8 +72,6 @@ public class BasedRoofIcon : IconObject
 			leftRoofLine.bodyControlPointList[i].transform.position = new Vector3(rightRoofLine.bodyControlPointList[i].transform.position.x - 2 * (rightRoofLine.bodyControlPointList[i].transform.position.x - centerPos.x), rightRoofLine.bodyControlPointList[i].transform.position.y, rightRoofLine.bodyControlPointList[i].transform.position.z);
 		}
 		leftRoofLine.catLine.ResetCatmullRom();
-		AdjMesh();
-		UpdateLineRender();
 	}
 	public void AdjMesh()
 	{
@@ -131,7 +131,8 @@ public class BasedRoofIcon : IconObject
 		mFilter.mesh.vertices = v;
 		mFilter.mesh.triangles = t;
 		mFilter.mesh.normals = n;
-
+		mFilter.mesh.RecalculateBounds();
+		mFilter.mesh.RecalculateNormals();
 		//mFilter.mesh.uv = uv;
 		/*	int innerPointCount = rightRoofLine.catLine.innerPointList.Count;
 			float uvR = (1 / (float)innerPointCount);
@@ -168,6 +169,7 @@ public class BasedRoofIcon : IconObject
 			mFilter.mesh.triangles = t;
 			mFilter.mesh.normals = n;
 			//mFilter.mesh.uv = uv;*/
+		UpdateLineRender();
 	}
 	public override void InitLineRender<T>(T thisGameObject)
 	{
@@ -205,12 +207,16 @@ public class BasedRoofIcon : IconObject
 		mRenderer.material.color = Color.red;
 		for (int i = 0; i < rightRoofLine.bodyControlPointList.Count; i++)
 		{
-			rightRoofLine.bodyControlPointList[i].GetComponent<MeshRenderer>().material=outLineShader;
+			if (silhouetteShader != null) 
+				rightRoofLine.bodyControlPointList[i].GetComponent<MeshRenderer>().material = silhouetteShader;
+
 			rightRoofLine.bodyControlPointList[i].GetComponent<MeshRenderer>().material.color = Color.yellow;
 		}
 		for (int i = 0; i < rightRoofLine.tailControlPointList.Count; i++)
 		{
-		rightRoofLine.tailControlPointList[i].GetComponent<MeshRenderer>().material=outLineShader;
+			if (silhouetteShader != null)
+				 rightRoofLine.tailControlPointList[i].GetComponent<MeshRenderer>().material = silhouetteShader;
+
 			rightRoofLine.tailControlPointList[i].GetComponent<MeshRenderer>().material.color = Color.yellow;
 		}
 	}

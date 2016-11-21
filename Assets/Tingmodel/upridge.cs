@@ -7,12 +7,13 @@ public class upridge : MonoBehaviour {
     public List<GameObject> upridgemanage = new List<GameObject>();
     public roofcontrol uict;
     public RidgeControl ridgecon;
-    
+    public AllInOne  AIO;
+
 
 
 	// Use this for initialization
 	void Start () {
-	
+        AIO = transform.parent.parent.GetComponent<AllInOne>();
 	}
 	
 	// Update is called once per frame
@@ -23,6 +24,8 @@ public class upridge : MonoBehaviour {
 
     public void ini()
     {
+
+
         GameObject upri = new GameObject();
         upri.name = "upri1";
         upri.AddComponent<catline>();
@@ -36,11 +39,8 @@ public class upridge : MonoBehaviour {
         g1.transform.parent = upri.transform;
         upri.GetComponent<catline>().AddControlPoint(g1);
 
-        //GameObject g2 = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+       
         GameObject g2 = new GameObject();
-
-        //g2.GetComponent<MeshRenderer>().material = ridgecon.ridgemanage[0].transform.GetChild(2).GetComponent<MeshRenderer>().material;
-        //g2.AddComponent<upridgemidpoint>();
         g2.transform.position = (v1 + v2) / 2;
         g2.transform.parent = upri.transform;
         upri.GetComponent<catline>().AddControlPoint(g2);
@@ -70,90 +70,148 @@ public class upridge : MonoBehaviour {
        
 
         
+      
 
-        a.transform.GetChild(0).transform.position = upridgemanage[0].transform.GetChild(2).transform.position;
-
-        a.transform.GetChild(2).transform.position = upridgemanage[2].transform.GetChild(0).transform.position;
-
-        a.transform.GetChild(1).transform.position=(a.transform.GetChild(0).transform.position+a.transform.GetChild(2).transform.position)/2;
+        if (AIO.Rectangle_Or_Not == true)
+        {
 
 
-        upridgemanage[0].GetComponent<catline>().ResetCatmullRom();
-        upridgemanage[2].GetComponent<catline>().ResetCatmullRom();
+            upridgemanage[0].GetComponent<catline>().ResetCatmullRom();
+            upridgemanage[2].GetComponent<catline>().ResetCatmullRom();
 
 
-        a.GetComponent<catline>().ResetCatmullRom();
-        a.GetComponent<circlecut1>().reset();
-        a.GetComponent<upridgetile>().reset();
+            a.GetComponent<catline>().ResetCatmullRom();
+            a.GetComponent<circlecut1>().reset();
+            a.GetComponent<upridgetile>().reset();
+        }
+        else
+        {
+            a.transform.GetChild(0).transform.position = upridgemanage[0].transform.GetChild(2).transform.position;
 
-        
+            a.transform.GetChild(2).transform.position = upridgemanage[2].transform.GetChild(0).transform.position;
+
+
+
+
+            a.transform.GetChild(1).transform.position = (a.transform.GetChild(0).transform.position + a.transform.GetChild(2).transform.position) / 2;
+
+
+
+            upridgemanage[0].GetComponent<catline>().ResetCatmullRom();
+            upridgemanage[2].GetComponent<catline>().ResetCatmullRom();
+
+
+            a.GetComponent<catline>().ResetCatmullRom();
+            a.GetComponent<circlecut1>().reset();
+            a.GetComponent<upridgetile>().reset();
+        }
+
 
     }
 
     public void inig2(GameObject a)
     {
+        if (AIO.Rectangle_Or_Not == true)
+        {
 
 
-        a.transform.GetChild(0).transform.position = upridgemanage[2].transform.GetChild(2).transform.position;
-
-        a.transform.GetChild(2).transform.position = upridgemanage[0].transform.GetChild(0).transform.position;
-
-        a.transform.GetChild(1).transform.position = (a.transform.GetChild(0).transform.position + a.transform.GetChild(2).transform.position) / 2;
+            upridgemanage[0].GetComponent<catline>().ResetCatmullRom();
+            upridgemanage[2].GetComponent<catline>().ResetCatmullRom();
 
 
-        upridgemanage[2].GetComponent<catline>().ResetCatmullRom();
-        upridgemanage[0].GetComponent<catline>().ResetCatmullRom();
+            a.GetComponent<catline>().ResetCatmullRom();
+            a.GetComponent<circlecut1>().reset();
+            a.GetComponent<upridgetile>().reset();
+        }
+        else
+        {
+
+            a.transform.GetChild(0).transform.position = upridgemanage[2].transform.GetChild(2).transform.position;
+
+            a.transform.GetChild(2).transform.position = upridgemanage[0].transform.GetChild(0).transform.position;
+
+            a.transform.GetChild(1).transform.position = (a.transform.GetChild(0).transform.position + a.transform.GetChild(2).transform.position) / 2;
+
+
+            upridgemanage[2].GetComponent<catline>().ResetCatmullRom();
+            upridgemanage[0].GetComponent<catline>().ResetCatmullRom();
 
 
 
-        a.GetComponent<catline>().ResetCatmullRom();
-        a.GetComponent<circlecut1>().reset();
-        a.GetComponent<upridgetile>().reset();
+            a.GetComponent<catline>().ResetCatmullRom();
+            a.GetComponent<circlecut1>().reset();
+            a.GetComponent<upridgetile>().reset();
 
-
+        }
 
     }
 
     public void inig3(GameObject a)
     {
+        if (AIO.Rectangle_Or_Not == true)
+        {
 
 
-        a.transform.GetChild(0).transform.position = upridgemanage[1].transform.GetChild(2).transform.position;
-
-        a.transform.GetChild(2).transform.position = upridgemanage[3].transform.GetChild(0).transform.position;
-
-        a.transform.GetChild(1).transform.position = (a.transform.GetChild(0).transform.position + a.transform.GetChild(2).transform.position) / 2;
+            upridgemanage[0].GetComponent<catline>().ResetCatmullRom();
+            upridgemanage[2].GetComponent<catline>().ResetCatmullRom();
 
 
-        upridgemanage[1].GetComponent<catline>().ResetCatmullRom();
-        upridgemanage[3].GetComponent<catline>().ResetCatmullRom();
+            a.GetComponent<catline>().ResetCatmullRom();
+            a.GetComponent<circlecut1>().reset();
+            a.GetComponent<upridgetile>().reset();
+        }
+        else
+        {
 
-        a.GetComponent<catline>().ResetCatmullRom();
-        a.GetComponent<circlecut1>().reset();
-        a.GetComponent<upridgetile>().reset();
+            a.transform.GetChild(0).transform.position = upridgemanage[1].transform.GetChild(2).transform.position;
 
+            a.transform.GetChild(2).transform.position = upridgemanage[3].transform.GetChild(0).transform.position;
+
+            a.transform.GetChild(1).transform.position = (a.transform.GetChild(0).transform.position + a.transform.GetChild(2).transform.position) / 2;
+
+
+            upridgemanage[1].GetComponent<catline>().ResetCatmullRom();
+            upridgemanage[3].GetComponent<catline>().ResetCatmullRom();
+
+            a.GetComponent<catline>().ResetCatmullRom();
+            a.GetComponent<circlecut1>().reset();
+            a.GetComponent<upridgetile>().reset();
+        }
 
 
     }
 
     public void inig4(GameObject a)
     {
+        if (AIO.Rectangle_Or_Not == true)
+        {
 
 
-        a.transform.GetChild(0).transform.position = upridgemanage[3].transform.GetChild(2).transform.position;
-
-        a.transform.GetChild(2).transform.position = upridgemanage[1].transform.GetChild(0).transform.position;
-
-        a.transform.GetChild(1).transform.position = (a.transform.GetChild(0).transform.position + a.transform.GetChild(2).transform.position) / 2;
+            upridgemanage[0].GetComponent<catline>().ResetCatmullRom();
+            upridgemanage[2].GetComponent<catline>().ResetCatmullRom();
 
 
-        upridgemanage[3].GetComponent<catline>().ResetCatmullRom();
-        upridgemanage[1].GetComponent<catline>().ResetCatmullRom();
+            a.GetComponent<catline>().ResetCatmullRom();
+            a.GetComponent<circlecut1>().reset();
+            a.GetComponent<upridgetile>().reset();
+        }
+        else
+        {
 
-        a.GetComponent<catline>().ResetCatmullRom();
-        a.GetComponent<circlecut1>().reset();
-        a.GetComponent<upridgetile>().reset();
+            a.transform.GetChild(0).transform.position = upridgemanage[3].transform.GetChild(2).transform.position;
 
+            a.transform.GetChild(2).transform.position = upridgemanage[1].transform.GetChild(0).transform.position;
+
+            a.transform.GetChild(1).transform.position = (a.transform.GetChild(0).transform.position + a.transform.GetChild(2).transform.position) / 2;
+
+
+            upridgemanage[3].GetComponent<catline>().ResetCatmullRom();
+            upridgemanage[1].GetComponent<catline>().ResetCatmullRom();
+
+            a.GetComponent<catline>().ResetCatmullRom();
+            a.GetComponent<circlecut1>().reset();
+            a.GetComponent<upridgetile>().reset();
+        }
 
 
     }
@@ -164,15 +222,18 @@ public class upridge : MonoBehaviour {
     {
         int angle = uict.numberslidervalue;
 
+
+        Vector3 v1=new Vector3(0,0,0);
+        Vector3 v2 = new Vector3(0, 0, 0);
+
         for (int i = 2; i <= angle; i++)
         {
 
 
 
-            if (i != 1)
-            {
 
 
+                /*
                 GameObject go = Instantiate(upridgemanage[0], upridgemanage[0].transform.position, Quaternion.identity) as GameObject;
 
                 Destroy(go.GetComponent<EaveControl>());
@@ -207,17 +268,70 @@ public class upridge : MonoBehaviour {
                 
                 }
 
-                go.AddComponent<catline>();
-                go.GetComponent<catline>().ResetCatmullRom();
+
+            */
 
 
 
 
-                upridgemanage.Add(go);
 
+            //新
+
+            GameObject upri = new GameObject();
+            upri.name = "upri"+i;
+            upri.AddComponent<catline>();
+
+
+
+            if (i == angle)
+            {
+                v1 = ridgecon.ridgemanage[i - 1].transform.GetChild(0).transform.position;
+                v2 = ridgecon.ridgemanage[0].transform.GetChild(0).transform.position;
+            }
+            else
+            {
+                v1 = ridgecon.ridgemanage[i-1].transform.GetChild(0).transform.position;
+                v2 = ridgecon.ridgemanage[i].transform.GetChild(0).transform.position;
             }
 
+            GameObject g1 = new GameObject();
+            g1.transform.position = v1;
+            g1.transform.parent = upri.transform;
+            upri.GetComponent<catline>().AddControlPoint(g1);
+
+
+            GameObject g2 = new GameObject();
+            g2.transform.position = (v1 + v2) / 2;
+            g2.transform.parent = upri.transform;
+            upri.GetComponent<catline>().AddControlPoint(g2);
+
+            GameObject g3 = new GameObject();
+            g3.transform.position = v2;
+            g3.transform.parent = upri.transform;
+            upri.GetComponent<catline>().AddControlPoint(g3);
+
+
+           
+
+            upri.transform.parent = this.transform;
+
+
+
+
+
+            upri.AddComponent<catline>();
+           upri.GetComponent<catline>().ResetCatmullRom();
+
+
+
+
+            upridgemanage.Add(upri);
+
+           
+
         }
+
+
 
 
         for (int i = 0; i < upridgemanage.Count; i++)

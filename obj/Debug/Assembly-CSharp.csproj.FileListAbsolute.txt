@@ -40,3 +40,24 @@ C:\Users\Tony\Documents\GitHub\Buliding\Temp\bin\Debug\UnityEngine.Networking.xm
 C:\Users\Tony\Documents\GitHub\Buliding\obj\Debug\Assembly-CSharp.csprojResolveAssemblyReference.cache
 C:\Users\Tony\Documents\GitHub\Buliding\obj\Debug\Assembly-CSharp.dll
 C:\Users\Tony\Documents\GitHub\Buliding\obj\Debug\Assembly-CSharp.pdb
+C:\Users\Game-LAB\Documents\Buliding1102 - 複製 - 複製 - 複製\Temp\bin\Debug\Assembly-CSharp.dll
+C:\Users\Game-LAB\Documents\Buliding1102 - 複製 - 複製 - 複製\Temp\bin\Debug\Assembly-CSharp.pdb
+C:\Users\Game-LAB\Documents\Buliding1102 - 複製 - 複製 - 複製\Temp\bin\Debug\UnityEditor.dll
+C:\Users\Game-LAB\Documents\Buliding1102 - 複製 - 複製 - 複製\Temp\bin\Debug\UnityEngine.dll
+C:\Users\Game-LAB\Documents\Buliding1102 - 複製 - 複製 - 複製\Temp\bin\Debug\UnityEngine.Networking.dll
+C:\Users\Game-LAB\Documents\Buliding1102 - 複製 - 複製 - 複製\Temp\bin\Debug\UnityEngine.UI.dll
+C:\Users\Game-LAB\Documents\Buliding1102 - 複製 - 複製 - 複製\Temp\bin\Debug\Mono.Cecil.dll
+C:\Users\Game-LAB\Documents\Buliding1102 - 複製 - 複製 - 複製\Temp\bin\Debug\Unity.SerializationLogic.dll
+C:\Users\Game-LAB\Documents\Buliding1102 - 複製 - 複製 - 複製\Temp\bin\Debug\Unity.DataContract.dll
+C:\Users\Game-LAB\Documents\Buliding1102 - 複製 - 複製 - 複製\Temp\bin\Debug\ICSharpCode.NRefactory.dll
+C:\Users\Game-LAB\Documents\Buliding1102 - 複製 - 複製 - 複製\Temp\bin\Debug\Unity.UNetWeaver.dll
+C:\Users\Game-LAB\Documents\Buliding1102 - 複製 - 複製 - 複製\Temp\bin\Debug\Unity.CecilTools.dll
+C:\Users\Game-LAB\Documents\Buliding1102 - 複製 - 複製 - 複製\Temp\bin\Debug\Mono.Cecil.Pdb.dll
+C:\Users\Game-LAB\Documents\Buliding1102 - 複製 - 複製 - 複製\Temp\bin\Debug\Mono.Cecil.Mdb.dll
+C:\Users\Game-LAB\Documents\Buliding1102 - 複製 - 複製 - 複製\Temp\bin\Debug\UnityEngine.xml
+C:\Users\Game-LAB\Documents\Buliding1102 - 複製 - 複製 - 複製\Temp\bin\Debug\UnityEditor.xml
+C:\Users\Game-LAB\Documents\Buliding1102 - 複製 - 複製 - 複製\Temp\bin\Debug\UnityEngine.UI.xml
+C:\Users\Game-LAB\Documents\Buliding1102 - 複製 - 複製 - 複製\Temp\bin\Debug\UnityEngine.Networking.xml
+C:\Users\Game-LAB\Documents\Buliding1102 - 複製 - 複製 - 複製\obj\Debug\Assembly-CSharp.csprojResolveAssemblyReference.cache
+C:\Users\Game-LAB\Documents\Buliding1102 - 複製 - 複製 - 複製\obj\Debug\Assembly-CSharp.dll
+C:\Users\Game-LAB\Documents\Buliding1102 - 複製 - 複製 - 複製\obj\Debug\Assembly-CSharp.pdb
