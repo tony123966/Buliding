@@ -1170,7 +1170,7 @@ public class RecMeshCreate : IconObject
 		};
 		ismesh.triangles = new int[] { 0, 1, 2, 0, 2, 3 };
 		ismesh.RecalculateNormals();
-
+		mFilter.mesh.RecalculateBounds();
 		return ismesh;
 	}
 	public override void InitLineRender<T>(T thisGameObject)
@@ -1203,7 +1203,30 @@ public class RecMeshCreate : IconObject
 		}
 	}
 }
-public class DoubleRoofIcon : RecMeshCreate
+public class DecorateIconObject : RecMeshCreate
+{
+	 public GameObject correspondingDragItemObject;
+
+	public void InitDecorateIconObjectSetting(GameObject correspondingDragItemObject)
+	 {
+
+		 if (!correspondingDragItemObject.GetComponent<DecorateEmptyObjectList>()) return;
+		
+		 DecorateEmptyObjectList decorateEmptyObjectList = correspondingDragItemObject.GetComponent<DecorateEmptyObjectList>();
+		 decorateEmptyObjectList.objectList.Clear();
+		 decorateEmptyObjectList.objectList.Add(body);
+		 for (int i = 0; i < controlPointList.Count; i++)
+		 {
+			 decorateEmptyObjectList.objectList.Add(controlPointList[i]);
+		 }
+		 for (int i = 0; i < lineRenderList.Count; i++)
+		 {
+			 decorateEmptyObjectList.objectList.Add(lineRenderList[i].lineObj);
+		 }	 
+	 
+	 }
+}
+public class DoubleRoofIcon : DecorateIconObject
 {
 	public enum PointIndex { LeftUpPoint = 0, RightUpPoint = 1, RightDownPoint = 2, LeftDownPoint = 3, };
 	public Vector3 rightUpPoint;
@@ -1212,7 +1235,7 @@ public class DoubleRoofIcon : RecMeshCreate
 	public Vector3 leftDownPoint;
 	public float doubleRoofWidth;
 	public float doubleRoofHeight;
-	public void DoubleRoofIconCreate<T>(T thisGameObject, string objName, ColumnIcon columnIcon, float doubleRoofHeight, float doubleRoofWidth)
+	public void DoubleRoofIconCreate<T>(T thisGameObject, string objName, ColumnIcon columnIcon, float doubleRoofHeight, float doubleRoofWidth, GameObject correspondingDragItemObject)
 	where T : Component
 	{
 		InitBodySetting(objName, (int)BodyType.GeneralBody);
@@ -1235,6 +1258,8 @@ public class DoubleRoofIcon : RecMeshCreate
 		InitLineRender(thisGameObject);
 		SetIconObjectColor();
 		SetParent2BodyAndControlPointList(thisGameObject);
+
+		InitDecorateIconObjectSetting(correspondingDragItemObject);
 	}
 	public void AdjMesh(ColumnIcon columnIcon, float doubleRoofHeight, float doubleRoofWidth)
 	{
@@ -1255,6 +1280,7 @@ public class DoubleRoofIcon : RecMeshCreate
 		mFilter.mesh = CreatRecMesh(leftUpPoint, rightUpPoint, rightDownPoint, leftDownPoint, mFilter.mesh);
 
 		UpdateLineRender();
+		UpdateCollider();
 	}
 	public void SetIconObjectColor()
 	{
@@ -1290,7 +1316,7 @@ public class DoubleRoofIcon : RecMeshCreate
 		}
 	}
 }
-public class FriezeIcon : RecMeshCreate
+public class FriezeIcon : DecorateIconObject
 {
 	public enum PointIndex { LeftUpPoint = 0, RightUpPoint = 1, RightDownPoint = 2, LeftDownPoint = 3, };
 	public GameObject rightUpPoint;
@@ -1298,7 +1324,7 @@ public class FriezeIcon : RecMeshCreate
 	public GameObject leftUpPoint;
 	public GameObject leftDownPoint;
 	public float friezeHeight;
-	public void FriezeIconCreate<T>(T thisGameObject, string objName, ColumnIcon columnIcon, float ini_friezeHeight) where T : Component
+	public void FriezeIconCreate<T>(T thisGameObject, string objName, ColumnIcon columnIcon, float ini_friezeHeight,GameObject correspondingDragItemObject) where T : Component
 	{
 		InitBodySetting(objName, (int)BodyType.GeneralBody);
 
@@ -1320,14 +1346,13 @@ public class FriezeIcon : RecMeshCreate
 		controlPointList.Add(leftDownPoint);
 		InitControlPointList2lastControlPointPosition();
 
-		/*
-				columnIcon.leftColumn.controlPointList.Add(columnIcon.leftColumn.friezePoint);
-				columnIcon.rightColumn.controlPointList.Add(columnIcon.rightColumn.friezePoint);*/
-
 
 		InitLineRender(thisGameObject);
 		SetIconObjectColor();
 		SetParent2BodyAndControlPointList(thisGameObject);
+
+		InitDecorateIconObjectSetting(correspondingDragItemObject);
+
 	}
 	public void AdjMesh()
 	{
@@ -1339,6 +1364,7 @@ public class FriezeIcon : RecMeshCreate
 		mFilter.mesh = CreatRecMesh(leftUpPoint.transform.position, rightUpPoint.transform.position, rightDownPoint.transform.position, leftDownPoint.transform.position, mFilter.mesh);
 
 		UpdateLineRender();
+		UpdateCollider();
 
 	}
 	public void SetIconObjectColor()
@@ -1390,7 +1416,7 @@ public class FriezeIcon : RecMeshCreate
 		}
 	}
 }
-public class WallIcon : RecMeshCreate
+public class WallIcon : DecorateIconObject
 {
 	public enum PointIndex { LeftUpPoint = 0, RightUpPoint = 1, RightDownPoint = 2, LeftDownPoint = 3, LeftUpWindowPoint = 4, RightUpWindowPoint = 5, RightDownWindowPoint = 6, LeftDownWindowPoint = 7, };
 	public GameObject rightUpPoint;
@@ -1406,9 +1432,10 @@ public class WallIcon : RecMeshCreate
 	public float wallWidth;
 	public float windowHeight;
 
-	public void WallIconCreate<T>(T thisGameObject, string objName, ColumnIcon columnIcon, float ini_wallWidth, float ini_windowsHeight) where T : Component
+	public void WallIconCreate<T>(T thisGameObject, string objName, ColumnIcon columnIcon, float ini_wallWidth, float ini_windowsHeight, GameObject correspondingDragItemObject) where T : Component
 	{
 		InitBodySetting(objName, (int)BodyType.GeneralBody);
+
 
 		Vector3 wallOffset = new Vector3(Mathf.Abs(columnIcon.rightColumn.upPoint.transform.transform.position.x - columnIcon.leftColumn.upPoint.transform.transform.position.x) / 2.0f - ini_wallWidth, 0, 0);
 		float columnHeight = columnIcon.rightColumn.upPoint.transform.transform.position.y - columnIcon.rightColumn.downPoint.transform.transform.position.y;
@@ -1443,6 +1470,9 @@ public class WallIcon : RecMeshCreate
 		InitLineRender(thisGameObject);
 		SetIconObjectColor();
 		SetParent2BodyAndControlPointList(thisGameObject);
+
+
+		InitDecorateIconObjectSetting(correspondingDragItemObject);
 	}
 	public void AdjMesh()
 	{
@@ -1450,6 +1480,7 @@ public class WallIcon : RecMeshCreate
 		mFilter.mesh = CreatRecMesh(leftUpPoint.transform.position, rightUpPoint.transform.position, rightDownPoint.transform.position, leftDownPoint.transform.position, mFilter.mesh);
 
 		UpdateLineRender();
+		UpdateCollider();
 	}
 	public override void InitLineRender<T>(T thisGameObject)
 	{
@@ -1579,7 +1610,7 @@ public class WallIcon : RecMeshCreate
 		UpdateLastPos();
 	}
 }
-public class BalustradeIcon : RecMeshCreate
+public class BalustradeIcon : DecorateIconObject
 {
 	public enum PointIndex { LeftUpPoint = 0, RightUpPoint = 1, RightDownPoint = 2, LeftDownPoint = 3, };
 	public GameObject rightUpPoint;
@@ -1587,7 +1618,7 @@ public class BalustradeIcon : RecMeshCreate
 	public GameObject leftUpPoint;
 	public GameObject leftDownPoint;
 	public float balustradeHeight;
-	public void BalustradeIconCreate<T>(T thisGameObject, string objName, ColumnIcon columnIcon, float ini_balustradeHeight) where T : Component
+	public void BalustradeIconCreate<T>(T thisGameObject, string objName, ColumnIcon columnIcon, float ini_balustradeHeight, GameObject correspondingDragItemObject) where T : Component
 	{
 		InitBodySetting(objName, (int)BodyType.GeneralBody);
 
@@ -1616,6 +1647,9 @@ public class BalustradeIcon : RecMeshCreate
 		InitLineRender(thisGameObject);
 		SetIconObjectColor(columnIcon);
 		SetParent2BodyAndControlPointList(thisGameObject);
+
+
+		InitDecorateIconObjectSetting(correspondingDragItemObject);
 	}
 	public void AdjMesh()
 	{
@@ -1626,6 +1660,7 @@ public class BalustradeIcon : RecMeshCreate
 		mFilter.mesh = CreatRecMesh(leftUpPoint.transform.position, rightUpPoint.transform.position, rightDownPoint.transform.position, leftDownPoint.transform.position, mFilter.mesh);
 
 		UpdateLineRender();
+		UpdateCollider();
 	}
 	public void SetIconObjectColor(ColumnIcon columnIcon)
 	{
@@ -1713,25 +1748,25 @@ public class ColumnIcon : IconObject
 		rightColumn.body.transform.parent = thisGameObject.transform;
 
 	}
-	public void CreateWall<T>(T thisGameObject, string objName, float ini_wallWidth, float ini_windowHeight) where T : Component
+	public void CreateWall<T>(T thisGameObject, string objName, float ini_wallWidth, float ini_windowHeight, GameObject correspondingDragItemObject) where T : Component
 	{
 		wallIcon = new WallIcon();
-		wallIcon.WallIconCreate(thisGameObject, objName, this, ini_wallWidth, ini_windowHeight);
+		wallIcon.WallIconCreate(thisGameObject, objName, this, ini_wallWidth, ini_windowHeight, correspondingDragItemObject);
 	}
-	public void CreateDoubleRoof<T>(T thisGameObject, string objName, float ini_doubleRoofHeight, float ini_doubleRoofWidth) where T : Component
+	public void CreateDoubleRoof<T>(T thisGameObject, string objName, float ini_doubleRoofHeight, float ini_doubleRoofWidth, GameObject correspondingDragItemObject) where T : Component
 	{
 		doubleRoofIcon = new DoubleRoofIcon();
-		doubleRoofIcon.DoubleRoofIconCreate(thisGameObject, objName, this, ini_doubleRoofHeight, ini_doubleRoofWidth);
+		doubleRoofIcon.DoubleRoofIconCreate(thisGameObject, objName, this, ini_doubleRoofHeight, ini_doubleRoofWidth, correspondingDragItemObject);
 	}
-	public void CreateBlustrade<T>(T thisGameObject, string objName, float ini_balustradeHeight) where T : Component
+	public void CreateBlustrade<T>(T thisGameObject, string objName, float ini_balustradeHeight,GameObject correspondingDragItemObject) where T : Component
 	{
 		balustradeIcon = new BalustradeIcon();
-		balustradeIcon.BalustradeIconCreate(thisGameObject, objName, this, ini_balustradeHeight);
+		balustradeIcon.BalustradeIconCreate(thisGameObject, objName, this, ini_balustradeHeight,correspondingDragItemObject);
 	}
-	public void CreateFrieze<T>(T thisGameObject, string objName, float ini_friezeHeight) where T : Component
+	public void CreateFrieze<T>(T thisGameObject, string objName, float ini_friezeHeight,GameObject correspondingDragItemObject) where T : Component
 	{
 		friezeIcon = new FriezeIcon();
-		friezeIcon.FriezeIconCreate(thisGameObject, objName, this, ini_friezeHeight);
+		friezeIcon.FriezeIconCreate(thisGameObject, objName, this, ini_friezeHeight, correspondingDragItemObject);
 	}
 	public void AdjPos(Vector3 tmp, GameObject chooseObject)
 	{
@@ -2028,9 +2063,7 @@ public class body2icon : MonoBehaviour
 		}
 		else if (chooseObj == columnIcon.rightColumn.friezePoint || chooseObj == columnIcon.leftColumn.friezePoint)
 		{//frieze
-
 			columnIcon.friezeIcon.AdjPos(tmp);
-
 
 			friezeHeight = columnIcon.friezeIcon.friezeHeight;
 
@@ -2140,34 +2173,26 @@ public class body2icon : MonoBehaviour
 				{
 					isFrieze = true;
 
-					columnIcon.CreateFrieze(this, "Frieze_mesh", ini_friezeHeight);
+					columnIcon.CreateFrieze(this, "Frieze_mesh", ini_friezeHeight, correspondingDragItemObject);
 
 					controlPointList.Add(columnIcon.rightColumn.friezePoint);
 					controlPointList.Add(columnIcon.leftColumn.friezePoint);
 
 					movement.verlist.Add(columnIcon.rightColumn.friezePoint);
 					movement.verlist.Add(columnIcon.leftColumn.friezePoint);
-
-					columnIcon.friezeIcon.SetParent2BodyAndControlPointList(correspondingDragItemObject);
-					columnIcon.friezeIcon.SetParent2LineRenderList(correspondingDragItemObject);
-
 				}
 				break;
 			case "Balustrade":
 				if (columnIcon.balustradeIcon.body == null)
 				{
 					isBalustrade = true;
-					columnIcon.CreateBlustrade(this, "Blustrade_mesh", ini_balustradeHeight);
+					columnIcon.CreateBlustrade(this, "Blustrade_mesh", ini_balustradeHeight, correspondingDragItemObject);
 
 					controlPointList.Add(columnIcon.rightColumn.balustradePoint);
 					controlPointList.Add(columnIcon.leftColumn.balustradePoint);
 
 					movement.verlist.Add(columnIcon.rightColumn.balustradePoint);
 					movement.verlist.Add(columnIcon.leftColumn.balustradePoint);
-
-
-					columnIcon.balustradeIcon.SetParent2BodyAndControlPointList(correspondingDragItemObject);
-					columnIcon.balustradeIcon.SetParent2LineRenderList(correspondingDragItemObject);
 				}
 				break;
 			case "DoubleRoof":
@@ -2175,10 +2200,8 @@ public class body2icon : MonoBehaviour
 				{
 					isDoubleRoof = true;
 
-					columnIcon.CreateDoubleRoof(this, "DoubleRoof_mesh", ini_doubleRoofHeight, ini_doubleRoofWidth);
+					columnIcon.CreateDoubleRoof(this, "DoubleRoof_mesh", ini_doubleRoofHeight, ini_doubleRoofWidth, correspondingDragItemObject);
 
-					columnIcon.doubleRoofIcon.SetParent2BodyAndControlPointList(correspondingDragItemObject);
-					columnIcon.doubleRoofIcon.SetParent2LineRenderList(correspondingDragItemObject);
 
 				}
 				break;
@@ -2187,16 +2210,13 @@ public class body2icon : MonoBehaviour
 				{
 					isWall = true;
 
-					columnIcon.CreateWall(this, "Wall_mesh", ini_wallWidth, ini_windowHeight);
+					columnIcon.CreateWall(this, "Wall_mesh", ini_wallWidth, ini_windowHeight, correspondingDragItemObject);
 
 					movement.horlist.Add(columnIcon.wallIcon.rightDownPoint);
 					movement.horlist.Add(columnIcon.wallIcon.rightUpPoint);
 					movement.horlist.Add(columnIcon.wallIcon.leftDownPoint);
 					movement.horlist.Add(columnIcon.wallIcon.leftUpPoint);
 
-
-					columnIcon.wallIcon.SetParent2BodyAndControlPointList(correspondingDragItemObject);
-					columnIcon.wallIcon.SetParent2LineRenderList(correspondingDragItemObject);
 
 					windowUp2TopDis = columnIcon.wallIcon.rightUpPoint.transform.position.y - columnIcon.wallIcon.rightUpWindowPoint.transform.position.y;
 					windowDown2ButtonDis = columnIcon.wallIcon.rightDownWindowPoint.transform.position.y - columnIcon.wallIcon.rightDownPoint.transform.position.y;

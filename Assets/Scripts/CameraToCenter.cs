@@ -22,14 +22,25 @@ public class CameraToCenter : MonoBehaviour
 	private int isClamp = 0;
 	private bool isRotating = false;
 	private Bounds bounds;
+	private float originMaxDistance;
+	public float distanceToTarget;
 	void Start()
 	{//Set up things on the start method
 		uICamera = GameObject.Find("UICamera").GetComponent<Camera>();
 		bounds = NGUIMath.CalculateAbsoluteWidgetBounds(constraintArea.transform);
 		targetPoint = target.transform.position;//get target's coords
 		transform.LookAt(targetPoint);//makes the camera look to it
+		originMaxDistance=maxDistance;
+		distanceToTarget = Vector3.Distance(target.transform.position, transform.position);
 	}
-
+	public void ChangeCenter2TargetObject(Vector3 focusNewPos,float disOffset) 
+	{
+		targetPoint = focusNewPos;
+		 transform.LookAt(targetPoint);
+		 transform.position -= (transform.forward * disOffset);
+		 distanceToTarget = Vector3.Distance(target.transform.position, transform.position);
+		 maxDistance = originMaxDistance + disOffset;
+	}
 	void Update()
 	{//makes the camera rotate around "point" coords, rotating around its Y axis, 20 degrees per second times the speed modifier
 		Vector2 mousePos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
@@ -40,10 +51,14 @@ public class CameraToCenter : MonoBehaviour
 
 			if (Input.GetAxisRaw("Mouse ScrollWheel") != 0)
 			{
-				float distanceToTarget = Vector3.Distance(target.transform.position, transform.position);
-				if (maxDistance > distanceToTarget && minDistance < distanceToTarget)
+				Vector3 dotVector=target.transform.position- transform.position;
+				Vector3 offset=(transform.forward * Mathf.Sign(Input.GetAxisRaw("Mouse ScrollWheel")) * roomInSpeedMod * Time.smoothDeltaTime);
+				distanceToTarget = Vector3.Distance(target.transform.position, transform.position);
+				float afterDistanceToTarget = Vector3.Distance(target.transform.position, transform.position + offset);
+				Vector3 afterDotVector = target.transform.position - (transform.position + offset);
+				if (maxDistance > afterDistanceToTarget && minDistance < afterDistanceToTarget && Vector3.Dot(afterDotVector, dotVector)>0)
 				{
-					transform.position += (transform.forward * Mathf.Sign(Input.GetAxisRaw("Mouse ScrollWheel")) * roomInSpeedMod * Time.smoothDeltaTime);
+					transform.position += offset;
 				}
 			}
 		}
@@ -82,7 +97,5 @@ public class CameraToCenter : MonoBehaviour
 			isClamp = 0;
 			isRotating = false;
 		}
-
-
 	}
 }

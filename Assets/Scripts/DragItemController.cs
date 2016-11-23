@@ -1095,6 +1095,10 @@ public class DragItemController : MonoBehaviour
 	public GameObject chooseWindow;
 	public GameObject chooseGrid;
 	private Camera chooseCamera;
+	//GeneralViewCamera
+	public Camera generalViewCamera;
+	private Vector3 generalViewCameraCenterOffset=new Vector3(0,10,0);
+	private float generalViewCameraDisOffset =10.0f;
 	//UICamera
 	private Camera uICamera;
 	//四大視窗
@@ -1135,7 +1139,6 @@ public class DragItemController : MonoBehaviour
 		uICamera = GameObject.Find("UICamera").GetComponent<Camera>();
 		movement = GameObject.Find("Movement").GetComponent<Movement>();
 		building = GameObject.Find("build").GetComponent<AllInOne>();
-
 		InitWindowListMemorySetting();
 		InitStateSetting();
 		InitWindowSetSetting();
@@ -1179,7 +1182,7 @@ public class DragItemController : MonoBehaviour
 	}
 	void InitIconSetting()
 	{
-		if (formFractorInitDragIconObj && !AllWindowsStruct[(int)WindowsIndex.Formfactor].allFloorItem[AllWindowsStruct[(int)WindowsIndex.Formfactor].inUseTab2ComponentLayerIndex].ContainsKey(MAINCOMPONENT))
+		if (formFractorInitDragIconObj&&!AllWindowsStruct[(int)WindowsIndex.Formfactor].allFloorItem[AllWindowsStruct[(int)WindowsIndex.Formfactor].inUseTab2ComponentLayerIndex].ContainsKey(MAINCOMPONENT))
 		{
 			CreateMainComponent((int)WindowsIndex.Formfactor, formFractorInitDragIconObj);
 			AllWindowsStruct[(int)WindowsIndex.Formfactor].lastChooseMainDragObjectName = formFractorInitDragIconObj.name;
@@ -1204,6 +1207,41 @@ public class DragItemController : MonoBehaviour
 			AllWindowsStruct[(int)WindowsIndex.Platform].lastChooseMainDragObjectName = platformInitDragIconObj.name;
 		}
 
+	}
+	void SetInitIcon(int index)
+	{
+		SaveState2MainComponent(index);
+		switch (index) 
+		{
+			case (int)WindowsIndex.Formfactor:
+				if (formFractorInitDragIconObj && !AllWindowsStruct[(int)WindowsIndex.Formfactor].allFloorItem[AllWindowsStruct[(int)WindowsIndex.Formfactor].inUseTab2ComponentLayerIndex].ContainsKey(MAINCOMPONENT))
+				{
+					CreateMainComponent((int)WindowsIndex.Formfactor, formFractorInitDragIconObj);
+					AllWindowsStruct[(int)WindowsIndex.Formfactor].lastChooseMainDragObjectName = formFractorInitDragIconObj.name;
+				}
+			break;
+			case (int)WindowsIndex.Roof:
+			if (roofInitDragIconObj && !AllWindowsStruct[(int)WindowsIndex.Roof].allFloorItem[AllWindowsStruct[(int)WindowsIndex.Roof].inUseTab2ComponentLayerIndex].ContainsKey(MAINCOMPONENT))
+				{
+					CreateMainComponent((int)WindowsIndex.Roof, roofInitDragIconObj);
+					AllWindowsStruct[(int)WindowsIndex.Roof].lastChooseMainDragObjectName = roofInitDragIconObj.name;
+				}
+			break;
+			case (int)WindowsIndex.Body:
+			if (bodyInitDragIconObj && !AllWindowsStruct[(int)WindowsIndex.Body].allFloorItem[AllWindowsStruct[(int)WindowsIndex.Body].inUseTab2ComponentLayerIndex].ContainsKey(MAINCOMPONENT))
+				{
+					CreateMainComponent((int)WindowsIndex.Body, bodyInitDragIconObj);
+					AllWindowsStruct[(int)WindowsIndex.Body].lastChooseMainDragObjectName = bodyInitDragIconObj.name;
+				}
+			break;
+			case (int)WindowsIndex.Platform:
+			if (platformInitDragIconObj && !AllWindowsStruct[(int)WindowsIndex.Platform].allFloorItem[AllWindowsStruct[(int)WindowsIndex.Platform].inUseTab2ComponentLayerIndex].ContainsKey(MAINCOMPONENT))
+				{
+					CreateMainComponent((int)WindowsIndex.Platform, platformInitDragIconObj);
+					AllWindowsStruct[(int)WindowsIndex.Platform].lastChooseMainDragObjectName = platformInitDragIconObj.name;
+				}
+			break;
+		}
 	}
 	//設定鏡頭、Grid
 	void InitCameraSetting()
@@ -1345,24 +1383,27 @@ public class DragItemController : MonoBehaviour
 		{
 			if (Input.GetMouseButtonDown(0))//選擇視窗
 			{
-				if (!IconControlMenuPanelBounds.Contains(mousePos2World) && IconControlMenuPanel.activeSelf)
+				if (IconControlMenuPanel.activeSelf) 
 				{
-					IconControlMenuPanel.SetActive(false);
-
-				}
-				else if (IconControlMenuPanelBounds.Contains(mousePos2World))
-				{
-					Ray ray = uICamera.ScreenPointToRay(mousePos);
-					RaycastHit srsHit;
-					if (Physics.Raycast(ray, out srsHit))
+					if (!IconControlMenuPanelBounds.Contains(mousePos2World))
 					{
-						if (srsHit.collider.gameObject.tag == ICONMENUBUTTON)
+
+						IconControlMenuPanel.SetActive(false);
+					}
+					else
+					{
+						Ray ray = uICamera.ScreenPointToRay(mousePos);
+						RaycastHit srsHit;
+						if (Physics.Raycast(ray, out srsHit))
 						{
-							IconControlMenuPanel.SetActive(true);
+							if (srsHit.collider.gameObject.tag == ICONMENUBUTTON)
+							{
+								IconControlMenuPanel.SetActive(true);
+							}
 						}
 					}
 				}
-				if( !IconControlMenuPanel.activeSelf)
+				else
 				{
 					int inUseTab = 0;
 					int index = 0;
@@ -1428,7 +1469,7 @@ public class DragItemController : MonoBehaviour
 
 									//building.DeleteLayer(AllWindowsStruct[mainSingleWindowinUseIndex].allFloorItem.Count);
 
-
+									generalViewCamera.GetComponent<CameraToCenter>().ChangeCenter2TargetObject(generalViewCameraCenterOffset * AllWindowsStruct[index].allFloorItem.Count, generalViewCameraDisOffset * AllWindowsStruct[index].allFloorItem.Count);
 								}
 							}
 
@@ -1493,7 +1534,7 @@ public class DragItemController : MonoBehaviour
 				}
 			
 			}
-			else if (Input.GetMouseButtonDown(1))//右鍵
+			else if (Input.GetMouseButtonDown(1))//右鍵找控制點開啟IconMenu
 				{
 					IconControlMenuPanelBounds = NGUIMath.CalculateAbsoluteWidgetBounds(IconControlMenuPanel.transform);
 					IconControlMenuPanel.SetActive(false);
@@ -1510,10 +1551,12 @@ public class DragItemController : MonoBehaviour
 						//從圖片位置到世界相機座標選取點
 						Ray srsRay = chooseCamera.ScreenPointToRay(new Vector2(hitLocalUV.x * chooseCamera.pixelWidth, hitLocalUV.y * chooseCamera.pixelHeight));
 						RaycastHit srsHit;
+						Debug.Log("zzzz");
 						if (Physics.Raycast(srsRay, out srsHit))
 						{
 							if (srsHit.collider.gameObject.tag == CONTROLPOINT || srsHit.collider.gameObject.tag == MESHBODYCOLLIDER)
 							{
+								Debug.Log("push");
 								lastChooseIconObject = srsHit.collider.transform.gameObject;
 								IconControlMenuPanel.SetActive(true);
 								IconControlMenuPanel.transform.position = new Vector3(mousePos2World.x + IconControlMenuPanelBounds.size.x / 2.0f, mousePos2World.y - IconControlMenuPanelBounds.size.y / 2.0f, 0);
@@ -1523,24 +1566,32 @@ public class DragItemController : MonoBehaviour
 				}
 
 		}
-
-
-
-
 	}
 	public void IConMenu2DeleteChooseIcon()
 	{
-		Debug.Log("press");
 		SaveState2MainComponent(mainSingleWindowinUseIndex);
 		//如果只有一個MainComponent
-
+		bool isMainComponentObject=true;
 		if (AllWindowsStruct[mainSingleWindowinUseIndex].allFloorItem[AllWindowsStruct[mainSingleWindowinUseIndex].inUseTab2ComponentLayerIndex].Count > 1)//有兩個以上的component
 		{
-			Debug.Log("fdfdf");
-			Debug.Log("lastChooseIconObject" + lastChooseIconObject.name);
 			foreach (KeyValuePair<string, List<GameObject>> kvp in AllWindowsStruct[mainSingleWindowinUseIndex].allFloorItem[AllWindowsStruct[mainSingleWindowinUseIndex].inUseTab2ComponentLayerIndex])
 			{
 				if (kvp.Key == MAINCOMPONENT) continue;
+		
+				for (int i = 0; i < kvp.Value.Count; i++)
+				{
+					for (int j = 0; j < kvp.Value[i].GetComponent<DecorateEmptyObjectList>().objectList.Count; j++)
+					{
+						if (lastChooseIconObject == kvp.Value[i].GetComponent<DecorateEmptyObjectList>().objectList[j])
+						{
+							Destroy(kvp.Value[i]);
+							AllWindowsStruct[mainSingleWindowinUseIndex].allFloorItem[AllWindowsStruct[mainSingleWindowinUseIndex].inUseTab2ComponentLayerIndex][kvp.Key].Clear();
+							isMainComponentObject=false;
+							break;
+						}
+					}
+				}
+/*
 				for (int i = 0; i < kvp.Value.Count; i++)
 				{
 					Debug.Log("kvp.key" + kvp.Key);
@@ -1559,17 +1610,22 @@ public class DragItemController : MonoBehaviour
 						}
 					}
 
-				}
+				}*/
 			}
+			if (isMainComponentObject)//如果點到的東西是MainComponentObject
+			{
+				AllWindowsStruct[mainSingleWindowinUseIndex].ClearAllComponent();
+				SetInitIcon(mainSingleWindowinUseIndex);
+			}
+
 		}
 		else
 		{
-			Debug.Log("clear()");
 			AllWindowsStruct[mainSingleWindowinUseIndex].ClearAllComponent();
+			SetInitIcon(mainSingleWindowinUseIndex);
 		}
 
 		IconControlMenuPanel.SetActive(false);
-
 	}
 	//隱藏開啟MissionTab
 	void SetMissionTab(int index)
@@ -1942,7 +1998,12 @@ public class DragItemController : MonoBehaviour
 
 						CreateMainComponent(index);
 
+						generalViewCamera.GetComponent<CameraToCenter>().ChangeCenter2TargetObject(generalViewCameraCenterOffset * AllWindowsStruct[index].allFloorItem.Count, generalViewCameraDisOffset * AllWindowsStruct[index].allFloorItem.Count);
+
 						building.upup(17.5f);
+
+			
+
 					}
 				}
 				break;
@@ -1976,11 +2037,11 @@ public class DragItemController : MonoBehaviour
 							clone = Instantiate(cloneCorrespondingObj, pos, cloneCorrespondingObj.transform.rotation) as GameObject;
 						else
 						{
-							clone=new GameObject();
-							clone.transform.position=pos;		
+							clone=new GameObject();	
 						}
 						//clone.transform.parent = this.transform;
 						clone.transform.parent = AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex][MAINCOMPONENT][0].transform;
+						if (!clone.GetComponent<DecorateEmptyObjectList>()) clone.AddComponent<DecorateEmptyObjectList>();
 						AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex][chooseDragObject.name].Add(clone);
 					}
 					else
@@ -1993,10 +2054,13 @@ public class DragItemController : MonoBehaviour
 					else
 					{
 						clone = new GameObject();
-						clone.transform.position = pos;
 					}
 					//clone.transform.parent = this.transform;
 					clone.transform.parent = AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex][MAINCOMPONENT][0].transform;
+
+					//clone.transform.SetParent(AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex][MAINCOMPONENT][0].transform, false);
+
+					if (!clone.GetComponent<DecorateEmptyObjectList>()) clone.AddComponent<DecorateEmptyObjectList>();
 					List<GameObject> newList = new List<GameObject>();
 					newList.Clear();
 					newList.Add(clone);

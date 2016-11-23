@@ -225,6 +225,7 @@
      <Compile Include="Assets\Scripts\CameraToCenter.cs" />
      <Compile Include="Assets\Scripts\CameraWindow.cs" />
      <Compile Include="Assets\Scripts\CorespondingDragItem.cs" />
+     <Compile Include="Assets\Scripts\DecorateEmptyObjectList.cs" />
      <Compile Include="Assets\Scripts\DragItemController.cs" />
      <Compile Include="Assets\Scripts\FixedWindows.cs" />
      <Compile Include="Assets\Scripts\HandleCursor.cs" />
