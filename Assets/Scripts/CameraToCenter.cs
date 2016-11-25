@@ -22,7 +22,7 @@ public class CameraToCenter : MonoBehaviour
 	private int isClamp = 0;
 	private bool isRotating = false;
 	private Bounds bounds;
-	private float originMaxDistance;
+	private int lastSize=0;
 	public float distanceToTarget;
 	void Start()
 	{//Set up things on the start method
@@ -30,16 +30,25 @@ public class CameraToCenter : MonoBehaviour
 		bounds = NGUIMath.CalculateAbsoluteWidgetBounds(constraintArea.transform);
 		targetPoint = target.transform.position;//get target's coords
 		transform.LookAt(targetPoint);//makes the camera look to it
-		originMaxDistance=maxDistance;
-		distanceToTarget = Vector3.Distance(target.transform.position, transform.position);
+		distanceToTarget = Vector3.Distance(targetPoint, transform.position);
 	}
-	public void ChangeCenter2TargetObject(Vector3 focusNewPos,float disOffset) 
+	public void ChangeCenter2TargetObject(Vector3 focusNewPos,float disOffset,int size) 
 	{
-		targetPoint = focusNewPos;
-		 transform.LookAt(targetPoint);
-		 transform.position -= (transform.forward * disOffset);
-		 distanceToTarget = Vector3.Distance(target.transform.position, transform.position);
-		 maxDistance = originMaxDistance + disOffset;
+		//未移動前距離	
+		float lastDistanceToTarget = Vector3.Distance(targetPoint, transform.position);
+		//移動目標點
+		targetPoint += focusNewPos * (size - lastSize);
+		distanceToTarget = Vector3.Distance(targetPoint, transform.position);
+		//因移動目標點造成的距離偏移
+		float offsetDistance =distanceToTarget - lastDistanceToTarget;
+		//移動鏡頭
+		lastDistanceToTarget = Vector3.Distance(targetPoint, transform.position);
+		transform.position -= (transform.forward * disOffset) * (size - lastSize);
+		transform.LookAt(targetPoint);
+		distanceToTarget = Vector3.Distance(targetPoint, transform.position);
+		//改變最大距離
+		maxDistance = maxDistance + ((distanceToTarget - lastDistanceToTarget) + offsetDistance);
+		lastSize=size;
 	}
 	void Update()
 	{//makes the camera rotate around "point" coords, rotating around its Y axis, 20 degrees per second times the speed modifier
@@ -51,15 +60,14 @@ public class CameraToCenter : MonoBehaviour
 
 			if (Input.GetAxisRaw("Mouse ScrollWheel") != 0)
 			{
-				Vector3 dotVector=target.transform.position- transform.position;
-				Vector3 offset=(transform.forward * Mathf.Sign(Input.GetAxisRaw("Mouse ScrollWheel")) * roomInSpeedMod * Time.smoothDeltaTime);
-				distanceToTarget = Vector3.Distance(target.transform.position, transform.position);
-				float afterDistanceToTarget = Vector3.Distance(target.transform.position, transform.position + offset);
-				Vector3 afterDotVector = target.transform.position - (transform.position + offset);
-				if (maxDistance > afterDistanceToTarget && minDistance < afterDistanceToTarget && Vector3.Dot(afterDotVector, dotVector)>0)
-				{
-					transform.position += offset;
-				}
+				distanceToTarget = Vector3.Distance(targetPoint, transform.position);
+				float desiredDistance = distanceToTarget;
+				float offset = (-Mathf.Sign(Input.GetAxisRaw("Mouse ScrollWheel")) * roomInSpeedMod * Time.smoothDeltaTime);
+				desiredDistance+=offset;
+				desiredDistance = Mathf.Clamp(desiredDistance, minDistance, maxDistance);
+
+				transform.position = targetPoint - (transform.forward * desiredDistance);
+
 			}
 		}
 		if (isRotating)

@@ -2164,6 +2164,25 @@ public class body2icon : MonoBehaviour
 		}
 
 	}
+	public void DestroyFunction(string objName) 
+	{
+		switch (objName)
+		{
+			case "Frieze":
+					isFrieze = false;
+				break;
+			case "Balustrade":
+					isBalustrade = false;
+				break;
+			case "DoubleRoof":
+					isDoubleRoof = false;
+				break;
+			case "Wall":
+					isWall = false;
+					windowUp2TopDis = 0;
+				break;
+		}
+	}
 	public void UpdateFunction(string objName, GameObject correspondingDragItemObject)
 	{
 		switch (objName)
@@ -2201,7 +2220,6 @@ public class body2icon : MonoBehaviour
 					isDoubleRoof = true;
 
 					columnIcon.CreateDoubleRoof(this, "DoubleRoof_mesh", ini_doubleRoofHeight, ini_doubleRoofWidth, correspondingDragItemObject);
-
 
 				}
 				break;
@@ -2258,22 +2276,22 @@ public class body2icon : MonoBehaviour
 		float minCloseHeight = ini_bodydis.y * 0.1f;
 		if (dragitemcontroller.chooseObj == columnIcon.rightColumn.body)
 		{
-			if (isWall) minClampX = columnIcon.wallIcon.rightUpPoint.transform.position.x + minWidth;
+			if (columnIcon.wallIcon.body!=null) minClampX = columnIcon.wallIcon.rightUpPoint.transform.position.x + minWidth;
 			else minClampX = columnIcon.leftColumn.upPoint.transform.position.x + minWidth;
 		}
 		else if (dragitemcontroller.chooseObj == columnIcon.leftColumn.body)
 		{
-			if (isWall) maxClampX = columnIcon.wallIcon.leftUpPoint.transform.position.x - minWidth;
+			if (columnIcon.wallIcon.body != null) maxClampX = columnIcon.wallIcon.leftUpPoint.transform.position.x - minWidth;
 			else maxClampX = columnIcon.leftColumn.upPoint.transform.position.x - minWidth;
 		}
 		else if (dragitemcontroller.chooseObj == columnIcon.rightColumn.upPoint)
 		{
-			if (isWall) minClampY = columnIcon.wallIcon.rightUpWindowPoint.transform.position.y + minCloseHeight;
+			if (columnIcon.wallIcon.body != null) minClampY = columnIcon.wallIcon.rightUpWindowPoint.transform.position.y + minCloseHeight;
 			else minClampY = columnIcon.rightColumn.downPoint.transform.position.y + minCloseHeight + friezeHeight + balustradeHeight;
 		}
 		else if (dragitemcontroller.chooseObj == columnIcon.rightColumn.downPoint)
 		{
-			if (isWall) maxClampY = columnIcon.wallIcon.rightDownWindowPoint.transform.position.y - minCloseHeight;
+			if (columnIcon.wallIcon.body != null) maxClampY = columnIcon.wallIcon.rightDownWindowPoint.transform.position.y - minCloseHeight;
 			else maxClampY = columnIcon.rightColumn.upPoint.transform.position.y - minCloseHeight - friezeHeight - balustradeHeight;
 		}
 		else if (dragitemcontroller.chooseObj == columnIcon.rightColumn.friezePoint)
@@ -2288,12 +2306,12 @@ public class body2icon : MonoBehaviour
 		}
 		else if (dragitemcontroller.chooseObj == columnIcon.leftColumn.upPoint)
 		{
-			if (isWall) minClampY = columnIcon.wallIcon.leftUpWindowPoint.transform.position.y + minCloseHeight;
+			if (columnIcon.wallIcon.body != null) minClampY = columnIcon.wallIcon.leftUpWindowPoint.transform.position.y + minCloseHeight;
 			else minClampY = columnIcon.leftColumn.downPoint.transform.position.y + minHeight;
 		}
 		else if (dragitemcontroller.chooseObj == columnIcon.leftColumn.downPoint)
 		{
-			if (isWall) maxClampY = columnIcon.wallIcon.leftDownWindowPoint.transform.position.y - minCloseHeight;
+			if (columnIcon.wallIcon.body != null) maxClampY = columnIcon.wallIcon.leftDownWindowPoint.transform.position.y - minCloseHeight;
 			else maxClampY = columnIcon.leftColumn.upPoint.transform.position.y - minHeight;
 		}
 		else if (dragitemcontroller.chooseObj == columnIcon.leftColumn.friezePoint)

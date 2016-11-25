@@ -961,12 +961,13 @@ public class MisstionTab : MonoBehaviour
 	}
 	public void DeleteCurrentMisstionTab()
 	{
+		Debug.Log("MisstionTabinUseIndex" + inUseIndex);
 		if (missionTabsList.Count >= 2)//剩二層時要刪除 要一次刪兩層
 		{
 			GameObject tmp = missionTabsList[inUseIndex];
 			Destroy(tmp);
 			missionTabsList.RemoveAt(inUseIndex);
-			if (inUseIndex != 0) inUseIndex--;
+			if (inUseIndex > 0) inUseIndex--;
 			if (missionTabsList.Count == 1)
 			{
 				tmp = deleteButton;
@@ -976,7 +977,7 @@ public class MisstionTab : MonoBehaviour
 				tmp = missionTabsList[missionTabsList.Count - 1];
 				Destroy(tmp);
 				missionTabsList.RemoveAt(missionTabsList.Count - 1);
-				inUseIndex--;
+				if (inUseIndex > 0) inUseIndex--;
 			}
 		}
 		SortMisstionTabPosition();
@@ -1208,40 +1209,37 @@ public class DragItemController : MonoBehaviour
 		}
 
 	}
-	void SetInitIcon(int index)
+	GameObject ReturnInitWindowsIcon(int index)
 	{
 		SaveState2MainComponent(index);
 		switch (index) 
 		{
 			case (int)WindowsIndex.Formfactor:
-				if (formFractorInitDragIconObj && !AllWindowsStruct[(int)WindowsIndex.Formfactor].allFloorItem[AllWindowsStruct[(int)WindowsIndex.Formfactor].inUseTab2ComponentLayerIndex].ContainsKey(MAINCOMPONENT))
+				if (formFractorInitDragIconObj)
 				{
-					CreateMainComponent((int)WindowsIndex.Formfactor, formFractorInitDragIconObj);
-					AllWindowsStruct[(int)WindowsIndex.Formfactor].lastChooseMainDragObjectName = formFractorInitDragIconObj.name;
+					return formFractorInitDragIconObj;
 				}
 			break;
 			case (int)WindowsIndex.Roof:
-			if (roofInitDragIconObj && !AllWindowsStruct[(int)WindowsIndex.Roof].allFloorItem[AllWindowsStruct[(int)WindowsIndex.Roof].inUseTab2ComponentLayerIndex].ContainsKey(MAINCOMPONENT))
+			if (roofInitDragIconObj)
 				{
-					CreateMainComponent((int)WindowsIndex.Roof, roofInitDragIconObj);
-					AllWindowsStruct[(int)WindowsIndex.Roof].lastChooseMainDragObjectName = roofInitDragIconObj.name;
+					return roofInitDragIconObj;
 				}
 			break;
 			case (int)WindowsIndex.Body:
-			if (bodyInitDragIconObj && !AllWindowsStruct[(int)WindowsIndex.Body].allFloorItem[AllWindowsStruct[(int)WindowsIndex.Body].inUseTab2ComponentLayerIndex].ContainsKey(MAINCOMPONENT))
+			if (bodyInitDragIconObj)
 				{
-					CreateMainComponent((int)WindowsIndex.Body, bodyInitDragIconObj);
-					AllWindowsStruct[(int)WindowsIndex.Body].lastChooseMainDragObjectName = bodyInitDragIconObj.name;
+					return  bodyInitDragIconObj;
 				}
 			break;
 			case (int)WindowsIndex.Platform:
-			if (platformInitDragIconObj && !AllWindowsStruct[(int)WindowsIndex.Platform].allFloorItem[AllWindowsStruct[(int)WindowsIndex.Platform].inUseTab2ComponentLayerIndex].ContainsKey(MAINCOMPONENT))
+			if (platformInitDragIconObj)
 				{
-					CreateMainComponent((int)WindowsIndex.Platform, platformInitDragIconObj);
-					AllWindowsStruct[(int)WindowsIndex.Platform].lastChooseMainDragObjectName = platformInitDragIconObj.name;
+					return platformInitDragIconObj;
 				}
 			break;
 		}
+		return null;
 	}
 	//設定鏡頭、Grid
 	void InitCameraSetting()
@@ -1275,6 +1273,7 @@ public class DragItemController : MonoBehaviour
 
 		if (chooseObj)//已選到控制點
 		{
+			IconControlMenuPanel.SetActive(false);
 			if (Input.GetMouseButtonUp(0))//放開選到的控制點
 			{
 				chooseObj.GetComponent<Collider>().enabled = true;
@@ -1469,7 +1468,7 @@ public class DragItemController : MonoBehaviour
 
 									//building.DeleteLayer(AllWindowsStruct[mainSingleWindowinUseIndex].allFloorItem.Count);
 
-									generalViewCamera.GetComponent<CameraToCenter>().ChangeCenter2TargetObject(generalViewCameraCenterOffset * AllWindowsStruct[index].allFloorItem.Count, generalViewCameraDisOffset * AllWindowsStruct[index].allFloorItem.Count);
+									generalViewCamera.GetComponent<CameraToCenter>().ChangeCenter2TargetObject(generalViewCameraCenterOffset, generalViewCameraDisOffset, AllWindowsStruct[mainSingleWindowinUseIndex].allFloorItem.Count-1);
 								}
 							}
 
@@ -1587,6 +1586,12 @@ public class DragItemController : MonoBehaviour
 							Destroy(kvp.Value[i]);
 							AllWindowsStruct[mainSingleWindowinUseIndex].allFloorItem[AllWindowsStruct[mainSingleWindowinUseIndex].inUseTab2ComponentLayerIndex][kvp.Key].Clear();
 							isMainComponentObject=false;
+
+							if (lastChooseIconObject.transform.parent.GetComponent<body2icon>())
+							{
+								lastChooseIconObject.transform.parent.GetComponent<body2icon>().DestroyFunction(kvp.Key);
+							}
+
 							break;
 						}
 					}
@@ -1614,17 +1619,20 @@ public class DragItemController : MonoBehaviour
 			}
 			if (isMainComponentObject)//如果點到的東西是MainComponentObject
 			{
-				AllWindowsStruct[mainSingleWindowinUseIndex].ClearAllComponent();
-				SetInitIcon(mainSingleWindowinUseIndex);
+				//AllWindowsStruct[mainSingleWindowinUseIndex].ClearAllComponent();
+				GameObject initWindowsIconDragObject = ReturnInitWindowsIcon(mainSingleWindowinUseIndex);
+				SetWindowsComponent(mainSingleWindowinUseIndex, initWindowsIconDragObject);
+				Debug.Log("addMain");
 			}
 
 		}
 		else
 		{
-			AllWindowsStruct[mainSingleWindowinUseIndex].ClearAllComponent();
-			SetInitIcon(mainSingleWindowinUseIndex);
+			//AllWindowsStruct[mainSingleWindowinUseIndex].ClearAllComponent();
+			GameObject initWindowsIconDragObject = ReturnInitWindowsIcon(mainSingleWindowinUseIndex);
+			SetWindowsComponent(mainSingleWindowinUseIndex, initWindowsIconDragObject);
+			Debug.Log("addMain");
 		}
-
 		IconControlMenuPanel.SetActive(false);
 	}
 	//隱藏開啟MissionTab
@@ -1814,7 +1822,7 @@ public class DragItemController : MonoBehaviour
 					{
 						ThisWindowsComponent = AllWindowsStruct[index];
 
-						SetWindowsComponent(index);
+						SetWindowsComponent(index, chooseDragObject);
 					}
 					//選擇視窗
 					chooseWindow = windowsList[index];
@@ -1829,33 +1837,34 @@ public class DragItemController : MonoBehaviour
 
 					ThisWindowsComponent = AllWindowsStruct[mainSingleWindowinUseIndex];
 
-					SetWindowsComponent(mainSingleWindowinUseIndex);
+					SetWindowsComponent(mainSingleWindowinUseIndex, chooseDragObject);
 				}
 				break;
 		}
 	}
-	void SetWindowsComponent(int index)
+	void SetWindowsComponent(int index, GameObject setDragObject)
 	{
+		if (setDragObject==null) return;
 		SaveState2MainComponent(index);
-		switch (chooseDragObject.tag)
+		switch (setDragObject.tag)
 		{
 			case MAINCOMPONENT:
 				movement.intiAllList();
 				Debug.Log(AllWindowsStruct[index].lastChooseMainDragObjectName);
 				if (!AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex].ContainsKey(MAINCOMPONENT))//在選擇的視窗內 且視窗內物件為空
 				{
-					CreateMainComponent(index);
+					CreateMainComponent(index, setDragObject);
 					Debug.Log("000");
 				}
 				else//視窗內物件為不為空
 				{
-					if (AllWindowsStruct[index].lastChooseMainDragObjectName != chooseDragObject.name)//如果不是拖曳同一個主物件取代原本的主物物件
+					if (AllWindowsStruct[index].lastChooseMainDragObjectName != setDragObject.name)//如果不是拖曳同一個主物件取代原本的主物物件
 					{
 						//紀錄操作的物件
-						if (AllWindowsStruct[index].temporateAllFloorItem.ContainsKey(chooseDragObject.name)) //有編輯過此視窗
+						if (AllWindowsStruct[index].temporateAllFloorItem.ContainsKey(setDragObject.name)) //有編輯過此視窗
 						{
 							AllWindowsStruct[index].HideAllComponent();
-							AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex] = AllWindowsStruct[index].temporateAllFloorItem[chooseDragObject.name][AllWindowsStruct[index].inUseTab2ComponentLayerIndex];
+							AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex] = AllWindowsStruct[index].temporateAllFloorItem[setDragObject.name][AllWindowsStruct[index].inUseTab2ComponentLayerIndex];
 							AllWindowsStruct[index].ShowAllComponent();
 							Debug.Log("1111");
 
@@ -1863,7 +1872,7 @@ public class DragItemController : MonoBehaviour
 						else //沒有編輯過此視窗
 						{
 							AllWindowsStruct[index].HideAllComponent();
-							CreateMainComponent(index);
+							CreateMainComponent(index, setDragObject);
 							Debug.Log("222");
 						}
 					}
@@ -1871,12 +1880,12 @@ public class DragItemController : MonoBehaviour
 					{
 						//取代原本的主物物件 清除此視窗物件
 						AllWindowsStruct[index].ClearAllComponent();
-						CreateMainComponent(index);
+						CreateMainComponent(index, setDragObject);
 						Debug.Log("333");
 
 					}
 				}
-				AllWindowsStruct[index].lastChooseMainDragObjectName = chooseDragObject.name;
+				AllWindowsStruct[index].lastChooseMainDragObjectName = setDragObject.name;
 				if (AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex][MAINCOMPONENT][0].GetComponent<MeshObj>()) building.UpdateAll(AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex][MAINCOMPONENT][0].GetComponent<MeshObj>().edgeIndex);
 				if (AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex][MAINCOMPONENT][0].GetComponent<body2icon>())
 				{
@@ -1893,18 +1902,18 @@ public class DragItemController : MonoBehaviour
 					if (AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex][MAINCOMPONENT][0].GetComponent<body2icon>())
 					{
 
-						if (AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex].ContainsKey(chooseDragObject.name)) AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex][MAINCOMPONENT][0].GetComponent<body2icon>().UpdateFunction(chooseDragObject.name, correspondingDragItemObject);
+						if (AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex].ContainsKey(setDragObject.name)) AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex][MAINCOMPONENT][0].GetComponent<body2icon>().UpdateFunction(setDragObject.name, correspondingDragItemObject);
 
 
 
-						if (chooseDragObject.name == "Balustrade")
+						if (setDragObject.name == "Balustrade")
 						{
 
 							//building.UpdateBody_F(AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex][MAINCOMPONENT][0].GetComponent<body2icon>().isFrieze);
 							building.UpdateBody_F(true);
 						}
 
-						if (chooseDragObject.name == "Frieze")
+						if (setDragObject.name == "Frieze")
 						{
 							//building.UpdateBody_B(AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex][MAINCOMPONENT][0].GetComponent<body2icon>().isBalustrade);
 							building.UpdateBody_B(true);
@@ -1998,7 +2007,7 @@ public class DragItemController : MonoBehaviour
 
 						CreateMainComponent(index);
 
-						generalViewCamera.GetComponent<CameraToCenter>().ChangeCenter2TargetObject(generalViewCameraCenterOffset * AllWindowsStruct[index].allFloorItem.Count, generalViewCameraDisOffset * AllWindowsStruct[index].allFloorItem.Count);
+						generalViewCamera.GetComponent<CameraToCenter>().ChangeCenter2TargetObject(generalViewCameraCenterOffset, generalViewCameraDisOffset, AllWindowsStruct[index].allFloorItem.Count-1);
 
 						building.upup(17.5f);
 
