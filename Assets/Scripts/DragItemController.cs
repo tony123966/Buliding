@@ -1640,9 +1640,11 @@ public class DragItemController : MonoBehaviour
 	{
 		if (changeLayoutIndexInWindowsSet == (int)WindowsSetIndex.SingleWindow)
 		{
-			AllWindowsStruct[(int)WindowsIndex.Body].misstionTab.SetAllMisstionTabsActive(false);
-			AllWindowsStruct[(int)WindowsIndex.Platform].misstionTab.SetAllMisstionTabsActive(false);
-			if (index == (int)WindowsIndex.Body || index == (int)WindowsIndex.Platform)
+			for (int i = 0; i < AllWindowsStruct.Length; i++)
+			{
+				AllWindowsStruct[i].misstionTab.SetAllMisstionTabsActive(false);
+			}
+			if (AllWindowsStruct[index].misstionTab.missionTabsList.Count>0)
 			{
 				AllWindowsStruct[index].misstionTab.SetAllMisstionTabsActive(true);
 			}

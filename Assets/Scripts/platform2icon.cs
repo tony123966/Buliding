@@ -161,6 +161,59 @@ public class platform2icon : MonoBehaviour
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+public class BasedPlatformBalustradeIcon : DecorateIconObject
+{
+	public enum PointIndex { LeftUpPoint = 0, RightUpPoint = 1, RightDownPoint = 2, LeftDownPoint = 3, };
+	public List<GameObject> body = new List<GameObject>();
+	public Column leftColumn;
+	public Column rightColumn;
+	public GameObject rightUpPoint;
+	public GameObject rightDownPoint;
+	public GameObject leftUpPoint;
+	public GameObject leftDownPoint;
+	public float columnHeight;
+	private float offset=0.01f;
+	public void BasedPlatformBalustradeIconCreate<T>(T thisGameObject, string objName, BasedPlatformIcon basedPlatformIcon, float columnHeight, GameObject correspondingDragItemObject) where T : Component
+	{
+		Vector3 h = new Vector3(0.0f, columnHeight, 0.0f);
+		Vector3 offsetVector = new Vector3(0.0f, offset, 0.0f);
+		Vector3 rightDownPointPos = basedPlatformIcon.rightUpPoint.transform.position + offsetVector;
+		Vector3 leftDownPointPos = basedPlatformIcon.leftUpPoint.transform.position + offsetVector;
+		Vector3 rightUpPointPos = rightDownPointPos + h;
+		Vector3 leftUpPointPos = leftDownPointPos + h;
+
+		rightDownPoint = CreateControlPoint("PBRD", basedPlatformIcon.rightUpPoint.transform.localScale, rightDownPointPos);
+		leftDownPoint = CreateControlPoint("PBLD", basedPlatformIcon.leftUpPoint.transform.localScale, leftDownPointPos);
+		rightUpPoint = CreateControlPoint("PBRU", basedPlatformIcon.rightUpPoint.transform.localScale, rightUpPointPos);
+		leftUpPoint = CreateControlPoint("PBLU", basedPlatformIcon.leftUpPoint.transform.localScale, leftUpPointPos);
+
+
+		leftColumn = new Column(leftUpPoint, leftDownPoint, columnHeight);
+		rightColumn = new Column(rightUpPoint, rightDownPoint, columnHeight);
+		this.columnHeight = columnHeight;
+		
+		body.Add(leftColumn.body);
+		body.Add(rightColumn.body);
+
+
+		mFilter.mesh = CreatRecMesh(leftUpPoint.transform.position, rightUpPoint.transform.position, rightDownPoint.transform.position, leftDownPoint.transform.position, mFilter.mesh);
+		//初始位置
+		controlPointList.Add(leftColumn.upPoint);
+		controlPointList.Add(rightColumn.upPoint);
+		controlPointList.Add(rightColumn.downPoint);
+		controlPointList.Add(leftColumn.downPoint);
+		InitControlPointList2lastControlPointPosition();
+
+
+		InitLineRender(thisGameObject);
+		SetIconObjectColor();
+		SetParent2BodyAndControlPointList(thisGameObject);
+
+		InitDecorateIconObjectSetting(correspondingDragItemObject);
+
+	}
+
+}
 public class BasedPlatformIcon : RecMeshCreate
 {
 	public enum PointIndex { LeftUpPoint = 0, RightUpPoint = 1, RightDownPoint = 2, LeftDownPoint = 3, };
@@ -168,6 +221,8 @@ public class BasedPlatformIcon : RecMeshCreate
 	public GameObject rightDownPoint;
 	public GameObject leftUpPoint;
 	public GameObject leftDownPoint;
+
+	public BasedPlatformBalustradeIcon basedPlatformBalustradeIcon=new BasedPlatformBalustradeIcon();
 	public void BasedPlatformIconCreate<T>(T thisGameObject, string objName, GameObject leftUpPoint, GameObject rightUpPoint, GameObject rightDownPoint, GameObject leftDownPoint)
 	where T : Component
 	{
@@ -198,7 +253,7 @@ public class BasedPlatformIcon : RecMeshCreate
 		for (int j = 0; j < controlPointList.Count; j++)
 		{
 			if (index == j) continue;
-			if ((lastControlPointPosition[index].x == controlPointList[j].transform.position.x))//x相同
+	/*		if ((lastControlPointPosition[index].x == controlPointList[j].transform.position.x))//x相同
 			{
 				controlPointList[j].transform.position = new Vector3(tmp.x, lastControlPointPosition[j].y - (offset_y), lastControlPointPosition[j].z);
 			}
@@ -209,6 +264,10 @@ public class BasedPlatformIcon : RecMeshCreate
 			else//對角
 			{
 				controlPointList[j].transform.position = new Vector3(lastControlPointPosition[j].x - (offset_x), lastControlPointPosition[j].y - (offset_y), lastControlPointPosition[j].z);
+			}*/
+			if ((lastControlPointPosition[index].y == controlPointList[j].transform.position.y))//y相同
+			{
+				controlPointList[j].transform.position = new Vector3(lastControlPointPosition[j].x - (offset_x), tmp.y, lastControlPointPosition[j].z);
 			}
 		}
 		  UpdateLastPos();
@@ -230,6 +289,8 @@ public class platform2icon : MonoBehaviour
 	//for ratio
 	public Vector2 chang_platdis;
 	public Vector2 ini_platdis;
+
+	public Vector2 ini_platBalustradeDis;
 
 	void Start()
 	{
@@ -265,7 +326,18 @@ public class platform2icon : MonoBehaviour
 			}
 		}
 	}
-
+	public void UpdateFunction(string objName, GameObject correspondingDragItemObject)
+	{
+		switch (objName)
+		{
+			case "BasePlatFormBalustrade":
+				if (basedPlatformIcon.basedPlatformBalustradeIcon.body == null)
+				{
+					basedPlatformIcon.basedPlatformBalustradeIcon.BasedPlatformBalustradeIconCreate(this, "basedPlatformBalustradeIcon_mesh", basedPlatformIcon, ini_platBalustradeDis.y, correspondingDragItemObject);
+				}
+				break;
+		}
+	}
 	public void addpoint()
 	{
 		movement.freelist.AddRange(controlPointList);

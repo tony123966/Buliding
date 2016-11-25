@@ -1153,6 +1153,12 @@ using System.Collections.Generic;
 
 public class RecMeshCreate : IconObject
 {
+	public enum PointIndex { LeftUpPoint = 0, RightUpPoint = 1, RightDownPoint = 2, LeftDownPoint = 3, };
+	public GameObject rightUpPoint;
+	public GameObject rightDownPoint;
+	public GameObject leftUpPoint;
+	public GameObject leftDownPoint;
+
 	public Mesh CreatRecMesh(Vector3 lu, Vector3 ru, Vector3 rd, Vector3 ld, Mesh ismesh)
 	{
 		if (!ismesh)
@@ -1228,11 +1234,12 @@ public class DecorateIconObject : RecMeshCreate
 }
 public class DoubleRoofIcon : DecorateIconObject
 {
-	public enum PointIndex { LeftUpPoint = 0, RightUpPoint = 1, RightDownPoint = 2, LeftDownPoint = 3, };
+
 	public Vector3 rightUpPoint;
 	public Vector3 rightDownPoint;
 	public Vector3 leftUpPoint;
 	public Vector3 leftDownPoint;
+
 	public float doubleRoofWidth;
 	public float doubleRoofHeight;
 	public void DoubleRoofIconCreate<T>(T thisGameObject, string objName, ColumnIcon columnIcon, float doubleRoofHeight, float doubleRoofWidth, GameObject correspondingDragItemObject)
@@ -1261,20 +1268,8 @@ public class DoubleRoofIcon : DecorateIconObject
 
 		InitDecorateIconObjectSetting(correspondingDragItemObject);
 	}
-	public void AdjMesh(ColumnIcon columnIcon, float doubleRoofHeight, float doubleRoofWidth)
+	public void AdjMesh()
 	{
-		this.doubleRoofHeight = doubleRoofHeight;
-		this.doubleRoofWidth = doubleRoofWidth;
-
-		rightDownPoint = new Vector3(columnIcon.rightColumn.upPoint.transform.position.x, columnIcon.rightColumn.upPoint.transform.position.y, columnIcon.rightColumn.upPoint.transform.position.z);
-		leftDownPoint = new Vector3(columnIcon.leftColumn.upPoint.transform.position.x, columnIcon.leftColumn.upPoint.transform.position.y, columnIcon.leftColumn.upPoint.transform.position.z);
-
-		float _upr = rightDownPoint.y + doubleRoofHeight;
-		rightUpPoint = new Vector3(rightUpPoint.x, _upr, rightUpPoint.z);
-		float _upl = leftDownPoint.y + doubleRoofHeight;
-		leftUpPoint = new Vector3(leftUpPoint.x, _upl, leftUpPoint.z);
-		rightDownPoint.x = rightDownPoint.x + doubleRoofWidth;
-		leftDownPoint.x = leftDownPoint.x - doubleRoofWidth;
 
 		mFilter.mesh.Clear();
 		mFilter.mesh = CreatRecMesh(leftUpPoint, rightUpPoint, rightDownPoint, leftDownPoint, mFilter.mesh);
@@ -1318,11 +1313,6 @@ public class DoubleRoofIcon : DecorateIconObject
 }
 public class FriezeIcon : DecorateIconObject
 {
-	public enum PointIndex { LeftUpPoint = 0, RightUpPoint = 1, RightDownPoint = 2, LeftDownPoint = 3, };
-	public GameObject rightUpPoint;
-	public GameObject rightDownPoint;
-	public GameObject leftUpPoint;
-	public GameObject leftDownPoint;
 	public float friezeHeight;
 	public void FriezeIconCreate<T>(T thisGameObject, string objName, ColumnIcon columnIcon, float ini_friezeHeight,GameObject correspondingDragItemObject) where T : Component
 	{
@@ -1356,11 +1346,9 @@ public class FriezeIcon : DecorateIconObject
 	}
 	public void AdjMesh()
 	{
-		Vector3 h = new Vector3(0.0f, friezeHeight, 0.0f);
+
 		mFilter.mesh.Clear();
 
-		rightDownPoint.transform.position = rightUpPoint.transform.position - h;
-		leftDownPoint.transform.position = leftUpPoint.transform.position - h;
 		mFilter.mesh = CreatRecMesh(leftUpPoint.transform.position, rightUpPoint.transform.position, rightDownPoint.transform.position, leftDownPoint.transform.position, mFilter.mesh);
 
 		UpdateLineRender();
@@ -1419,10 +1407,6 @@ public class FriezeIcon : DecorateIconObject
 public class WallIcon : DecorateIconObject
 {
 	public enum PointIndex { LeftUpPoint = 0, RightUpPoint = 1, RightDownPoint = 2, LeftDownPoint = 3, LeftUpWindowPoint = 4, RightUpWindowPoint = 5, RightDownWindowPoint = 6, LeftDownWindowPoint = 7, };
-	public GameObject rightUpPoint;
-	public GameObject rightDownPoint;
-	public GameObject leftUpPoint;
-	public GameObject leftDownPoint;
 
 	public GameObject rightUpWindowPoint;
 	public GameObject rightDownWindowPoint;
@@ -1612,11 +1596,6 @@ public class WallIcon : DecorateIconObject
 }
 public class BalustradeIcon : DecorateIconObject
 {
-	public enum PointIndex { LeftUpPoint = 0, RightUpPoint = 1, RightDownPoint = 2, LeftDownPoint = 3, };
-	public GameObject rightUpPoint;
-	public GameObject rightDownPoint;
-	public GameObject leftUpPoint;
-	public GameObject leftDownPoint;
 	public float balustradeHeight;
 	public void BalustradeIconCreate<T>(T thisGameObject, string objName, ColumnIcon columnIcon, float ini_balustradeHeight, GameObject correspondingDragItemObject) where T : Component
 	{
@@ -1653,10 +1632,9 @@ public class BalustradeIcon : DecorateIconObject
 	}
 	public void AdjMesh()
 	{
-		Vector3 h = new Vector3(0.0f, balustradeHeight, 0.0f);
+
 		mFilter.mesh.Clear();
-		rightUpPoint.transform.position = rightDownPoint.transform.position + h;
-		leftUpPoint.transform.position = leftDownPoint.transform.position + h;
+
 		mFilter.mesh = CreatRecMesh(leftUpPoint.transform.position, rightUpPoint.transform.position, rightDownPoint.transform.position, leftDownPoint.transform.position, mFilter.mesh);
 
 		UpdateLineRender();
@@ -1770,6 +1748,7 @@ public class ColumnIcon : IconObject
 	}
 	public void AdjPos(Vector3 tmp, GameObject chooseObject)
 	{
+		Debug.Log("tmp.x+" + tmp.x);
 		float OffsetX = 0;
 		if (chooseObject == leftColumn.upPoint || chooseObject == rightColumn.upPoint)
 		{
@@ -1793,10 +1772,24 @@ public class ColumnIcon : IconObject
 				leftColumn.friezePoint.transform.position = new Vector3(leftColumn.upPoint.transform.position.x, tmp.y - friezeIcon.friezeHeight, leftColumn.upPoint.transform.position.z);
 
 				friezeIcon.AdjMesh();
+				friezeIcon.UpdateLastPos();
 			}
 			if (doubleRoofIcon.body != null)
 			{
-				doubleRoofIcon.AdjMesh(this, doubleRoofIcon.doubleRoofHeight, doubleRoofIcon.doubleRoofWidth);
+
+				doubleRoofIcon.rightDownPoint = new Vector3(rightColumn.upPoint.transform.position.x,rightColumn.upPoint.transform.position.y, rightColumn.upPoint.transform.position.z);
+				doubleRoofIcon.leftDownPoint = new Vector3(leftColumn.upPoint.transform.position.x, leftColumn.upPoint.transform.position.y, leftColumn.upPoint.transform.position.z);
+
+				float _upr = doubleRoofIcon.rightDownPoint.y + doubleRoofIcon.doubleRoofHeight;
+				doubleRoofIcon.rightUpPoint = new Vector3(doubleRoofIcon.rightUpPoint.x, _upr, doubleRoofIcon.rightUpPoint.z);
+				float _upl = doubleRoofIcon.leftDownPoint.y + doubleRoofIcon.doubleRoofHeight;
+				doubleRoofIcon.leftUpPoint = new Vector3(doubleRoofIcon.leftUpPoint.x, _upl, doubleRoofIcon.leftUpPoint.z);
+				doubleRoofIcon.rightDownPoint.x = doubleRoofIcon.rightDownPoint.x + doubleRoofIcon.doubleRoofWidth;
+				doubleRoofIcon.leftDownPoint.x = doubleRoofIcon.leftDownPoint.x - doubleRoofIcon.doubleRoofWidth;
+
+				doubleRoofIcon.AdjMesh();
+
+				doubleRoofIcon.UpdateLastPos();
 			}
 			if (wallIcon.body != null)
 			{
@@ -1805,6 +1798,7 @@ public class ColumnIcon : IconObject
 
 
 				wallIcon.AdjMesh();
+				wallIcon.UpdateLastPos();
 			}
 		}
 		else if (chooseObject == leftColumn.downPoint || chooseObject == rightColumn.downPoint)
@@ -1828,6 +1822,7 @@ public class ColumnIcon : IconObject
 				leftColumn.balustradePoint.transform.position = new Vector3(leftColumn.downPoint.transform.position.x, tmp.y + balustradeIcon.balustradeHeight, leftColumn.upPoint.transform.position.z);
 
 				balustradeIcon.AdjMesh();
+				balustradeIcon.UpdateLastPos();
 			}
 			if (wallIcon.body != null)
 			{
@@ -1835,38 +1830,56 @@ public class ColumnIcon : IconObject
 				wallIcon.leftDownPoint.transform.position = new Vector3(wallIcon.leftDownPoint.transform.position.x, tmp.y, wallIcon.leftDownPoint.transform.position.z);
 
 				wallIcon.AdjMesh();
+				wallIcon.UpdateLastPos();
 			}
 		}
 		else if (chooseObject == leftColumn.body)
 		{
-			OffsetX = (tmp.x - lastControlPointPosition[(int)PointIndex.LeftUpPoint].x);
+// 			Debug.Log("lastControlPointPosition[(int)PointIndex.LeftUpPoint].x+" + lastControlPointPosition[(int)PointIndex.LeftUpPoint].x);
+			OffsetX = (tmp.x - lastControlPointPosition[(int)PointIndex.LeftDownPoint].x);
+		//	Debug.Log("OffsetX+" + OffsetX);
 			for (int i = 0; i < rightColumn.controlPointList.Count; i++)
 			{
 				leftColumn.controlPointList[i].transform.position = new Vector3(tmp.x, leftColumn.controlPointList[i].transform.position.y, leftColumn.controlPointList[i].transform.position.z);
 				rightColumn.controlPointList[i].transform.position = new Vector3(rightColumn.controlPointList[i].transform.position.x - (OffsetX), rightColumn.controlPointList[i].transform.position.y, rightColumn.controlPointList[i].transform.position.z);
 			}
-
-			leftColumn.body.transform.position = new Vector3(tmp.x, leftColumn.body.transform.position.y, leftColumn.body.transform.position.z);
-			rightColumn.body.transform.position = new Vector3(rightColumn.body.transform.position.x - (OffsetX), rightColumn.body.transform.position.y, rightColumn.body.transform.position.z);
+			
 			if (friezeIcon.body != null)
 			{
+				rightColumn.friezePoint.transform.position = new Vector3(rightColumn.upPoint.transform.position.x, rightColumn.friezePoint.transform.position.y, rightColumn.friezePoint.transform.position.z);
+				leftColumn.friezePoint.transform.position = new Vector3(tmp.x, leftColumn.friezePoint.transform.position.y, leftColumn.friezePoint.transform.position.z);
+
 				friezeIcon.AdjMesh();
 				friezeIcon.UpdateLastPos();
 			}
 			if (balustradeIcon.body != null)
 			{
+				balustradeIcon.rightUpPoint.transform.position = new Vector3(rightColumn.upPoint.transform.position.x, balustradeIcon.rightUpPoint.transform.position.y, balustradeIcon.rightUpPoint.transform.position.z);
+				balustradeIcon.leftUpPoint.transform.position = new Vector3(tmp.x, balustradeIcon.leftUpPoint.transform.position.y, balustradeIcon.leftUpPoint.transform.position.z);
+
 				balustradeIcon.AdjMesh();
 				balustradeIcon.UpdateLastPos();
 			}
 			if (doubleRoofIcon.body != null)
 			{
-				doubleRoofIcon.AdjMesh(this, doubleRoofIcon.doubleRoofHeight, doubleRoofIcon.doubleRoofWidth);
+				doubleRoofIcon.rightDownPoint = new Vector3(rightColumn.upPoint.transform.position.x, rightColumn.upPoint.transform.position.y, rightColumn.upPoint.transform.position.z);
+				doubleRoofIcon.leftDownPoint = new Vector3(leftColumn.upPoint.transform.position.x, leftColumn.upPoint.transform.position.y, leftColumn.upPoint.transform.position.z);
+
+				float _upr = doubleRoofIcon.rightDownPoint.y + doubleRoofIcon.doubleRoofHeight;
+				doubleRoofIcon.rightUpPoint = new Vector3(doubleRoofIcon.rightUpPoint.x, _upr, doubleRoofIcon.rightUpPoint.z);
+				float _upl = doubleRoofIcon.leftDownPoint.y + doubleRoofIcon.doubleRoofHeight;
+				doubleRoofIcon.leftUpPoint = new Vector3(doubleRoofIcon.leftUpPoint.x, _upl, doubleRoofIcon.leftUpPoint.z);
+				doubleRoofIcon.rightDownPoint.x = doubleRoofIcon.rightDownPoint.x + doubleRoofIcon.doubleRoofWidth;
+				doubleRoofIcon.leftDownPoint.x = doubleRoofIcon.leftDownPoint.x - doubleRoofIcon.doubleRoofWidth;
+
+				doubleRoofIcon.AdjMesh();
+				doubleRoofIcon.UpdateLastPos();
 			}
 		}
 		else if (chooseObject == rightColumn.body)
 		{
 			OffsetX = (tmp.x - lastControlPointPosition[(int)PointIndex.RightUpPoint].x);
-			for (int i = 0; i < leftColumn.controlPointList.Count; i++)
+			for (int i = 0; i < rightColumn.controlPointList.Count; i++)
 			{
 				rightColumn.controlPointList[i].transform.position = new Vector3(tmp.x, rightColumn.controlPointList[i].transform.position.y, rightColumn.controlPointList[i].transform.position.z);
 				leftColumn.controlPointList[i].transform.position = new Vector3(leftColumn.controlPointList[i].transform.position.x - (OffsetX), leftColumn.controlPointList[i].transform.position.y, leftColumn.controlPointList[i].transform.position.z);
@@ -1874,19 +1887,39 @@ public class ColumnIcon : IconObject
 			}
 			if (friezeIcon.body != null)
 			{
+				rightColumn.friezePoint.transform.position = new Vector3(tmp.x, rightColumn.friezePoint.transform.position.y, rightColumn.friezePoint.transform.position.z);
+				leftColumn.friezePoint.transform.position = new Vector3(leftColumn.upPoint.transform.position.x, leftColumn.friezePoint.transform.position.y, leftColumn.friezePoint.transform.position.z);
+
 				friezeIcon.AdjMesh();
 				friezeIcon.UpdateLastPos();
 			}
 			if (balustradeIcon.body != null)
 			{
+
+				balustradeIcon.rightUpPoint.transform.position = new Vector3(tmp.x, balustradeIcon.rightUpPoint.transform.position.y, balustradeIcon.rightUpPoint.transform.position.z);
+				balustradeIcon.leftUpPoint.transform.position = new Vector3(leftColumn.upPoint.transform.position.x, balustradeIcon.leftUpPoint.transform.position.y, balustradeIcon.leftUpPoint.transform.position.z);
+
 				balustradeIcon.AdjMesh();
 				balustradeIcon.UpdateLastPos();
 			}
 			if (doubleRoofIcon.body != null)
 			{
-				doubleRoofIcon.AdjMesh(this, doubleRoofIcon.doubleRoofHeight, doubleRoofIcon.doubleRoofWidth);
+				doubleRoofIcon.rightDownPoint = new Vector3(rightColumn.upPoint.transform.position.x, rightColumn.upPoint.transform.position.y, rightColumn.upPoint.transform.position.z);
+				doubleRoofIcon.leftDownPoint = new Vector3(leftColumn.upPoint.transform.position.x, leftColumn.upPoint.transform.position.y, leftColumn.upPoint.transform.position.z);
+
+				float _upr = doubleRoofIcon.rightDownPoint.y + doubleRoofIcon.doubleRoofHeight;
+				doubleRoofIcon.rightUpPoint = new Vector3(doubleRoofIcon.rightUpPoint.x, _upr, doubleRoofIcon.rightUpPoint.z);
+				float _upl = doubleRoofIcon.leftDownPoint.y + doubleRoofIcon.doubleRoofHeight;
+				doubleRoofIcon.leftUpPoint = new Vector3(doubleRoofIcon.leftUpPoint.x, _upl, doubleRoofIcon.leftUpPoint.z);
+				doubleRoofIcon.rightDownPoint.x = doubleRoofIcon.rightDownPoint.x + doubleRoofIcon.doubleRoofWidth;
+				doubleRoofIcon.leftDownPoint.x = doubleRoofIcon.leftDownPoint.x - doubleRoofIcon.doubleRoofWidth;
+
+				doubleRoofIcon.AdjMesh();
+				doubleRoofIcon.UpdateLastPos();
 			}
 		}
+		rightColumn.UpdateLastPos();
+		leftColumn.UpdateLastPos();
 		UpdateLastPos();
 	}
 }

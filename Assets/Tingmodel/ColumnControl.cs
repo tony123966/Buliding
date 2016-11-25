@@ -242,7 +242,7 @@ public class ColumnControl : MonoBehaviour
     public void childbuild(int n)
     {
 
-        print("childbuild  n  :" + n);
+        //print("childbuild  n  :" + n);
 
 
         int angle = uict.numberslidervalue;
