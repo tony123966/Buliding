@@ -696,7 +696,7 @@ public class IconObject : lineRendererControl
 	}
 	public void SetIconObjectColor()
 	{
-		mRenderer.material.color = Color.red;
+		if (mRenderer!=null) mRenderer.material.color = Color.red;
 		foreach (GameObject controlPoint in controlPointList)
 		{
 			if (silhouetteShader != null)
@@ -1315,13 +1315,15 @@ public class MeshObj : MonoBehaviour
 			float minHeight = ini_bodydis.y * 0.5f;
 			if (dragitemcontroller.chooseObj == controlPointList[4])//rightMainRidge
 			{
-				minClampX = controlPointList[5].transform.position.x + minWidth;
+				//minClampX = controlPointList[5].transform.position.x + minWidth;
+				minClampX = controlPointList[5].transform.position.x;
 				maxClampX = controlPointList[1].transform.position.x;
 			}
 			else if (dragitemcontroller.chooseObj == controlPointList[5])//leftMainRidge
 			{
 				minClampX = controlPointList[0].transform.position.x;
-				maxClampX = controlPointList[4].transform.position.x - minWidth;
+				//maxClampX = controlPointList[4].transform.position.x - minWidth;
+				maxClampX = controlPointList[4].transform.position.x;
 			}
 			else if (dragitemcontroller.chooseObj == controlPointList[0])//upLeft
 			{

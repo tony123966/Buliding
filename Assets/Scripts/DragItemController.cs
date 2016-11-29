@@ -1445,7 +1445,7 @@ public class DragItemController : MonoBehaviour
 								}
 
 							}
-							if (AllWindowsStruct[mainSingleWindowinUseIndex].allFloorItem.Count > 0)
+							if (AllWindowsStruct[mainSingleWindowinUseIndex].allFloorItem.Count > 1)
 							{
 								//視窗中是否有missionTab 有的話切換missionTab 並設定AllwindowsComponent內容
 								inUseTab = AllWindowsStruct[mainSingleWindowinUseIndex].misstionTab.ChooseInUseMissionTabsIndex(mousePos2World);
@@ -1454,13 +1454,13 @@ public class DragItemController : MonoBehaviour
 
 									SetInUseTabIndex2Window(mainSingleWindowinUseIndex, inUseTab);
 
-									building.changeLayer(inUseTab);
+									//building.changeLayer(inUseTab);
 
 								}
 								if (AllWindowsStruct[mainSingleWindowinUseIndex].misstionTab.deleteButton && AllWindowsStruct[mainSingleWindowinUseIndex].misstionTab.ChooseMissionTabsDeleteButton(mousePos2World))
 								{
 
-									building.DeleteLayer(AllWindowsStruct[mainSingleWindowinUseIndex].inUseTab2ComponentLayerIndex);
+									//building.DeleteLayer(AllWindowsStruct[mainSingleWindowinUseIndex].inUseTab2ComponentLayerIndex);
 
 
 									AllWindowsStruct[mainSingleWindowinUseIndex].misstionTab.DeleteCurrentMisstionTab();
@@ -1583,6 +1583,7 @@ public class DragItemController : MonoBehaviour
 					{
 						if (lastChooseIconObject == kvp.Value[i].GetComponent<DecorateEmptyObjectList>().objectList[j])
 						{
+							Debug.Log("kvp.Key  " + kvp.Key);
 							Destroy(kvp.Value[i]);
 							AllWindowsStruct[mainSingleWindowinUseIndex].allFloorItem[AllWindowsStruct[mainSingleWindowinUseIndex].inUseTab2ComponentLayerIndex][kvp.Key].Clear();
 							isMainComponentObject=false;
@@ -1592,6 +1593,10 @@ public class DragItemController : MonoBehaviour
 								lastChooseIconObject.transform.parent.GetComponent<body2icon>().DestroyFunction(kvp.Key);
 							}
 
+							if (lastChooseIconObject.transform.parent.GetComponent<platform2icon>())
+							{
+								lastChooseIconObject.transform.parent.GetComponent<platform2icon>().DestroyFunction(kvp.Key);
+							}
 							break;
 						}
 					}
@@ -1644,7 +1649,7 @@ public class DragItemController : MonoBehaviour
 			{
 				AllWindowsStruct[i].misstionTab.SetAllMisstionTabsActive(false);
 			}
-			if (AllWindowsStruct[index].misstionTab.missionTabsList.Count>0)
+			if (AllWindowsStruct[index].misstionTab.missionTabsList.Count>1)
 			{
 				AllWindowsStruct[index].misstionTab.SetAllMisstionTabsActive(true);
 			}
@@ -1903,14 +1908,10 @@ public class DragItemController : MonoBehaviour
 
 					if (AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex][MAINCOMPONENT][0].GetComponent<body2icon>())
 					{
-
-						if (AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex].ContainsKey(setDragObject.name)) AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex][MAINCOMPONENT][0].GetComponent<body2icon>().UpdateFunction(setDragObject.name, correspondingDragItemObject);
-
-
+							AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex][MAINCOMPONENT][0].GetComponent<body2icon>().UpdateFunction(setDragObject.name, correspondingDragItemObject);
 
 						if (setDragObject.name == "Balustrade")
 						{
-
 							//building.UpdateBody_F(AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex][MAINCOMPONENT][0].GetComponent<body2icon>().isFrieze);
 							building.UpdateBody_F(true);
 						}
@@ -1920,16 +1921,14 @@ public class DragItemController : MonoBehaviour
 							//building.UpdateBody_B(AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex][MAINCOMPONENT][0].GetComponent<body2icon>().isBalustrade);
 							building.UpdateBody_B(true);
 						}
+					}
+					else if (AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex][MAINCOMPONENT][0].GetComponent<platform2icon>())
+					{
+							AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex][MAINCOMPONENT][0].GetComponent<platform2icon>().UpdateFunction(setDragObject.name, correspondingDragItemObject);
 
-						/*
-						building.Move_F(AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex][MAINCOMPONENT][0].GetComponent<body2icon>().friezeHeight, AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex][MAINCOMPONENT][0].GetComponent<body2icon>().ini_bodydis.y);
-						building.Move_B(AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex][MAINCOMPONENT][0].GetComponent<body2icon>().balustradeHeight, AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex][MAINCOMPONENT][0].GetComponent<body2icon>().ini_bodydis.y);
-						*/
 					}
 
-					//frieze ＆ Balustrade
 				}
-
 				break;
 		}
 	}
@@ -2042,6 +2041,7 @@ public class DragItemController : MonoBehaviour
 			default:
 				if (AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex].ContainsKey(chooseDragObject.name))
 				{
+					Debug.Log("AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex][chooseDragObject.name].Count" + AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex][chooseDragObject.name].Count);
 					if (AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex][chooseDragObject.name].Count < correspondingDragItemMaxCount)
 					{
 						if (cloneCorrespondingObj!=null)
@@ -2066,18 +2066,29 @@ public class DragItemController : MonoBehaviour
 					{
 						clone = new GameObject();
 					}
-					//clone.transform.parent = this.transform;
 					clone.transform.parent = AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex][MAINCOMPONENT][0].transform;
-
-					//clone.transform.SetParent(AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex][MAINCOMPONENT][0].transform, false);
 
 					if (!clone.GetComponent<DecorateEmptyObjectList>()) clone.AddComponent<DecorateEmptyObjectList>();
 					List<GameObject> newList = new List<GameObject>();
 					newList.Clear();
 					newList.Add(clone);
 					AllWindowsStruct[index].allFloorItem[AllWindowsStruct[index].inUseTab2ComponentLayerIndex].Add(chooseDragObject.name, newList);
-				}
 
+	/*				if (chooseDragObject.name == "BasedPlatformStair")
+					{
+						for (int i = 0; i < AllWindowsStruct[index].allFloorItem.Count; i++)
+						{
+							if (i == AllWindowsStruct[index].inUseTab2ComponentLayerIndex || AllWindowsStruct[index].allFloorItem[i].ContainsKey(chooseDragObject.name)) continue;
+							if (!clone.GetComponent<DecorateEmptyObjectList>()) clone.AddComponent<DecorateEmptyObjectList>();
+							newList = new List<GameObject>();
+							newList.Clear();
+							newList.Add(clone);
+							AllWindowsStruct[index].allFloorItem[i].Add(chooseDragObject.name, newList);
+						}
+
+					}*/
+
+				}
 				if (chooseDragObject.name == "Wall")
 				{
 					building.Bodytruefalse(true);
