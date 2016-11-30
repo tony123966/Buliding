@@ -1356,7 +1356,7 @@ public class DragItemController : MonoBehaviour
 
 						//判斷是否為plat
 						if (chooseObj.transform.parent.GetComponent<platform2icon>())
-							building.paraplat(chooseObj.transform.parent.GetComponent<platform2icon>().chang_platdis.y, chooseObj.transform.parent.GetComponent<platform2icon>().chang_platdis.x);
+							building.paraplat(chooseObj.transform.parent.GetComponent<platform2icon>().chang_platHeightDis, chooseObj.transform.parent.GetComponent<platform2icon>().chang_platTopWidthDis);
 
 						//判斷是否為roof
 						if (chooseObj.transform.parent.GetComponent<rooficon>())

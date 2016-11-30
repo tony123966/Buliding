@@ -1710,12 +1710,12 @@ public class ColumnIcon : IconObject
 	public Column leftColumn;
 	public Column rightColumn;
 
-	public DoubleRoofIcon doubleRoofIcon = new DoubleRoofIcon();
+	public DoubleRoofIcon doubleRoofIcon=null;
 
-	public FriezeIcon friezeIcon = new FriezeIcon();
-	public BalustradeIcon balustradeIcon = new BalustradeIcon();
+	public FriezeIcon friezeIcon = null;
+	public BalustradeIcon balustradeIcon = null;
 
-	public WallIcon wallIcon = new WallIcon();
+	public WallIcon wallIcon;
 
 	public float columnHeight;
 
@@ -1786,7 +1786,7 @@ where T : Component
 			leftColumn.body.transform.localScale = new Vector3(leftColumn.radius, columnHeight / 2.0f, leftColumn.radius);
 
 
-			if (friezeIcon.body != null)
+			if (friezeIcon != null)
 			{
 				rightColumn.friezePoint.transform.position = new Vector3(rightColumn.upPoint.transform.position.x, tmp.y - friezeIcon.friezeHeight, rightColumn.upPoint.transform.position.z);
 				leftColumn.friezePoint.transform.position = new Vector3(leftColumn.upPoint.transform.position.x, tmp.y - friezeIcon.friezeHeight, leftColumn.upPoint.transform.position.z);
@@ -1794,13 +1794,13 @@ where T : Component
 				friezeIcon.AdjMesh();
 				friezeIcon.UpdateLastPos();
 			}
-			if (doubleRoofIcon.body != null)
+			if (doubleRoofIcon != null)
 			{
 				doubleRoofIcon.AdjPos(this);
 				doubleRoofIcon.AdjMesh();
 				doubleRoofIcon.UpdateLastPos();
 			}
-			if (wallIcon.body != null)
+			if (wallIcon != null)
 			{
 				wallIcon.rightUpPoint.transform.position = new Vector3(wallIcon.rightUpPoint.transform.position.x, tmp.y, wallIcon.rightUpPoint.transform.position.z);
 				wallIcon.leftUpPoint.transform.position = new Vector3(wallIcon.leftUpPoint.transform.position.x, tmp.y, wallIcon.leftUpPoint.transform.position.z);
@@ -1825,7 +1825,7 @@ where T : Component
 			leftColumn.body.transform.localScale = new Vector3(leftColumn.radius, columnHeight / 2.0f, leftColumn.radius);
 
 
-			if (balustradeIcon.body != null)
+			if (balustradeIcon != null)
 			{
 				rightColumn.balustradePoint.transform.position = new Vector3(rightColumn.downPoint.transform.position.x, tmp.y + balustradeIcon.balustradeHeight, rightColumn.upPoint.transform.position.z);
 				leftColumn.balustradePoint.transform.position = new Vector3(leftColumn.downPoint.transform.position.x, tmp.y + balustradeIcon.balustradeHeight, leftColumn.upPoint.transform.position.z);
@@ -1833,7 +1833,7 @@ where T : Component
 				balustradeIcon.AdjMesh();
 				balustradeIcon.UpdateLastPos();
 			}
-			if (wallIcon.body != null)
+			if (wallIcon != null)
 			{
 				wallIcon.rightDownPoint.transform.position = new Vector3(wallIcon.rightDownPoint.transform.position.x, tmp.y, wallIcon.rightDownPoint.transform.position.z);
 				wallIcon.leftDownPoint.transform.position = new Vector3(wallIcon.leftDownPoint.transform.position.x, tmp.y, wallIcon.leftDownPoint.transform.position.z);
@@ -1852,7 +1852,7 @@ where T : Component
 				rightColumn.controlPointList[i].transform.position = new Vector3(rightColumn.controlPointList[i].transform.position.x - (OffsetX), rightColumn.controlPointList[i].transform.position.y, rightColumn.controlPointList[i].transform.position.z);
 			}
 			
-			if (friezeIcon.body != null)
+			if (friezeIcon != null)
 			{
 				rightColumn.friezePoint.transform.position = new Vector3(rightColumn.upPoint.transform.position.x, rightColumn.friezePoint.transform.position.y, rightColumn.friezePoint.transform.position.z);
 				leftColumn.friezePoint.transform.position = new Vector3(tmp.x, leftColumn.friezePoint.transform.position.y, leftColumn.friezePoint.transform.position.z);
@@ -1860,7 +1860,7 @@ where T : Component
 				friezeIcon.AdjMesh();
 				friezeIcon.UpdateLastPos();
 			}
-			if (balustradeIcon.body != null)
+			if (balustradeIcon != null)
 			{
 				balustradeIcon.rightUpPoint.transform.position = new Vector3(rightColumn.upPoint.transform.position.x, balustradeIcon.rightUpPoint.transform.position.y, balustradeIcon.rightUpPoint.transform.position.z);
 				balustradeIcon.leftUpPoint.transform.position = new Vector3(tmp.x, balustradeIcon.leftUpPoint.transform.position.y, balustradeIcon.leftUpPoint.transform.position.z);
@@ -1868,7 +1868,7 @@ where T : Component
 				balustradeIcon.AdjMesh();
 				balustradeIcon.UpdateLastPos();
 			}
-			if (doubleRoofIcon.body != null)
+			if (doubleRoofIcon != null)
 			{
 				doubleRoofIcon.AdjPos(this);
 				doubleRoofIcon.AdjMesh();
@@ -1885,7 +1885,7 @@ where T : Component
 				leftColumn.controlPointList[i].transform.position = new Vector3(leftColumn.controlPointList[i].transform.position.x - (OffsetX), leftColumn.controlPointList[i].transform.position.y, leftColumn.controlPointList[i].transform.position.z);
 
 			}
-			if (friezeIcon.body != null)
+			if (friezeIcon != null)
 			{
 				rightColumn.friezePoint.transform.position = new Vector3(tmp.x, rightColumn.friezePoint.transform.position.y, rightColumn.friezePoint.transform.position.z);
 				leftColumn.friezePoint.transform.position = new Vector3(leftColumn.upPoint.transform.position.x, leftColumn.friezePoint.transform.position.y, leftColumn.friezePoint.transform.position.z);
@@ -1893,7 +1893,7 @@ where T : Component
 				friezeIcon.AdjMesh();
 				friezeIcon.UpdateLastPos();
 			}
-			if (balustradeIcon.body != null)
+			if (balustradeIcon != null)
 			{
 
 				balustradeIcon.rightUpPoint.transform.position = new Vector3(tmp.x, balustradeIcon.rightUpPoint.transform.position.y, balustradeIcon.rightUpPoint.transform.position.z);
@@ -1902,7 +1902,7 @@ where T : Component
 				balustradeIcon.AdjMesh();
 				balustradeIcon.UpdateLastPos();
 			}
-			if (doubleRoofIcon.body != null)
+			if (doubleRoofIcon != null)
 			{
 
 				doubleRoofIcon.AdjPos(this);
@@ -2195,16 +2195,20 @@ public class body2icon : MonoBehaviour
 		{
 			case "Frieze":
 					isFrieze = false;
+					columnIcon.friezeIcon= null;
 				break;
 			case "Balustrade":
 					isBalustrade = false;
+					columnIcon.balustradeIcon = null;
 				break;
 			case "DoubleRoof":
 					isDoubleRoof = false;
+					columnIcon.doubleRoofIcon = null;
 				break;
 			case "Wall":
 					isWall = false;
 					windowUp2TopDis = 0;
+					columnIcon.wallIcon = null;
 				break;
 		}
 	}
@@ -2213,7 +2217,7 @@ public class body2icon : MonoBehaviour
 		switch (objName)
 		{
 			case "Frieze":
-				if (columnIcon.friezeIcon.body == null)
+				if (columnIcon.friezeIcon== null)
 				{
 					isFrieze = true;
 
@@ -2227,7 +2231,7 @@ public class body2icon : MonoBehaviour
 				}
 				break;
 			case "Balustrade":
-				if (columnIcon.balustradeIcon.body == null)
+				if (columnIcon.balustradeIcon == null)
 				{
 					isBalustrade = true;
 					columnIcon.CreateBlustrade(this, "Blustrade_mesh", ini_balustradeHeight, correspondingDragItemObject);
@@ -2240,7 +2244,7 @@ public class body2icon : MonoBehaviour
 				}
 				break;
 			case "DoubleRoof":
-				if (columnIcon.doubleRoofIcon.body == null)
+				if (columnIcon.doubleRoofIcon == null)
 				{
 					isDoubleRoof = true;
 
@@ -2249,7 +2253,7 @@ public class body2icon : MonoBehaviour
 				}
 				break;
 			case "Wall":
-				if (columnIcon.wallIcon.body == null)
+				if (columnIcon.wallIcon == null)
 				{
 					isWall = true;
 
@@ -2301,22 +2305,22 @@ public class body2icon : MonoBehaviour
 		float minCloseHeight = ini_bodydis.y * 0.1f;
 		if (dragitemcontroller.chooseObj == columnIcon.rightColumn.body)
 		{
-			if (columnIcon.wallIcon.body!=null) minClampX = columnIcon.wallIcon.rightUpPoint.transform.position.x + minWidth;
+			if (columnIcon.wallIcon!=null) minClampX = columnIcon.wallIcon.rightUpPoint.transform.position.x + minWidth;
 			else minClampX = columnIcon.leftColumn.upPoint.transform.position.x + minWidth;
 		}
 		else if (dragitemcontroller.chooseObj == columnIcon.leftColumn.body)
 		{
-			if (columnIcon.wallIcon.body != null) maxClampX = columnIcon.wallIcon.leftUpPoint.transform.position.x - minWidth;
+			if (columnIcon.wallIcon!= null) maxClampX = columnIcon.wallIcon.leftUpPoint.transform.position.x - minWidth;
 			else maxClampX = columnIcon.rightColumn.upPoint.transform.position.x - minWidth;
 		}
 		else if (dragitemcontroller.chooseObj == columnIcon.rightColumn.upPoint)
 		{
-			if (columnIcon.wallIcon.body != null) minClampY = columnIcon.wallIcon.rightUpWindowPoint.transform.position.y + minCloseHeight;
+			if (columnIcon.wallIcon!= null) minClampY = columnIcon.wallIcon.rightUpWindowPoint.transform.position.y + minCloseHeight;
 			else minClampY = columnIcon.rightColumn.downPoint.transform.position.y + minCloseHeight + friezeHeight + balustradeHeight;
 		}
 		else if (dragitemcontroller.chooseObj == columnIcon.rightColumn.downPoint)
 		{
-			if (columnIcon.wallIcon.body != null) maxClampY = columnIcon.wallIcon.rightDownWindowPoint.transform.position.y - minCloseHeight;
+			if (columnIcon.wallIcon != null) maxClampY = columnIcon.wallIcon.rightDownWindowPoint.transform.position.y - minCloseHeight;
 			else maxClampY = columnIcon.rightColumn.upPoint.transform.position.y - minCloseHeight - friezeHeight - balustradeHeight;
 		}
 		else if (dragitemcontroller.chooseObj == columnIcon.rightColumn.friezePoint)
@@ -2331,12 +2335,12 @@ public class body2icon : MonoBehaviour
 		}
 		else if (dragitemcontroller.chooseObj == columnIcon.leftColumn.upPoint)
 		{
-			if (columnIcon.wallIcon.body != null) minClampY = columnIcon.wallIcon.leftUpWindowPoint.transform.position.y + minCloseHeight;
+			if (columnIcon.wallIcon != null) minClampY = columnIcon.wallIcon.leftUpWindowPoint.transform.position.y + minCloseHeight;
 			else minClampY = columnIcon.leftColumn.downPoint.transform.position.y + minHeight;
 		}
 		else if (dragitemcontroller.chooseObj == columnIcon.leftColumn.downPoint)
 		{
-			if (columnIcon.wallIcon.body != null) maxClampY = columnIcon.wallIcon.leftDownWindowPoint.transform.position.y - minCloseHeight;
+			if (columnIcon.wallIcon != null) maxClampY = columnIcon.wallIcon.leftDownWindowPoint.transform.position.y - minCloseHeight;
 			else maxClampY = columnIcon.leftColumn.upPoint.transform.position.y - minHeight;
 		}
 		else if (dragitemcontroller.chooseObj == columnIcon.leftColumn.friezePoint)

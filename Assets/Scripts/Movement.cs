@@ -63,10 +63,10 @@ public class Movement : MonoBehaviour
             obj.transform.position = obj.transform.parent.GetComponent<MeshObj>().ClampPos(setPos);
             obj.transform.parent.GetComponent<MeshObj>().adjPos();
         }
-        if (obj.transform.parent.GetComponent<platform2icon>())
+		if (obj.transform.root.GetComponent<platform2icon>())
         {
-            obj.transform.position = obj.transform.parent.GetComponent<platform2icon>().ClampPos(setPos);
-            obj.transform.parent.GetComponent<platform2icon>().adjPos();
+			obj.transform.position = obj.transform.root.GetComponent<platform2icon>().ClampPos(setPos);
+			obj.transform.root.GetComponent<platform2icon>().adjPos();
         }
 
         if (obj.transform.root.GetComponent<body2icon>())

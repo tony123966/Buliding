@@ -1088,10 +1088,13 @@ public class MeshObj : MonoBehaviour
 	public Vector2 ratio_bodydis;
 	public float ratio_mainRidgedis;
 
+
 	void Start()
 	{
 		dragitemcontroller = GameObject.Find("DragItemController").GetComponent<DragItemController>();
+
 	}
+
 	VerandaIcon CreateVerandaIcon()
 	{
 		VerandaIcon verandaIcon = new VerandaIcon();
