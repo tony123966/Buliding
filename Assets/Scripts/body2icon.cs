@@ -1148,6 +1148,7 @@ public class body2icon : MonoBehaviour
 }*/
 
 using UnityEngine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -1217,7 +1218,7 @@ where TModel : class
 	public void InitDecorateIconObjectSetting(GameObject correspondingDragItemObject)
 	 {
 
-		 if (!correspondingDragItemObject.GetComponent<DecorateEmptyObjectList>()) return;
+		 if (correspondingDragItemObject.GetComponent<DecorateEmptyObjectList>()==null) return;
 		
 		 DecorateEmptyObjectList decorateEmptyObjectList = correspondingDragItemObject.GetComponent<DecorateEmptyObjectList>();
 		 decorateEmptyObjectList.objectList.Clear();
@@ -1233,6 +1234,50 @@ where TModel : class
 	 
 	 }
 }
+public class MutiColumnIcon : DecorateIconObject<ColumnIcon>
+{
+	public Vector3 upPoint;
+	public Vector3 downPoint;
+	public int mutiColumnIconCount=5;
+	public int mutiColumnIconMaxCount=11;
+	public void MutiColumnIconCreate<T>(T thisGameObject, string objName, ColumnIcon columnIcon, GameObject correspondingDragItemObject) where T: Component
+	{
+		InitBodySetting("MutiColumnIcon", (int)BodyType.CylinderBody);
+		InitIconMenuButtonSetting();
+
+		float columnHeight=columnIcon.columnHeight;
+		float radius=columnIcon.rightColumn.radius;
+		upPoint = (columnIcon.rightColumn.upPoint.transform.position+columnIcon.leftColumn.upPoint.transform.position)/2.0f;
+		downPoint = (columnIcon.rightColumn.downPoint.transform.position + columnIcon.leftColumn.downPoint.transform.position) / 2.0f;
+
+		body.transform.localScale = new Vector3(radius, columnHeight / 2.0f, radius);
+		body.transform.position = new Vector3(upPoint.x, upPoint.y - columnHeight / 2.0f, upPoint.z);
+		SetIconObjectColor();
+		SetParent2BodyAndControlPointList(thisGameObject);
+
+		InitDecorateIconObjectSetting(correspondingDragItemObject);
+	}
+	public void SetIconObjectColor()
+	{
+		if (silhouetteShader != null)
+		{
+			mRenderer.material = silhouetteShader;
+		}
+		mRenderer.material.color = Color.red;
+	}
+	public void InitIconMenuButtonSetting()
+	{
+		iconMenuControl.delelteButton.isDeleteIconButton = true;
+		iconMenuControl.scrollBarButton.isScrollBarIconButton = true;
+		iconMenuControl.scrollBarButton.scrollBarIconValue = mutiColumnIconCount;
+		iconMenuControl.scrollBarButton.scrollBarIconMaxValue = mutiColumnIconMaxCount;
+		iconMenuControl.scrollBarButton.scrollBarIconType = (int)ScrollBarButton.ScrollType.OddINT;
+	}
+	public override void InitIconMenuButtonUpdate()
+	{
+		mutiColumnIconCount = iconMenuControl.scrollBarButton.scrollBarIconValue;
+	}
+}
 public class DoubleRoofIcon : DecorateIconObject<ColumnIcon>
 {
 
@@ -1246,7 +1291,9 @@ public class DoubleRoofIcon : DecorateIconObject<ColumnIcon>
 	public void DoubleRoofIconCreate<T>(T thisGameObject, string objName, ColumnIcon columnIcon, float doubleRoofHeight, float doubleRoofWidth, GameObject correspondingDragItemObject)
 	where T : Component
 	{
+		MainComponent=columnIcon;
 		InitBodySetting(objName, (int)BodyType.GeneralBody);
+		InitIconMenuButtonSetting();
 
 		this.doubleRoofHeight = doubleRoofHeight;
 		this.doubleRoofWidth = doubleRoofWidth;
@@ -1331,6 +1378,7 @@ public class FriezeIcon : DecorateIconObject<ColumnIcon>
 	{
 		MainComponent = columnIcon;
 		InitBodySetting(objName, (int)BodyType.GeneralBody);
+		InitIconMenuButtonSetting();
 
 		Vector3 h = new Vector3(0.0f, ini_friezeHeight, 0.0f);
 		friezeHeight = ini_friezeHeight;
@@ -1429,6 +1477,9 @@ public class WallIcon : DecorateIconObject<ColumnIcon>
 	public GameObject leftUpWindowPoint;
 	public GameObject leftDownWindowPoint;
 
+	public int windowIconCount=1;
+	public int windowIconMaxCount =5;
+
 	public float wallWidth;
 	public float windowHeight;
 	public float initWallWidth;
@@ -1438,7 +1489,7 @@ public class WallIcon : DecorateIconObject<ColumnIcon>
 	{
 		MainComponent=columnIcon;
 		InitBodySetting(objName, (int)BodyType.GeneralBody);
-
+		InitIconMenuButtonSetting();
 
 		Vector3 wallOffset = new Vector3(Mathf.Abs(columnIcon.rightColumn.upPoint.transform.transform.position.x - columnIcon.leftColumn.upPoint.transform.transform.position.x) / 2.0f - ini_wallWidth, 0, 0);
 		float columnHeight = columnIcon.rightColumn.upPoint.transform.transform.position.y - columnIcon.rightColumn.downPoint.transform.transform.position.y;
@@ -1600,7 +1651,7 @@ public class WallIcon : DecorateIconObject<ColumnIcon>
 			rightDownWindowPoint.transform.position = new Vector3(rightDownWindowPoint.transform.position.x + (OffsetX), rightDownWindowPoint.transform.position.y, rightDownWindowPoint.transform.position.z);
 			leftUpWindowPoint.transform.position = new Vector3(tmp.x, leftUpWindowPoint.transform.position.y, leftUpWindowPoint.transform.position.z);
 			leftDownWindowPoint.transform.position = new Vector3(tmp.x, leftDownWindowPoint.transform.position.y, leftDownWindowPoint.transform.position.z);
-			wallWidth = (rightUpPoint.transform.position.x - leftUpPoint.transform.position.x) / 2.0f;
+			wallWidth = (rightUpPoint.transform.position.x - leftUpPoint.transform.position.x);
 		}
 		else if (chooseGameObject == rightUpPoint)
 		{
@@ -1615,7 +1666,7 @@ public class WallIcon : DecorateIconObject<ColumnIcon>
 			leftDownWindowPoint.transform.position = new Vector3(leftDownWindowPoint.transform.position.x - (OffsetX), leftDownWindowPoint.transform.position.y, leftDownWindowPoint.transform.position.z);
 			rightDownWindowPoint.transform.position = new Vector3(tmp.x, rightDownWindowPoint.transform.position.y, rightDownWindowPoint.transform.position.z);
 			rightUpWindowPoint.transform.position = new Vector3(tmp.x, rightUpWindowPoint.transform.position.y, rightUpWindowPoint.transform.position.z);
-			wallWidth = (rightUpPoint.transform.position.x - leftUpPoint.transform.position.x) / 2.0f;
+			wallWidth = (rightUpPoint.transform.position.x - leftUpPoint.transform.position.x);
 		}
 		else if (chooseGameObject == rightDownPoint)
 		{
@@ -1629,7 +1680,7 @@ public class WallIcon : DecorateIconObject<ColumnIcon>
 			leftDownWindowPoint.transform.position = new Vector3(leftDownWindowPoint.transform.position.x - (OffsetX), leftDownWindowPoint.transform.position.y, leftDownWindowPoint.transform.position.z);
 			rightUpWindowPoint.transform.position = new Vector3(tmp.x, rightUpWindowPoint.transform.position.y, rightUpWindowPoint.transform.position.z);
 			rightDownWindowPoint.transform.position = new Vector3(tmp.x, rightDownWindowPoint.transform.position.y, rightDownWindowPoint.transform.position.z);
-			wallWidth = (rightUpPoint.transform.position.x - leftUpPoint.transform.position.x) / 2.0f;
+			wallWidth = (rightUpPoint.transform.position.x - leftUpPoint.transform.position.x);
 		}
 		else if (chooseGameObject == leftDownPoint)
 		{
@@ -1642,34 +1693,46 @@ public class WallIcon : DecorateIconObject<ColumnIcon>
 			rightDownWindowPoint.transform.position = new Vector3(rightDownWindowPoint.transform.position.x + (OffsetX), rightDownWindowPoint.transform.position.y, rightDownWindowPoint.transform.position.z);
 			leftUpWindowPoint.transform.position = new Vector3(tmp.x, leftUpWindowPoint.transform.position.y, leftUpWindowPoint.transform.position.z);
 			leftDownWindowPoint.transform.position = new Vector3(tmp.x, leftDownWindowPoint.transform.position.y, leftDownWindowPoint.transform.position.z);
-			wallWidth = (rightUpPoint.transform.position.x - leftUpPoint.transform.position.x) / 2.0f;
+			wallWidth = (rightUpPoint.transform.position.x - leftUpPoint.transform.position.x);
 		}
 		else if (chooseGameObject == leftUpWindowPoint)
 		{
 			OffsetY = (tmp.y - lastControlPointPosition[(int)PointIndex.LeftUpWindowPoint].y);
 			rightUpWindowPoint.transform.position = new Vector3(rightUpWindowPoint.transform.position.x, rightUpWindowPoint.transform.position.y + (OffsetY), rightUpWindowPoint.transform.position.z);
-			windowHeight = (rightUpPoint.transform.position.x - leftUpPoint.transform.position.x) / 2.0f;
+			windowHeight = (rightUpPoint.transform.position.x - leftUpPoint.transform.position.x);
 
 		}
 		else if (chooseGameObject == rightUpWindowPoint)
 		{
 			OffsetY = (tmp.y - lastControlPointPosition[(int)PointIndex.RightUpWindowPoint].y);
 			leftUpWindowPoint.transform.position = new Vector3(leftUpWindowPoint.transform.position.x, leftUpWindowPoint.transform.position.y + (OffsetY), rightUpPoint.transform.position.z);
-			windowHeight = (rightUpPoint.transform.position.x - leftUpPoint.transform.position.x) / 2.0f;
+			windowHeight = (rightUpPoint.transform.position.x - leftUpPoint.transform.position.x);
 		}
 		else if (chooseGameObject == rightDownWindowPoint)
 		{
 			OffsetY = (tmp.y - lastControlPointPosition[(int)PointIndex.RightDownWindowPoint].y);
 			leftDownWindowPoint.transform.position = new Vector3(leftDownWindowPoint.transform.position.x, leftDownWindowPoint.transform.position.y + (OffsetY), leftDownWindowPoint.transform.position.z);
-			windowHeight = (rightUpPoint.transform.position.x - leftUpPoint.transform.position.x) / 2.0f;
+			windowHeight = (rightUpPoint.transform.position.x - leftUpPoint.transform.position.x);
 		}
 		else if (chooseGameObject == leftDownWindowPoint)
 		{
 			OffsetY = (tmp.y - lastControlPointPosition[(int)PointIndex.LeftDownWindowPoint].y);
 			rightDownWindowPoint.transform.position = new Vector3(rightDownWindowPoint.transform.position.x, rightDownWindowPoint.transform.position.y + (OffsetY), rightDownWindowPoint.transform.position.z);
-			windowHeight = (rightUpPoint.transform.position.x - leftUpPoint.transform.position.x) / 2.0f;
+			windowHeight = (rightUpPoint.transform.position.x - leftUpPoint.transform.position.x);
 		}
 		UpdateLastPos();
+	}
+	public void InitIconMenuButtonSetting()
+	{
+		iconMenuControl.delelteButton.isDeleteIconButton = true;
+		iconMenuControl.scrollBarButton.isScrollBarIconButton = true;
+		iconMenuControl.scrollBarButton.scrollBarIconValue = windowIconCount;
+		iconMenuControl.scrollBarButton.scrollBarIconMaxValue = windowIconMaxCount;
+		iconMenuControl.scrollBarButton.scrollBarIconType = (int)ScrollBarButton.ScrollType.INT;
+	}
+	public override void InitIconMenuButtonUpdate()
+	{
+		windowIconCount = iconMenuControl.scrollBarButton.scrollBarIconValue;
 	}
 }
 public class BalustradeIcon : DecorateIconObject<ColumnIcon>
@@ -1679,6 +1742,7 @@ public class BalustradeIcon : DecorateIconObject<ColumnIcon>
 	{
 		MainComponent = columnIcon;
 		InitBodySetting(objName, (int)BodyType.GeneralBody);
+		InitIconMenuButtonSetting();
 
 		Vector3 h = new Vector3(0.0f, ini_balustradeHeight, 0.0f);
 		balustradeHeight = ini_balustradeHeight;
@@ -1780,24 +1844,34 @@ public class ColumnIcon : IconObject
 	public DoubleRoofIcon doubleRoofIcon=null;
 
 	public FriezeIcon friezeIcon = null;
+
 	public BalustradeIcon balustradeIcon = null;
 
 	public WallIcon wallIcon = null;
+
+	public MutiColumnIcon mutiColumnIcon=null;
+
+	public int mutiColumnIconCount=6;
+	public int mutiColumnIconMaxCount = 15;
 
 	public float initFriezeHeight;
 	public float initBalustradeHeight;
 
 	public float columnHeight;
+	public float columnWidth;
 	public float initColumnWidth;
 	public float initColumnHeight;
 	public float minFriezeHeight;
 	public float minBalustradeHeight;
 	public void ColumnIconCreate<T>(T thisGameObject, GameObject rightUpPoint, GameObject rightDownPoint, GameObject leftUpPoint, GameObject leftDownPoint, float columnHeight, float ini_friezeHeight, float ini_balustradeHeight) where T : Component
 	{
-		leftColumn = new Column(leftUpPoint, leftDownPoint, columnHeight);
-		rightColumn = new Column(rightUpPoint, rightDownPoint, columnHeight);
+
+		InitBodySetting(thisGameObject);
+		InitIconMenuButtonSetting();
+		leftColumn = new Column("ColumnIcon", leftUpPoint, leftDownPoint, columnHeight);
+		rightColumn = new Column("ColumnIcon", rightUpPoint, rightDownPoint, columnHeight);
 		this.columnHeight = initColumnHeight = columnHeight;
-		initColumnWidth = rightUpPoint.transform.position.x - leftUpPoint.transform.position.x;
+		this.columnWidth=initColumnWidth = rightUpPoint.transform.position.x - leftUpPoint.transform.position.x;
 		this.initFriezeHeight = ini_friezeHeight;
 		this.initBalustradeHeight = ini_balustradeHeight;
 		minFriezeHeight= initColumnHeight * 0.1f;
@@ -1817,6 +1891,11 @@ public class ColumnIcon : IconObject
 
 		SetParent2BodyAndControlPointList(thisGameObject);
 
+		for (int i = 0; i < body.Count; i++)
+		{
+			if (body[i].GetComponent<IconControl>())
+				UnityEngine.Object.Destroy(body[i].GetComponent<IconControl>());
+		}
 	}
 	public void SetParent2BodyAndControlPointList<T>(T thisGameObject)
 where T : Component
@@ -1845,6 +1924,11 @@ where T : Component
 	{
 		friezeIcon = new FriezeIcon();
 		friezeIcon.FriezeIconCreate(thisGameObject, objName, this, ini_friezeHeight, correspondingDragItemObject);
+	}
+	public void CreateMutiColumn<T>(T thisGameObject, string objName, GameObject correspondingDragItemObject) where T : Component
+	{
+		mutiColumnIcon = new MutiColumnIcon();
+		mutiColumnIcon.MutiColumnIconCreate(thisGameObject, objName, this, correspondingDragItemObject);
 	}
 	public Vector3 ClampPos(Vector3 inputPos, GameObject chooseObj)
 	{
@@ -1921,12 +2005,11 @@ where T : Component
 	}
 	public void AdjPos(Vector3 tmp, GameObject chooseObject)
 	{
-		Debug.Log("tmp.x+" + tmp.x);
 		float OffsetX = 0;
+		columnHeight = (rightColumn.upPoint.transform.position.y- rightColumn.downPoint.transform.position.y);
+		columnHeight = Mathf.Abs(columnHeight);
 		if (chooseObject == leftColumn.upPoint || chooseObject == rightColumn.upPoint)
 		{
-			columnHeight = (tmp.y - rightColumn.downPoint.transform.position.y);
-			columnHeight = Mathf.Abs(columnHeight);
 			//update point
 			rightColumn.upPoint.transform.position = new Vector3(rightColumn.upPoint.transform.position.x, tmp.y, rightColumn.upPoint.transform.position.z);
 			leftColumn.upPoint.transform.position = new Vector3(leftColumn.upPoint.transform.position.x, tmp.y, leftColumn.upPoint.transform.position.z);
@@ -1939,7 +2022,7 @@ where T : Component
 			leftColumn.body.transform.localScale = new Vector3(leftColumn.radius, columnHeight / 2.0f, leftColumn.radius);
 
 
-			if (friezeIcon != null)
+			if (friezeIcon!= null)
 			{
 				rightColumn.friezePoint.transform.position = new Vector3(rightColumn.upPoint.transform.position.x, tmp.y - friezeIcon.friezeHeight, rightColumn.upPoint.transform.position.z);
 				leftColumn.friezePoint.transform.position = new Vector3(leftColumn.upPoint.transform.position.x, tmp.y - friezeIcon.friezeHeight, leftColumn.upPoint.transform.position.z);
@@ -1965,8 +2048,6 @@ where T : Component
 		}
 		else if (chooseObject == leftColumn.downPoint || chooseObject == rightColumn.downPoint)
 		{
-			columnHeight = (tmp.y - rightColumn.upPoint.transform.position.y);
-			columnHeight = Mathf.Abs(columnHeight);
 			//update point
 			rightColumn.downPoint.transform.position = new Vector3(rightColumn.downPoint.transform.position.x, tmp.y, rightColumn.downPoint.transform.position.z);
 			leftColumn.downPoint.transform.position = new Vector3(leftColumn.downPoint.transform.position.x, tmp.y, rightColumn.downPoint.transform.position.z);
@@ -1976,7 +2057,6 @@ where T : Component
 
 			rightColumn.body.transform.localScale = new Vector3(rightColumn.radius, columnHeight / 2.0f, rightColumn.radius);
 			leftColumn.body.transform.localScale = new Vector3(leftColumn.radius, columnHeight / 2.0f, leftColumn.radius);
-
 
 			if (balustradeIcon != null)
 			{
@@ -2004,7 +2084,7 @@ where T : Component
 				leftColumn.controlPointList[i].transform.position = new Vector3(tmp.x, leftColumn.controlPointList[i].transform.position.y, leftColumn.controlPointList[i].transform.position.z);
 				rightColumn.controlPointList[i].transform.position = new Vector3(rightColumn.controlPointList[i].transform.position.x - (OffsetX), rightColumn.controlPointList[i].transform.position.y, rightColumn.controlPointList[i].transform.position.z);
 			}
-			
+			columnWidth = rightColumn.upPoint.transform.position.x - leftColumn.upPoint.transform.position.x;
 			if (friezeIcon != null)
 			{
 				rightColumn.friezePoint.transform.position = new Vector3(rightColumn.upPoint.transform.position.x, rightColumn.friezePoint.transform.position.y, rightColumn.friezePoint.transform.position.z);
@@ -2038,6 +2118,7 @@ where T : Component
 				leftColumn.controlPointList[i].transform.position = new Vector3(leftColumn.controlPointList[i].transform.position.x - (OffsetX), leftColumn.controlPointList[i].transform.position.y, leftColumn.controlPointList[i].transform.position.z);
 
 			}
+			columnWidth = rightColumn.upPoint.transform.position.x - leftColumn.upPoint.transform.position.x;
 			if (friezeIcon != null)
 			{
 				rightColumn.friezePoint.transform.position = new Vector3(tmp.x, rightColumn.friezePoint.transform.position.y, rightColumn.friezePoint.transform.position.z);
@@ -2067,6 +2148,24 @@ where T : Component
 		leftColumn.UpdateLastPos();
 		UpdateLastPos();
 	}
+	public void InitBodySetting<T>(T thisGameObject) where T : Component
+	{
+		iconMenuControl = thisGameObject.gameObject.AddComponent<IconControl>();
+	}
+	public void InitIconMenuButtonSetting()
+	{
+		iconMenuControl.delelteButton.isDeleteIconButton = true;
+		iconMenuControl.scrollBarButton.isScrollBarIconButton = true;
+		iconMenuControl.scrollBarButton.scrollBarIconValue = mutiColumnIconCount;
+		iconMenuControl.scrollBarButton.scrollBarIconMaxValue=mutiColumnIconMaxCount;
+		iconMenuControl.scrollBarButton.scrollBarIconType=(int) ScrollBarButton.ScrollType.OddINT;
+	}
+	public override void InitIconMenuButtonUpdate()
+	{
+		if (wallIcon != null) wallIcon.InitIconMenuButtonUpdate();
+		mutiColumnIconCount = iconMenuControl.scrollBarButton.scrollBarIconValue;
+
+	}
 }
 public class Column : IconObject
 {
@@ -2076,10 +2175,9 @@ public class Column : IconObject
 	public GameObject balustradePoint = null;
 	public GameObject friezePoint = null;
 	public float radius = 0.01f;
-	public Column(GameObject upPoint, GameObject downPoint, float columnHeight)
+	public Column(string objName,GameObject upPoint, GameObject downPoint, float columnHeight)
 	{
-
-		InitBodySetting("Cylinder", (int)BodyType.CylinderBody);
+		InitBodySetting(objName, (int)BodyType.CylinderBody);
 
 		body.transform.localScale = new Vector3(radius, columnHeight / 2.0f, radius);
 		body.transform.position = new Vector3(upPoint.transform.position.x, upPoint.transform.position.y - columnHeight / 2.0f, upPoint.transform.position.z);
@@ -2108,7 +2206,7 @@ public class Column : IconObject
 		mRenderer.material.color = Color.red;
 		upPoint.GetComponent<MeshRenderer>().material.color = Color.yellow;
 		downPoint.GetComponent<MeshRenderer>().material.color = Color.yellow;
-	}
+	}                                                    
 }
 
 public class body2icon : MonoBehaviour
@@ -2116,16 +2214,14 @@ public class body2icon : MonoBehaviour
 	public List<GameObject> controlPointList = new List<GameObject>();//所有控制點
 
 	//just try two point
-	public ColumnIcon columnIcon;
+	[HideInInspector][SerializeField] public ColumnIcon columnIcon;
 
 	private DragItemController dragitemcontroller;
 	private Movement movement;
 
 	public Vector2 ini_bodydis;
-	public Vector2 chang_bodydis;
-	public Vector2 ratio_bodydis;
-	public float chang_walldis;
-	public float ratio_walldis;
+	public Vector2 bodydis;
+	public float walldis;
 	public float ini_friezeHeight;
 	public float ini_balustradeHeight;
 	public float ini_doubleRoofWidth;
@@ -2137,8 +2233,8 @@ public class body2icon : MonoBehaviour
 	public bool isFrieze;
 	public bool isDoubleRoof;
 	public bool isWall;
+	public bool isMutiColumn;
 
-	public float cylinderHeight;
 	public float friezeHeight;
 	public float balustradeHeight;
 	public float windowHeight;
@@ -2154,7 +2250,7 @@ public class body2icon : MonoBehaviour
 		movement = GameObject.Find("Movement").GetComponent<Movement>();
 		movement.verlist.AddRange(controlPointList);
 
-		cylinderHeight = ini_bodydis.y = controlPointList[1].transform.position.y- controlPointList[2].transform.position.y;
+		ini_bodydis.y = controlPointList[1].transform.position.y- controlPointList[2].transform.position.y;
 		friezeHeight = ini_friezeHeight = 0.2f * ini_bodydis.y;
 		balustradeHeight = ini_balustradeHeight = 0.2f * ini_bodydis.y;
 		windowHeight = ini_windowHeight = 0.5f * ini_bodydis.y;
@@ -2176,68 +2272,13 @@ public class body2icon : MonoBehaviour
 
 	public void adjPos()
 	{
-		ratio_bodydis = chang_bodydis = Vector2.zero;
-		ratio_walldis = chang_walldis = 0;
 		Vector3 tmp = dragitemcontroller.chooseObj.transform.position;
 		GameObject chooseObj = dragitemcontroller.chooseObj;
-		float dis = 0;
-		if (chooseObj == columnIcon.rightColumn.upPoint || chooseObj == columnIcon.leftColumn.upPoint)//RU LU
+		if (chooseObj == columnIcon.rightColumn.upPoint || chooseObj == columnIcon.leftColumn.upPoint||chooseObj == columnIcon.rightColumn.downPoint || chooseObj == columnIcon.leftColumn.downPoint||chooseObj == columnIcon.rightColumn.body||chooseObj == columnIcon.leftColumn.body)//RU LU RD LD RBody LBody
 		{
-
-			if (chooseObj == columnIcon.leftColumn.upPoint)
-			{
-				dis = (tmp.y - columnIcon.rightColumn.upPoint.transform.position.y);
-				columnIcon.AdjPos(tmp, chooseObj);
-				cylinderHeight = columnIcon.columnHeight;
-			}
-			else if (chooseObj == columnIcon.rightColumn.upPoint)
-			{
-				dis = (tmp.y - columnIcon.leftColumn.upPoint.transform.position.y);
-				columnIcon.AdjPos(tmp, chooseObj);
-
-				cylinderHeight = columnIcon.columnHeight;
-			}
-
-			chang_bodydis.y = dis;
-			ratio_bodydis.y = chang_bodydis.y / ini_bodydis.y;
-		}
-		else if (chooseObj == columnIcon.rightColumn.downPoint || chooseObj == columnIcon.leftColumn.downPoint)//RD  LD
-		{
-			if (chooseObj == columnIcon.leftColumn.downPoint)
-			{
-				dis = (tmp.y - columnIcon.rightColumn.downPoint.transform.position.y);
-
-				columnIcon.AdjPos(tmp, chooseObj);
-				cylinderHeight = columnIcon.columnHeight;
-
-			}
-			else if (chooseObj == columnIcon.rightColumn.downPoint)
-			{
-				dis = (tmp.y - columnIcon.leftColumn.downPoint.transform.position.y);
-
-				columnIcon.AdjPos(tmp, chooseObj);
-				cylinderHeight = columnIcon.columnHeight;
-
-			}
-			chang_bodydis.y = -dis;
-			ratio_bodydis.y = chang_bodydis.y / ini_bodydis.y;
-		}
-		else if (chooseObj == columnIcon.rightColumn.body)
-		{
-			dis = (tmp.x - columnIcon.rightColumn.upPoint.transform.position.x);
-
 			columnIcon.AdjPos(tmp, chooseObj);
 
-			chang_bodydis.x = dis;
-			ratio_bodydis.x = chang_bodydis.x / ini_bodydis.x;
-		}
-		else if (chooseObj == columnIcon.leftColumn.body)
-		{
-			dis = (tmp.x - columnIcon.leftColumn.upPoint.transform.position.x);
-
-			columnIcon.AdjPos(tmp, chooseObj);
-			chang_bodydis.x = -dis;
-			ratio_bodydis.x = chang_bodydis.x / ini_bodydis.x;
+			bodydis = new Vector2(columnIcon.columnWidth / 2.0f, columnIcon.columnHeight);
 		}
 		else if (chooseObj == columnIcon.rightColumn.friezePoint || chooseObj == columnIcon.leftColumn.friezePoint)
 		{//frieze
@@ -2247,7 +2288,6 @@ public class body2icon : MonoBehaviour
 
 			columnIcon.friezeIcon.AdjMesh(); ;
 
-
 		}
 		else if (chooseObj == columnIcon.rightColumn.balustradePoint || chooseObj == columnIcon.leftColumn.balustradePoint)
 		{ //balustrade
@@ -2255,88 +2295,69 @@ public class body2icon : MonoBehaviour
 			columnIcon.balustradeIcon.AdjPos(tmp);
 
 			balustradeHeight = columnIcon.balustradeIcon.balustradeHeight;
+
 			columnIcon.balustradeIcon.AdjMesh();
 
 		}
 		else if (chooseObj == columnIcon.wallIcon.rightUpPoint)
 		{
-			dis = (tmp.x - columnIcon.wallIcon.rightDownPoint.transform.position.x);
 			columnIcon.wallIcon.AdjPos(tmp, chooseObj);
 			columnIcon.wallIcon.AdjMesh();
 
-			chang_walldis = dis;
-			ratio_walldis = chang_walldis / ini_wallWidth;
 		}
 		else if (chooseObj == columnIcon.wallIcon.leftUpPoint)
 		{
-			dis = (tmp.x - columnIcon.wallIcon.leftDownPoint.transform.position.x);
 
 			columnIcon.wallIcon.AdjPos(tmp, chooseObj);
 
 			columnIcon.wallIcon.AdjMesh();
-
-			chang_walldis = -dis;
-			ratio_walldis = chang_walldis / ini_wallWidth;
 		}
 		else if (chooseObj == columnIcon.wallIcon.rightDownPoint)
 		{
-			dis = (tmp.x - columnIcon.wallIcon.rightUpPoint.transform.position.x);
 
 			columnIcon.wallIcon.AdjPos(tmp, chooseObj);
 
 			columnIcon.wallIcon.AdjMesh();
 
-			chang_walldis = dis;
-			ratio_walldis = chang_walldis / ini_wallWidth;
 		}
 		else if (chooseObj == columnIcon.wallIcon.leftDownPoint)
 		{
-			dis = (tmp.x - columnIcon.wallIcon.leftUpPoint.transform.position.x);
-
 			columnIcon.wallIcon.AdjPos(tmp, chooseObj);
 
 			columnIcon.wallIcon.AdjMesh();
-
-			chang_walldis = -dis;
-			ratio_walldis = chang_walldis / ini_wallWidth;
 		}
 		else if (chooseObj == columnIcon.wallIcon.rightUpWindowPoint)
 		{
-			dis = (tmp.y - columnIcon.wallIcon.leftUpWindowPoint.transform.position.y);
 
 			columnIcon.wallIcon.AdjPos(tmp, chooseObj);
 
-			windowHeight = columnIcon.wallIcon.windowHeight;
+			windowHeight = columnIcon.wallIcon.windowHeight / 2.0f;
 
 			windowUp2TopDis = columnIcon.wallIcon.rightUpPoint.transform.position.y - columnIcon.wallIcon.rightUpWindowPoint.transform.position.y;
 		}
 		else if (chooseObj == columnIcon.wallIcon.leftUpWindowPoint)
 		{
-			dis = (tmp.y - columnIcon.wallIcon.rightUpWindowPoint.transform.position.y);
-
 			columnIcon.wallIcon.AdjPos(tmp, chooseObj);
 
-			windowHeight = columnIcon.wallIcon.windowHeight;
+			windowHeight = columnIcon.wallIcon.windowHeight/2.0f;
 
 			windowUp2TopDis = columnIcon.wallIcon.rightUpPoint.transform.position.y - columnIcon.wallIcon.rightUpWindowPoint.transform.position.y;
 		}
 		else if (chooseObj == columnIcon.wallIcon.rightDownWindowPoint)
 		{
-			dis = (tmp.y - columnIcon.wallIcon.leftDownWindowPoint.transform.position.y);
 
 			columnIcon.wallIcon.AdjPos(tmp, chooseObj);
 
-			windowHeight = columnIcon.wallIcon.windowHeight;
+			windowHeight = columnIcon.wallIcon.windowHeight / 2.0f;
 
 			windowDown2ButtonDis = columnIcon.wallIcon.rightDownWindowPoint.transform.position.y - columnIcon.wallIcon.rightDownPoint.transform.position.y;
 		}
 		else if (chooseObj == columnIcon.wallIcon.leftDownWindowPoint)
 		{
-			dis = (tmp.y - columnIcon.wallIcon.rightDownWindowPoint.transform.position.y);
 
 			columnIcon.wallIcon.AdjPos(tmp, chooseObj);
 
-			windowHeight = columnIcon.wallIcon.windowHeight;
+			windowHeight = columnIcon.wallIcon.windowHeight / 2.0f;
 
 			windowDown2ButtonDis = columnIcon.wallIcon.rightDownWindowPoint.transform.position.y - columnIcon.wallIcon.rightDownPoint.transform.position.y;
 		}
@@ -2363,6 +2384,10 @@ public class body2icon : MonoBehaviour
 					windowUp2TopDis = 0;
 					columnIcon.wallIcon = null;
 				break;
+			case "MutiColumn":
+				isMutiColumn = false;
+				columnIcon.mutiColumnIcon = null;
+				break;
 		}
 	}
 	public void UpdateFunction(string objName, GameObject correspondingDragItemObject)
@@ -2374,26 +2399,26 @@ public class body2icon : MonoBehaviour
 				{
 					isFrieze = true;
 
-					columnIcon.CreateFrieze(this, "Frieze_mesh", ini_friezeHeight, correspondingDragItemObject);
+					columnIcon.CreateFrieze(this, "FriezeIcon", ini_friezeHeight, correspondingDragItemObject);
 
 					controlPointList.Add(columnIcon.rightColumn.friezePoint);
 					controlPointList.Add(columnIcon.leftColumn.friezePoint);
 
-					movement.verlist.Add(columnIcon.rightColumn.friezePoint);
-					movement.verlist.Add(columnIcon.leftColumn.friezePoint);
+					/*movement.verlist.Add(columnIcon.rightColumn.friezePoint);
+					movement.verlist.Add(columnIcon.leftColumn.friezePoint);*/
 				}
 				break;
 			case "Balustrade":
 				if (columnIcon.balustradeIcon == null)
 				{
 					isBalustrade = true;
-					columnIcon.CreateBlustrade(this, "Blustrade_mesh", ini_balustradeHeight, correspondingDragItemObject);
+					columnIcon.CreateBlustrade(this, "BlustradeIcon", ini_balustradeHeight, correspondingDragItemObject);
 
 					controlPointList.Add(columnIcon.rightColumn.balustradePoint);
 					controlPointList.Add(columnIcon.leftColumn.balustradePoint);
 
-					movement.verlist.Add(columnIcon.rightColumn.balustradePoint);
-					movement.verlist.Add(columnIcon.leftColumn.balustradePoint);
+					/*movement.verlist.Add(columnIcon.rightColumn.balustradePoint);
+					movement.verlist.Add(columnIcon.leftColumn.balustradePoint);*/
 				}
 				break;
 			case "DoubleRoof":
@@ -2401,7 +2426,7 @@ public class body2icon : MonoBehaviour
 				{
 					isDoubleRoof = true;
 
-					columnIcon.CreateDoubleRoof(this, "DoubleRoof_mesh", ini_doubleRoofHeight, ini_doubleRoofWidth, correspondingDragItemObject);
+					columnIcon.CreateDoubleRoof(this, "DoubleRoofIcon", ini_doubleRoofHeight, ini_doubleRoofWidth, correspondingDragItemObject);
 
 				}
 				break;
@@ -2410,12 +2435,12 @@ public class body2icon : MonoBehaviour
 				{
 					isWall = true;
 
-					columnIcon.CreateWall(this, "Wall_mesh", ini_wallWidth, ini_windowHeight, correspondingDragItemObject);
+					columnIcon.CreateWall(this, "WallIcon", ini_wallWidth, ini_windowHeight, correspondingDragItemObject);
 
-					movement.horlist.Add(columnIcon.wallIcon.rightDownPoint);
+				/*	movement.horlist.Add(columnIcon.wallIcon.rightDownPoint);
 					movement.horlist.Add(columnIcon.wallIcon.rightUpPoint);
 					movement.horlist.Add(columnIcon.wallIcon.leftDownPoint);
-					movement.horlist.Add(columnIcon.wallIcon.leftUpPoint);
+					movement.horlist.Add(columnIcon.wallIcon.leftUpPoint);*/
 
 
 					windowUp2TopDis = columnIcon.wallIcon.rightUpPoint.transform.position.y - columnIcon.wallIcon.rightUpWindowPoint.transform.position.y;
@@ -2423,6 +2448,16 @@ public class body2icon : MonoBehaviour
 
 				}
 				break;
+			case "MutiColumn":
+				if (columnIcon.mutiColumnIcon == null)
+				{
+					isMutiColumn = true;
+
+					columnIcon.CreateMutiColumn(this, "MutiColumnIcon", correspondingDragItemObject);
+
+				}
+				break;
+		
 		}
 	}
 	public void addpoint()
@@ -2461,5 +2496,9 @@ public class body2icon : MonoBehaviour
 				return columnIcon.ClampPos(inputPos, chooseObj);
 		}
 		return inputPos;
+	}
+	public void IconUpdate()
+	{
+		columnIcon.InitIconMenuButtonUpdate();
 	}
 }

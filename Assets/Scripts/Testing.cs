@@ -13,10 +13,12 @@ public class BasedRoofIcon : IconObject
 	public RoofStruct rightRoofLine = new RoofStruct();
 	public RoofStruct leftRoofLine = new RoofStruct();
 	Vector3 centerPos;
-	int sliceUnit2LineRender = 80;
+	public int numberOfPoints = 10;
+	public int sliceUnit2LineRender = 1;
 	public void CreateBasedRoofIcon<T>(T thisGameObject, string objName, List<GameObject> bodyControlPointList, List<GameObject> tailControlPointList, Vector3 centerPos) where T : Component
 	{
 		InitBodySetting(objName, (int)BodyType.GeneralBody);
+		InitIconMenuButtonSetting();
 
 		this.centerPos = centerPos;
 
@@ -25,23 +27,24 @@ public class BasedRoofIcon : IconObject
 
 		//RightCatmullromLine
 		rightRoofLine.body = new GameObject("CatLine_Right");
-		rightRoofLine.body.transform.parent = body.transform;
+		rightRoofLine.body.transform.parent = thisGameObject.transform;
 		rightRoofLine.catLine = rightRoofLine.body.AddComponent<catline>();
 		for (int i = 0; i < bodyControlPointList.Count; i++)
 		{
 			rightRoofLine.catLine.AddControlPoint(bodyControlPointList[i]);
 		}
+		rightRoofLine.catLine.SetLineNumberOfPoints(numberOfPoints);
 		rightRoofLine.catLine.ResetCatmullRom();
 
 		//LeftCatmullromLine
 		leftRoofLine.body = new GameObject("CatLine_Left");
-		leftRoofLine.body.transform.parent = body.transform;
+		leftRoofLine.body.transform.parent = thisGameObject.transform;
 		leftRoofLine.catLine = leftRoofLine.body.AddComponent<catline>();
 
 		for (int i = 0; i < bodyControlPointList.Count; i++)
 		{
 			GameObject copy = new GameObject();
-			copy.transform.parent = leftRoofLine.body.transform;
+			copy.transform.parent = thisGameObject.transform;
 			copy.transform.position = new Vector3(bodyControlPointList[i].transform.position.x - 2 * (bodyControlPointList[i].transform.position.x - centerPos.x), bodyControlPointList[i].transform.position.y, bodyControlPointList[i].transform.position.z);
 			leftRoofLine.bodyControlPointList.Add(copy);
 			leftRoofLine.catLine.AddControlPoint(copy);
@@ -49,11 +52,11 @@ public class BasedRoofIcon : IconObject
 		for (int i = 0; i < tailControlPointList.Count; i++)
 		{
 			GameObject copy = new GameObject();
-			copy.transform.parent = leftRoofLine.body.transform;
+			copy.transform.parent = thisGameObject.transform;
 			copy.transform.position = new Vector3(tailControlPointList[i].transform.position.x - 2 * (tailControlPointList[i].transform.position.x - centerPos.x), tailControlPointList[i].transform.position.y, tailControlPointList[i].transform.position.z);
 			leftRoofLine.tailControlPointList.Add(copy);
 		}
-
+		leftRoofLine.catLine.SetLineNumberOfPoints(numberOfPoints);
 		leftRoofLine.catLine.ResetCatmullRom();
 
 		SetParent2BodyAndControlPointList(thisGameObject);
@@ -77,7 +80,6 @@ public class BasedRoofIcon : IconObject
 	{
 		int innerPointCount = rightRoofLine.catLine.innerPointList.Count;
 		float uvR = (rightRoofLine.catLine.innerPointList[rightRoofLine.catLine.innerPointList.Count - 1].x - leftRoofLine.catLine.innerPointList[rightRoofLine.catLine.innerPointList.Count - 1].x)/((float)innerPointCount*2);
-		mFilter.mesh.Clear();
 		Vector3[] v = new Vector3[4 * innerPointCount];
 		Vector3[] n = new Vector3[4 * innerPointCount];
 		//Vector2[] uv = new Vector2[2 * innerPointCount];
@@ -128,11 +130,13 @@ public class BasedRoofIcon : IconObject
 		{
 			n[i] = -Vector3.forward;
 		}
+		mFilter.mesh.Clear();
 		mFilter.mesh.vertices = v;
 		mFilter.mesh.triangles = t;
 		mFilter.mesh.normals = n;
-		mFilter.mesh.RecalculateBounds();
+
 		mFilter.mesh.RecalculateNormals();
+		mFilter.mesh.RecalculateBounds();
 		//mFilter.mesh.uv = uv;
 		/*	int innerPointCount = rightRoofLine.catLine.innerPointList.Count;
 			float uvR = (1 / (float)innerPointCount);
@@ -170,6 +174,7 @@ public class BasedRoofIcon : IconObject
 			mFilter.mesh.normals = n;
 			//mFilter.mesh.uv = uv;*/
 		UpdateLineRender();
+		UpdateCollider();
 	}
 	public override void InitLineRender<T>(T thisGameObject)
 	{

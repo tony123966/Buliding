@@ -81,9 +81,10 @@ public class lineRendererControl
 	public virtual void InitLineRender<T>(T thisGameObject) where T : Component { }
 
 }
+
 public class IconObject : lineRendererControl
 {
-	public enum BodyType { GeneralBody = 0, CylinderBody = 1, }
+	public enum BodyType { GeneralBody = 0, CylinderBody = 1,}
 	public List<GameObject> controlPointList = new List<GameObject>();
 	public Vector3[] lastControlPointPosition = null;
 	public List<Vector3> controlPointList_Vec3_2_LineRender = new List<Vector3>();//用於lineRenderer的controlPoint
@@ -93,11 +94,18 @@ public class IconObject : lineRendererControl
 	public Collider mCollider = null;
 	public Material silhouetteShader = null;
 
+	public IconControl iconMenuControl;
 	public IconObject()
 	{
 		if (Shader.Find("Outlined/Silhouetted Bumped Diffuse"))
 			silhouetteShader = new Material(Shader.Find("Outlined/Silhouetted Bumped Diffuse"));
 
+	}
+	public virtual void InitIconMenuButtonUpdate(){}
+	public void InitIconMenuButtonSetting()
+	{
+		iconMenuControl.delelteButton.isDeleteIconButton=true;
+		iconMenuControl.scrollBarButton.isScrollBarIconButton = false;
 	}
 	public void InitBodySetting(string objName, int bodyType)
 	{
@@ -110,6 +118,8 @@ public class IconObject : lineRendererControl
 				mCollider = body.AddComponent<MeshCollider>() as MeshCollider;
 				mFilter.mesh = new Mesh();
 				mCollider.GetComponent<MeshCollider>().sharedMesh = mFilter.mesh;
+				mRenderer.sortingOrder = 0;
+				body.tag = "MeshBodyCollider";
 				break;
 			case (int)BodyType.CylinderBody:
 				body = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
@@ -117,10 +127,11 @@ public class IconObject : lineRendererControl
 				mFilter = body.GetComponent<MeshFilter>();
 				mRenderer = body.GetComponent<MeshRenderer>() as MeshRenderer;
 				mCollider = body.GetComponent<CapsuleCollider>() as CapsuleCollider;
+				mRenderer.sortingOrder = 0;
+				body.tag = "MeshBodyCollider";
 				break;
 		}
-		mRenderer.sortingOrder = 0;
-		body.tag = "MeshBodyCollider";
+		iconMenuControl = body.AddComponent<IconControl>();
 	}
 	public void InitControlPointList2lastControlPointPosition()
 	{
@@ -241,16 +252,23 @@ public class VerandaIcon : IconObject//廡殿頂
 {
 	public enum PointIndex { LeftUpPoint = 0, RightUpPoint = 1, RightDownPoint = 2, LeftDownPoint = 3, RightMainRidgePoint = 4, LeftMainRidgePoint = 5, };
 	public int edgeIndex = 4;
-	float initVerandaIconWidth;
-	float initVerandaIconHeight;
+	public float initVerandaIconWidth;
+	public float initVerandaIconHeight;
+	public float initMainRidgeWidth;
+	public float verandaIconWidth;
+	public float verandaIconHeight;
+	public float mainRidgeWidth;
 	public void VerandaIconCreate<T>(T thisGameObject, string objName, List<GameObject> controlPointList) where T : Component
 	{
 		InitBodySetting(objName, (int)BodyType.GeneralBody);
+		InitIconMenuButtonSetting();
 		this.controlPointList = controlPointList;
 		InitControlPointList2lastControlPointPosition();
 
-		initVerandaIconWidth = controlPointList[(int)PointIndex.RightMainRidgePoint].transform.position.x - controlPointList[(int)PointIndex.LeftMainRidgePoint].transform.position.x;
-		initVerandaIconHeight = controlPointList[(int)PointIndex.RightUpPoint].transform.position.y - controlPointList[(int)PointIndex.RightDownPoint].transform.position.y;
+		verandaIconWidth = initVerandaIconWidth = controlPointList[(int)PointIndex.RightMainRidgePoint].transform.position.x - controlPointList[(int)PointIndex.LeftMainRidgePoint].transform.position.x;
+		verandaIconHeight = initVerandaIconHeight = controlPointList[(int)PointIndex.RightUpPoint].transform.position.y - controlPointList[(int)PointIndex.RightDownPoint].transform.position.y;
+
+		mainRidgeWidth = initMainRidgeWidth = controlPointList[(int)PointIndex.RightMainRidgePoint].transform.position.x - controlPointList[(int)PointIndex.LeftMainRidgePoint].transform.position.x;
 
 		mFilter.mesh.vertices = new Vector3[] {
 					controlPointList [0].transform.position,
@@ -308,7 +326,7 @@ public class VerandaIcon : IconObject//廡殿頂
 		float posY = Mathf.Clamp(inputPos.y, minClampY, maxClampY);
 		return new Vector3(posX, posY, inputPos.z);
 	}
-	public Vector3 AdjPos(Vector3 tmp, int index)
+	public void AdjPos(Vector3 tmp, int index)
 	{
 		float offset_x = tmp.x - lastControlPointPosition[index].x;
 		float offset_y = tmp.y - lastControlPointPosition[index].y;
@@ -330,21 +348,23 @@ public class VerandaIcon : IconObject//廡殿頂
 					controlPointList[j].transform.position = new Vector3(lastControlPointPosition[j].x - (offset_x), lastControlPointPosition[j].y - (offset_y), lastControlPointPosition[j].z);
 				}
 			}
+			verandaIconWidth = controlPointList[(int)PointIndex.RightMainRidgePoint].transform.position.x - controlPointList[(int)PointIndex.LeftMainRidgePoint].transform.position.x;
+			verandaIconHeight =controlPointList[(int)PointIndex.RightUpPoint].transform.position.y - controlPointList[(int)PointIndex.RightDownPoint].transform.position.y;
 		}
 		else//mainRidge
 		{
-			if (index == 4)
+			if (index == (int)PointIndex.RightMainRidgePoint)
 			{
-				controlPointList[5].transform.position = new Vector3(lastControlPointPosition[5].x - (offset_x), lastControlPointPosition[5].y, lastControlPointPosition[5].z);
+				controlPointList[(int)PointIndex.LeftMainRidgePoint].transform.position = new Vector3(lastControlPointPosition[(int)PointIndex.LeftMainRidgePoint].x - (offset_x), lastControlPointPosition[(int)PointIndex.LeftMainRidgePoint].y, lastControlPointPosition[(int)PointIndex.LeftMainRidgePoint].z);
 			}
 			else
 			{
-				controlPointList[4].transform.position = new Vector3(lastControlPointPosition[4].x - (offset_x), lastControlPointPosition[4].y, lastControlPointPosition[4].z);
+				controlPointList[(int)PointIndex.RightMainRidgePoint].transform.position = new Vector3(lastControlPointPosition[(int)PointIndex.RightMainRidgePoint].x - (offset_x), lastControlPointPosition[(int)PointIndex.RightMainRidgePoint].y, lastControlPointPosition[(int)PointIndex.RightMainRidgePoint].z);
 			}
+			mainRidgeWidth  = controlPointList[(int)PointIndex.RightMainRidgePoint].transform.position.x - controlPointList[(int)PointIndex.LeftMainRidgePoint].transform.position.x;
 		}
 		UpdateLastPos();
 		UpdateLineRender();
-		return new Vector3(offset_x, offset_y, 0);
 	}
 	public override void InitLineRender<T>(T thisGameObject)
 	{
@@ -369,6 +389,7 @@ public class ShandingIcon : IconObject//歇山頂
 	public void ShandingIconCreate<T>(T thisGameObject, string objName, List<GameObject> controlPointList) where T : Component
 	{
 		InitBodySetting(objName, (int)BodyType.GeneralBody);
+		InitIconMenuButtonSetting();
 
 		this.controlPointList = controlPointList;
 		InitControlPointList2lastControlPointPosition();
@@ -554,6 +575,7 @@ public class TriangleIcon : IconObject//三角形
 	public void TriangleIconCreate<T>(T thisGameObject, string objName, List<GameObject> controlPointList) where T : Component
 	{
 		InitBodySetting(objName, (int)BodyType.GeneralBody);
+		InitIconMenuButtonSetting();
 
 		this.controlPointList = controlPointList;
 		InitControlPointList2lastControlPointPosition();
@@ -577,6 +599,7 @@ public class RectangleIcon : IconObject//四角形
 	public void RectangleIconCreate<T>(T thisGameObject, string objName, List<GameObject> controlPointList) where T : Component
 	{
 		InitBodySetting(objName, (int)BodyType.GeneralBody);
+		InitIconMenuButtonSetting();
 
 		this.controlPointList = controlPointList;
 		InitControlPointList2lastControlPointPosition();
@@ -602,6 +625,7 @@ public class PentagonIcon : IconObject//五邊形
 	public void PentagonIconCreate<T>(T thisGameObject, string objName, List<GameObject> controlPointList) where T : Component
 	{
 		InitBodySetting(objName, (int)BodyType.GeneralBody);
+		InitIconMenuButtonSetting();
 
 		this.controlPointList = controlPointList;
 		InitControlPointList2lastControlPointPosition();
@@ -628,6 +652,7 @@ public class HexagonIcon : IconObject//六邊形
 	public void HexagonIconCreate<T>(T thisGameObject, string objName, List<GameObject> controlPointList) where T : Component
 	{
 		InitBodySetting(objName, (int)BodyType.GeneralBody);
+		InitIconMenuButtonSetting();
 
 		this.controlPointList = controlPointList;
 		InitControlPointList2lastControlPointPosition();
@@ -668,54 +693,47 @@ public class MeshObj : MonoBehaviour
 	public Vector2 ini_bodydis;
 	public float ini_mainRidgedis;
 
-	public Vector2 chang_bodydis;
-	public float chang_mainRidgedis;
-	public Vector2 ratio_bodydis;
-	public float ratio_mainRidgedis;
+	public Vector2 bodydis;
+	public float mainRidgedis;
 
 
 	void Start()
 	{
 		dragitemcontroller = GameObject.Find("DragItemController").GetComponent<DragItemController>();
-
 	}
 
 	VerandaIcon CreateVerandaIcon()
 	{
 		VerandaIcon verandaIcon = new VerandaIcon();
 
-		verandaIcon.VerandaIconCreate(this, "VerandaIcon_mesh", controlPointList);
+		verandaIcon.VerandaIconCreate(this, "VerandaIcon", controlPointList);
 
 		edgeIndex = verandaIcon.edgeIndex;
 
-		ini_bodydis.x = controlPointList[1].transform.position.x - controlPointList[0].transform.position.x;
-		ini_bodydis.y = controlPointList[1].transform.position.y - controlPointList[2].transform.position.y;
-		ini_bodydis = ini_bodydis / 2.0f;
+		ini_bodydis.x =bodydis.x= (controlPointList[1].transform.position.x - controlPointList[0].transform.position.x)/2.0f;
+		ini_bodydis.y =bodydis.y= controlPointList[1].transform.position.y - controlPointList[2].transform.position.y;
 
-		ini_mainRidgedis = controlPointList[4].transform.position.x - controlPointList[5].transform.position.x;
-		ini_mainRidgedis = ini_mainRidgedis / 2.0f;
+		ini_mainRidgedis =mainRidgedis= (controlPointList[4].transform.position.x - controlPointList[5].transform.position.x)/2.0f;
 
 		return verandaIcon;
 	}
 	ShandingIcon CreateShandingIcon()
 	{
 		ShandingIcon shandingIcon = new ShandingIcon();
-		shandingIcon.ShandingIconCreate(this, "ShandingIcon_mesh", controlPointList);
+		shandingIcon.ShandingIconCreate(this, "ShandingIcon", controlPointList);
 
 		edgeIndex = shandingIcon.edgeIndex;
-		ini_bodydis.x = controlPointList[1].transform.position.x - controlPointList[0].transform.position.x;
-		ini_bodydis.y = controlPointList[1].transform.position.y - controlPointList[2].transform.position.y;
-		ini_bodydis = ini_bodydis / 2.0f;
+		ini_bodydis.x =bodydis.x= (controlPointList[1].transform.position.x - controlPointList[0].transform.position.x)/2.0f;
+		ini_bodydis.y =bodydis.y= controlPointList[1].transform.position.y - controlPointList[2].transform.position.y;
 
-		ini_mainRidgedis = controlPointList[4].transform.position.x - controlPointList[5].transform.position.x;
-		ini_mainRidgedis = ini_mainRidgedis / 2.0f;
+		ini_mainRidgedis =mainRidgedis= (controlPointList[4].transform.position.x - controlPointList[5].transform.position.x)/2.0f;
 		return shandingIcon;
 	}
 	TriangleIcon CreateTriangleIcon()
 	{
 		TriangleIcon triIcon = new TriangleIcon();
 
-		triIcon.TriangleIconCreate(this, "TiangleIcon_mesh", controlPointList);
+		triIcon.TriangleIconCreate(this, "TiangleIcon", controlPointList);
 
 		edgeIndex = triIcon.edgeIndex;
 
@@ -725,7 +743,7 @@ public class MeshObj : MonoBehaviour
 	{
 		RectangleIcon rectIcon = new RectangleIcon();
 
-		rectIcon.RectangleIconCreate(this, "RectangleIcon_mesh", controlPointList);
+		rectIcon.RectangleIconCreate(this, "RectangleIcon", controlPointList);
 
 		edgeIndex = rectIcon.edgeIndex;
 		return rectIcon;
@@ -734,7 +752,7 @@ public class MeshObj : MonoBehaviour
 	{
 		PentagonIcon pentaIcon = new PentagonIcon();
 
-		pentaIcon.PentagonIconCreate(this, "PentagonIcon_mesh", controlPointList);
+		pentaIcon.PentagonIconCreate(this, "PentagonIcon", controlPointList);
 
 		edgeIndex = pentaIcon.edgeIndex;
 		return pentaIcon;
@@ -743,7 +761,7 @@ public class MeshObj : MonoBehaviour
 	{
 		HexagonIcon hexIcon = new HexagonIcon();
 
-		hexIcon.HexagonIconCreate(this, "HexagonIcon_mesh", controlPointList);
+		hexIcon.HexagonIconCreate(this, "HexagonIcon", controlPointList);
 
 		edgeIndex = hexIcon.edgeIndex;
 		return hexIcon;
@@ -780,9 +798,6 @@ public class MeshObj : MonoBehaviour
 
 	public void adjPos()
 	{
-		chang_bodydis = ratio_bodydis = Vector2.zero;
-		chang_mainRidgedis = ratio_mainRidgedis = 0;
-
 		for (int i = 0; i < controlPointList.Count; i++)
 		{
 			if (dragitemcontroller.chooseObj == controlPointList[i])
@@ -792,45 +807,10 @@ public class MeshObj : MonoBehaviour
 				switch (gameObject.tag)
 				{
 					case "VerandaIcon"://specialCase
-						Vector3 offsetVector = verandaIcon.AdjPos(tmp, i);
-						switch (i)
-						{
-							case 0:
-								chang_bodydis.x = -offsetVector.x;
-								chang_bodydis.y = offsetVector.y;
-								ratio_bodydis.x = chang_bodydis.x / ini_bodydis.x;
-								ratio_bodydis.y = chang_bodydis.y / ini_bodydis.y;
-								break;
-							case 1:
-								chang_bodydis.x = offsetVector.x;
-								chang_bodydis.y = offsetVector.y;
-								ratio_bodydis.x = chang_bodydis.x / ini_bodydis.x;
-								ratio_bodydis.y = chang_bodydis.y / ini_bodydis.y;
-								break;
-							case 2:
-								chang_bodydis.x = offsetVector.x;
-								chang_bodydis.y = -offsetVector.y;
-								ratio_bodydis.x = chang_bodydis.x / ini_bodydis.x;
-								ratio_bodydis.y = chang_bodydis.y / ini_bodydis.y;
-								break;
-							case 3:
-								chang_bodydis.x = -offsetVector.x;
-								chang_bodydis.y = -offsetVector.y;
-								ratio_bodydis.x = chang_bodydis.x / ini_bodydis.x;
-								ratio_bodydis.y = chang_bodydis.y / ini_bodydis.y;
-								break;
-								break;
-							case 4:
-								chang_mainRidgedis = -offsetVector.x;
-								ratio_mainRidgedis = chang_mainRidgedis / ini_mainRidgedis;
-								break;
-							case 5:
-								chang_mainRidgedis = offsetVector.x;
-								ratio_mainRidgedis = chang_mainRidgedis / ini_mainRidgedis;
-								break;
-
-						}
+						verandaIcon.AdjPos(tmp, i);
 						verandaIcon.AdjMesh();
+						bodydis = new Vector2(verandaIcon.verandaIconWidth / 2.0f, verandaIcon.verandaIconHeight);
+						mainRidgedis=(controlPointList[4].transform.position.x - controlPointList[5].transform.position.x)/2.0f;
 						break;
 					case "ShandingIcon"://specialCase
 						shandingIcon.AdjPos(tmp, i);
@@ -914,6 +894,10 @@ public class MeshObj : MonoBehaviour
 			}
 		}
 		return inputPos;
+	}
+	public void IconUpdate()
+	{
+
 	}
 }
 

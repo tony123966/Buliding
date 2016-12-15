@@ -229,10 +229,14 @@
      <Compile Include="Assets\Scripts\DragItemController.cs" />
      <Compile Include="Assets\Scripts\FixedWindows.cs" />
      <Compile Include="Assets\Scripts\HandleCursor.cs" />
+     <Compile Include="Assets\Scripts\IconControl.cs" />
+     <Compile Include="Assets\Scripts\IconMenu.cs" />
      <Compile Include="Assets\Scripts\MeshObj.cs" />
      <Compile Include="Assets\Scripts\Movement.cs" />
+     <Compile Include="Assets\Scripts\SetSliderValue.cs" />
      <Compile Include="Assets\Scripts\Testing.cs" />
      <Compile Include="Assets\Scripts\UIDragDropItem2DragItemController.cs" />
+     <Compile Include="Assets\Scripts\body2icon.cs" />
      <Compile Include="Assets\Scripts\catline.cs" />
      <Compile Include="Assets\Scripts\childcolumn.cs" />
      <Compile Include="Assets\Scripts\creaticonforfractor.cs" />
@@ -322,7 +326,6 @@
      <Compile Include="Assets\Tingmodel\upridgemidpoint2.cs" />
      <Compile Include="Assets\Tingmodel\upridgetile.cs" />
      <Compile Include="Assets\Tingmodel\worldmouse.cs" />
-     <Compile Include="Assets\body2icon.cs" />
      <Compile Include="Assets\cat\Balustrade.cs" />
      <Compile Include="Assets\cat\Balustrademesh.cs" />
      <Compile Include="Assets\cat\Frieze.cs" />

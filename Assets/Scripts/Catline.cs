@@ -34,6 +34,10 @@ public class catline : MonoBehaviour
         lineRenderer.SetWidth(0, 0);
         ResetCatmullRom();
     }
+	public void SetLineNumberOfPoints(int number) 
+	{
+		numberOfPoints=number;
+	}
     public void ResetCatmullRom()
     {
         ControlPointSetting();
