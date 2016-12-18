@@ -205,16 +205,16 @@ where T : Component
 
 		InitDecorateIconObjectSetting(correspondingDragItemObject);
 	}
-	public void AdjPos(BasedPlatformIcon basedPlatformIcon)
+	public void AdjPos(GameObject baseLeftUpPoint, GameObject baseRightUpPoint, GameObject baseRightDownPoint, GameObject baseLeftDownPoint)
 	{
 
-		float centerPosX = (basedPlatformIcon.rightDownPoint.transform.position.x + basedPlatformIcon.leftDownPoint.transform.position.x) / 2.0f;
-		rightDownPoint = new Vector3(centerPosX + stairWidth / 2.0f, basedPlatformIcon.rightDownPoint.transform.position.y, basedPlatformIcon.rightDownPoint.transform.position.z);
-		leftDownPoint = new Vector3(centerPosX - stairWidth / 2.0f, basedPlatformIcon.leftDownPoint.transform.position.y, basedPlatformIcon.leftDownPoint.transform.position.z);
+		float centerPosX = (baseRightDownPoint.transform.position.x + baseLeftDownPoint.transform.position.x) / 2.0f;
+		rightDownPoint = new Vector3(centerPosX + stairWidth / 2.0f, baseRightDownPoint.transform.position.y, baseRightDownPoint.transform.position.z);
+		leftDownPoint = new Vector3(centerPosX - stairWidth / 2.0f, baseLeftDownPoint.transform.position.y, baseLeftDownPoint.transform.position.z);
 
 
-		rightUpPoint = new Vector3(centerPosX + stairWidth / 2.0f, basedPlatformIcon.rightUpPoint.transform.position.y, basedPlatformIcon.rightUpPoint.transform.position.z);
-		leftUpPoint = new Vector3(centerPosX - stairWidth / 2.0f, basedPlatformIcon.leftUpPoint.transform.position.y, basedPlatformIcon.leftUpPoint.transform.position.z);
+		rightUpPoint = new Vector3(centerPosX + stairWidth / 2.0f, baseRightUpPoint.transform.position.y, baseRightUpPoint.transform.position.z);
+		leftUpPoint = new Vector3(centerPosX - stairWidth / 2.0f, baseLeftUpPoint.transform.position.y, baseLeftUpPoint.transform.position.z);
 	}
 	public void AdjMesh()
 	{
@@ -291,7 +291,7 @@ public class BasedPlatformBalustradeIcon : DecorateIconObject<BasedPlatformIcon>
 	public float initBalustradeColumnWidth;
 
 	float offset = 0.01f;
-	public void BasedPlatformBalustradeCreate<T>(T thisGameObject, string objName, BasedPlatformIcon basedPlatformIcon, float columnHeight, GameObject correspondingDragItemObject) where T : Component
+	public void BasedPlatformBalustradeCreate<T>(T thisGameObject, string objName, BasedPlatformIcon basedPlatformIcon, float columnHeight, GameObject correspondingDragItemObject) where T : Component 
 	{
 
 		MainComponent = basedPlatformIcon;
@@ -490,13 +490,261 @@ where T : Component
 		mutiColumnIconCount = iconMenuControl.scrollBarButton.scrollBarIconValue;
 	}
 }
+public class CurvePlatformStruct
+{
+	public List<GameObject> controlPointList = new List<GameObject>();
+	public catline catLine;
+}
+public class CurvePlatformIcon : IconObject
+{
+	public enum PointIndex { LeftUpPoint = 0, RightUpPoint = 1, RightDownPoint = 2, LeftDownPoint = 3, LeftMidPoint = 4, RightMidPoint = 5, };
+	
+	public GameObject rightUpPoint;
+	public GameObject rightMidPoint;
+	public GameObject rightDownPoint;
+	public GameObject leftUpPoint;
+	public GameObject leftMidPoint;
+	public GameObject leftDownPoint;
+
+	public CurvePlatformStruct rightPlatformLine = new CurvePlatformStruct();
+	public CurvePlatformStruct leftPlatformLine = new CurvePlatformStruct();
+	public int numberOfPoints = 10;
+	public int sliceUnit = 1;
+
+	public float platformHeight;
+	public float platformTopWidth;
+	public float platformButtonWidth;
+
+	public float initPlatformHeight;
+	public float initPlatformTopWidth;
+	public float initPlatformButtonWidth;
+
+
+	public BasedPlatformBalustradeIcon basedPlatformBalustradeIcon = null;
+	public BasedPlatformStairIcon basedPlatformStairIcon = null;
+	public void CurvePlatformIconCreate<T>(T thisGameObject, string objName, GameObject leftUpPoint, GameObject rightUpPoint, GameObject rightDownPoint, GameObject leftDownPoint, GameObject leftMidPoint,GameObject rightMidPoint)
+	where T : Component
+	{
+		InitBodySetting(objName, (int)BodyType.GeneralBody);
+		InitIconMenuButtonSetting();
+
+		controlPointList.Add(leftUpPoint);
+		controlPointList.Add(rightUpPoint);
+		controlPointList.Add(rightDownPoint);
+		controlPointList.Add(leftDownPoint);
+		controlPointList.Add(leftMidPoint);
+		controlPointList.Add(rightMidPoint);
+
+		//RightCatmullromLine
+		GameObject cR = new GameObject("CatLine_Right");
+		cR.transform.parent = thisGameObject.transform;
+		rightPlatformLine.catLine = cR.AddComponent<catline>();
+		rightPlatformLine.controlPointList.Add(rightUpPoint);
+		rightPlatformLine.controlPointList.Add(rightMidPoint);
+		rightPlatformLine.controlPointList.Add(rightDownPoint);
+		rightPlatformLine.catLine.AddControlPoint(rightUpPoint);
+		rightPlatformLine.catLine.AddControlPoint(rightMidPoint);
+		rightPlatformLine.catLine.AddControlPoint(rightDownPoint);
+		//RightCatmullromLine
+		GameObject cL = new GameObject("CatLine_Left");
+		cL.transform.parent = thisGameObject.transform;
+		leftPlatformLine.catLine = cR.AddComponent<catline>();
+		leftPlatformLine.controlPointList.Add(leftUpPoint);
+		leftPlatformLine.controlPointList.Add(leftMidPoint);
+		leftPlatformLine.controlPointList.Add(leftDownPoint);
+		leftPlatformLine.catLine.AddControlPoint(leftUpPoint);
+		leftPlatformLine.catLine.AddControlPoint(leftMidPoint);
+		leftPlatformLine.catLine.AddControlPoint(leftDownPoint);
+		InitControlPointList2lastControlPointPosition();
+
+		rightPlatformLine.catLine.SetLineNumberOfPoints(numberOfPoints);
+		rightPlatformLine.catLine.ResetCatmullRom();
+
+		leftPlatformLine.catLine.SetLineNumberOfPoints(numberOfPoints);
+		leftPlatformLine.catLine.ResetCatmullRom();
+
+
+		SetParent2BodyAndControlPointList(thisGameObject);
+		InitLineRender(thisGameObject);
+
+		SetIconObjectColor();
+
+
+		AdjMesh();
+	}
+	public void AdjMesh()
+	{
+
+		int innerPointCount = rightPlatformLine.catLine.innerPointList.Count;
+		float uvR = (1 / (float)innerPointCount);
+		mFilter.mesh.Clear();
+		Vector3[] v = new Vector3[2 * innerPointCount];
+		Vector3[] n = new Vector3[2 * innerPointCount];
+		//Vector2[] uv = new Vector2[2 * innerPointCount];
+		int[] t = new int[6 * innerPointCount];
+
+		for (int i = 0; i < innerPointCount; i++)
+		{
+			v[i] = rightPlatformLine.catLine.innerPointList[i];
+		}
+		for (int i = 0; i < innerPointCount; i++)
+		{
+			v[i + innerPointCount] = leftPlatformLine.catLine.innerPointList[i];
+		}
+		int index = 0;
+		for (int i = 0; i < rightPlatformLine.catLine.innerPointList.Count - 1; i++)
+		{
+			t[index] = i;
+			t[index + 1] = (i + 1);
+			t[index + 2] = i + rightPlatformLine.catLine.innerPointList.Count;
+			t[index + 3] = i + rightPlatformLine.catLine.innerPointList.Count;
+			t[index + 4] = (i + 1);
+			t[index + 5] = (i + 1) + rightPlatformLine.catLine.innerPointList.Count;
+			index += 6;
+		}
+		for (int i = 0; i < 2 * innerPointCount; i++)
+		{
+			n[i] = -Vector3.forward;
+		}
+		mFilter.mesh.vertices = v;
+		mFilter.mesh.triangles = t;
+		mFilter.mesh.normals = n;
+
+		mFilter.mesh.RecalculateNormals();
+		mFilter.mesh.RecalculateBounds();
+		//mFilter.mesh.uv = uv;
+
+		//UpdateLineRender();
+		UpdateCollider();
+	}
+	public override void InitLineRender<T>(T thisGameObject)
+	{
+		for (int i = 0; i < rightPlatformLine.catLine.innerPointList.Count - 1; i += sliceUnit)
+		{
+			i = Mathf.Min(i, rightPlatformLine.catLine.innerPointList.Count - 1);
+			CreateLineRenderer(thisGameObject, rightPlatformLine.catLine.innerPointList[i], rightPlatformLine.catLine.innerPointList[Mathf.Min((i + sliceUnit), rightPlatformLine.catLine.innerPointList.Count - 1)]);
+			if (i == rightPlatformLine.catLine.innerPointList.Count - 1) return;
+		}
+		for (int i = 0; i < leftPlatformLine.catLine.innerPointList.Count - 1; i += sliceUnit)
+		{
+			i = Mathf.Min(i, leftPlatformLine.catLine.innerPointList.Count - 1);
+			CreateLineRenderer(thisGameObject, leftPlatformLine.catLine.innerPointList[i], leftPlatformLine.catLine.innerPointList[Mathf.Min((i + sliceUnit), leftPlatformLine.catLine.innerPointList.Count - 1)]);
+			if (i == leftPlatformLine.catLine.innerPointList.Count - 1) return;
+		}
+		CreateLineRenderer(thisGameObject, leftPlatformLine.catLine.innerPointList[0], rightPlatformLine.catLine.innerPointList[0]);
+		CreateLineRenderer(thisGameObject, leftPlatformLine.catLine.innerPointList[leftPlatformLine.catLine.innerPointList.Count - 1], rightPlatformLine.catLine.innerPointList[rightPlatformLine.catLine.innerPointList.Count - 1]);
+	}
+	public Vector3 ClampPos(Vector3 inputPos, GameObject chooseObj)
+	{
+		float minClampX = float.MinValue;
+		float maxClampX = float.MaxValue;
+		float minClampY = float.MinValue;
+		float maxClampY = float.MaxValue;
+
+		float minWidth = (initPlatformTopWidth) * 0.4f;
+		float minHeight = (initPlatformHeight) * 0.4f;
+
+		if (chooseObj == controlPointList[(int)PointIndex.LeftUpPoint])
+		{
+			if (basedPlatformBalustradeIcon != null)
+				maxClampX = basedPlatformBalustradeIcon.leftUpPoint.transform.position.x;
+			else
+				maxClampX = controlPointList[(int)PointIndex.RightUpPoint].transform.position.x - minWidth;
+			minClampY = controlPointList[(int)PointIndex.LeftDownPoint].transform.position.y + minHeight;
+		}
+		else if (chooseObj == controlPointList[(int)PointIndex.LeftDownPoint])
+		{
+			maxClampX = controlPointList[(int)PointIndex.RightDownPoint].transform.position.x - minWidth;
+			maxClampY = controlPointList[(int)PointIndex.LeftUpPoint].transform.position.y - minHeight;
+		}
+		else if (chooseObj == controlPointList[(int)PointIndex.RightUpPoint])
+		{
+			if (basedPlatformBalustradeIcon != null)
+				minClampX = basedPlatformBalustradeIcon.rightUpPoint.transform.position.x;
+			else
+				minClampX = controlPointList[(int)PointIndex.LeftUpPoint].transform.position.x + minWidth;
+
+			minClampY = controlPointList[(int)PointIndex.RightDownPoint].transform.position.y + minHeight;
+
+		}
+		else if (chooseObj == controlPointList[(int)PointIndex.RightDownPoint])
+		{
+			minClampX = controlPointList[(int)PointIndex.LeftDownPoint].transform.position.x + minWidth;
+			maxClampY = controlPointList[(int)PointIndex.RightUpPoint].transform.position.y - minHeight;
+		}
+
+		float posX = Mathf.Clamp(inputPos.x, minClampX, maxClampX);
+		float posY = Mathf.Clamp(inputPos.y, minClampY, maxClampY);
+		return new Vector3(posX, posY, inputPos.z);
+	}
+	public Vector3 AdjPos(Vector3 tmp, GameObject chooseObj)
+	{
+		int index = -1;
+		for (int i = 0; i < controlPointList.Count; i++)
+		{
+			if (chooseObj == controlPointList[i])
+			{
+				index = i;
+				break;
+			}
+		}
+		if (index == -1) return Vector3.zero;
+
+		float offset_x = tmp.x - lastControlPointPosition[index].x;
+		float offset_y = tmp.y - lastControlPointPosition[index].y;
+		for (int j = 0; j < controlPointList.Count; j++)
+		{
+			if (index == j) continue;
+			if ((lastControlPointPosition[index].y == controlPointList[j].transform.position.y))//y相同
+			{
+				controlPointList[j].transform.position = new Vector3(lastControlPointPosition[j].x - (offset_x), tmp.y, lastControlPointPosition[j].z);
+			}
+		}
+		if (chooseObj == rightUpPoint || chooseObj == leftUpPoint)
+		{
+			if (basedPlatformBalustradeIcon != null)
+			{
+				for (int i = 0; i < basedPlatformBalustradeIcon.rightColumn.controlPointList.Count; i++)
+				{
+					basedPlatformBalustradeIcon.rightColumn.controlPointList[i].transform.position = new Vector3(basedPlatformBalustradeIcon.rightColumn.controlPointList[i].transform.position.x, basedPlatformBalustradeIcon.rightColumn.controlPointList[i].transform.position.y + (offset_y), basedPlatformBalustradeIcon.rightColumn.controlPointList[i].transform.position.z);
+					basedPlatformBalustradeIcon.leftColumn.controlPointList[i].transform.position = new Vector3(basedPlatformBalustradeIcon.leftColumn.controlPointList[i].transform.position.x, basedPlatformBalustradeIcon.leftColumn.controlPointList[i].transform.position.y + (offset_y), basedPlatformBalustradeIcon.leftColumn.controlPointList[i].transform.position.z);
+
+				}
+			}
+		}
+		if (basedPlatformStairIcon != null)
+		{
+			basedPlatformStairIcon.AdjPos(leftUpPoint, rightUpPoint, rightDownPoint, leftDownPoint);
+			basedPlatformStairIcon.AdjMesh();
+			basedPlatformStairIcon.UpdateLastPos();
+		}
+		platformHeight = rightUpPoint.transform.position.y - rightDownPoint.transform.position.y;
+		platformTopWidth = (rightUpPoint.transform.position.x - leftUpPoint.transform.position.x);
+		platformButtonWidth = (rightDownPoint.transform.position.x - leftDownPoint.transform.position.x);
+		UpdateLastPos();
+		UpdateLineRender();
+		return new Vector3(offset_x, offset_y, 0);
+	}
+
+	public void CreateBasedPlatformBalustrade<T>(T thisGameObject, string objName, float ini_platBalustradeHeight, GameObject correspondingDragItemObject) where T : Component
+	{
+		basedPlatformBalustradeIcon = new BasedPlatformBalustradeIcon();
+		//basedPlatformBalustradeIcon.BasedPlatformBalustradeCreate(thisGameObject, objName, this, ini_platBalustradeHeight, correspondingDragItemObject);
+	}
+	public void CreateBasedPlatformStair<T>(T thisGameObject, string objName, float stairWidth, GameObject correspondingDragItemObject) where T : Component
+	{
+		basedPlatformStairIcon = new BasedPlatformStairIcon();
+		//basedPlatformStairIcon.BasedPlatformStairCreate(thisGameObject, objName, this, stairWidth, correspondingDragItemObject);
+	}
+	public override void InitIconMenuButtonUpdate()
+	{
+		if (basedPlatformBalustradeIcon != null) basedPlatformBalustradeIcon.InitIconMenuButtonUpdate();
+		if (basedPlatformStairIcon != null) basedPlatformStairIcon.InitIconMenuButtonUpdate();
+	}
+}
 public class BasedPlatformIcon : RecMeshCreate
 {
 	public enum PointIndex { LeftUpPoint = 0, RightUpPoint = 1, RightDownPoint = 2, LeftDownPoint = 3, };
-	public GameObject rightUpPoint;
-	public GameObject rightDownPoint;
-	public GameObject leftUpPoint;
-	public GameObject leftDownPoint;
 
 	public float platformHeight;
 	public float platformTopWidth;
@@ -617,7 +865,7 @@ public class BasedPlatformIcon : RecMeshCreate
 		}
 		if (basedPlatformStairIcon!= null)
 		{
-			basedPlatformStairIcon.AdjPos(this);
+			basedPlatformStairIcon.AdjPos(leftUpPoint,rightUpPoint,rightDownPoint,leftDownPoint);
 			basedPlatformStairIcon.AdjMesh();
 			basedPlatformStairIcon.UpdateLastPos();
 		}

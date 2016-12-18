@@ -88,27 +88,12 @@ public class catline : MonoBehaviour
         {
             for (int index = 0; index < controlPointList.Count - 1; index++)
             {
-                if (index == 0)
-                {
-                    p0 = controlPointList[0].transform.position;
-                    p1 = controlPointList[0].transform.position;
-                    p2 = controlPointList[1].transform.position;
-                    p3 = controlPointList[2].transform.position;
-                }
-                else if (index == controlPointList.Count - 2)
-                {
-                    p0 = controlPointList[index - 1].transform.position;
-                    p1 = controlPointList[index].transform.position;
-                    p2 = controlPointList[index + 1].transform.position;
-                    p3 = controlPointList[index + 1].transform.position;
-                }
-                else
-                {
-                    p0 = controlPointList[index - 1].transform.position;
-                    p1 = controlPointList[index].transform.position;
-                    p2 = controlPointList[index + 1].transform.position;
-                    p3 = controlPointList[index + 2].transform.position;
-                }
+     
+                 p0 = controlPointList[ Mathf.Max(index - 1,0)].transform.position;
+                 p1 = controlPointList[index].transform.position;
+				p2 = controlPointList[Mathf.Min(index + 1, controlPointList.Count - 1)].transform.position;
+                 p3 = controlPointList[Mathf.Min(index + 2,controlPointList.Count - 1)].transform.position;
+ 
 
                 float segmentation = 1 / (float)numberOfPoints;
                 float t = 0;
@@ -143,32 +128,17 @@ public class catline : MonoBehaviour
                 innerPointList.Add(newPos);
                 //t += segmentation;
             }
+			return;
         }
         else
         {
             for (int index = 0; index < controlPointList.Count - 1; index++)
             {
-                if (index == 0)
-                {
-                    p0 = controlPointList[0].transform.position;
-                    p1 = controlPointList[0].transform.position;
-                    p2 = controlPointList[1].transform.position;
-                    p3 = controlPointList[2].transform.position;
-                }
-                else if (index == controlPointList.Count - 2)
-                {
-                    p0 = controlPointList[index - 1].transform.position;
-                    p1 = controlPointList[index].transform.position;
-                    p2 = controlPointList[index + 1].transform.position;
-                    p3 = controlPointList[index + 1].transform.position;
-                }
-                else
-                {
-                    p0 = controlPointList[index - 1].transform.position;
-                    p1 = controlPointList[index].transform.position;
-                    p2 = controlPointList[index + 1].transform.position;
-                    p3 = controlPointList[index + 2].transform.position;
-                }
+
+				p0 = controlPointList[Mathf.Max(index - 1, 0)].transform.position;
+				p1 = controlPointList[index].transform.position;
+				p2 = controlPointList[Mathf.Min(index + 1, controlPointList.Count - 1)].transform.position;
+				p3 = controlPointList[Mathf.Min(index + 2, controlPointList.Count - 1)].transform.position;
 
                 float segmentation = 1 / (float)numberOfPoints;
                 float t = 0;
@@ -179,6 +149,7 @@ public class catline : MonoBehaviour
                     t += segmentation;
                 }
             }
+			return;
         }
 
     }

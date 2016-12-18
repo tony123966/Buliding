@@ -1210,11 +1210,10 @@ public class RecMeshCreate : IconObject
 		}
 	}
 }
-public class DecorateIconObject<TModel> : RecMeshCreate
-where TModel : class
+public class DecorateIconObject <T>: RecMeshCreate where T :class
 {
 	 public GameObject correspondingDragItemObject;
-	 public TModel MainComponent;
+	 public T MainComponent;
 	public void InitDecorateIconObjectSetting(GameObject correspondingDragItemObject)
 	 {
 

@@ -265,7 +265,7 @@ public class VerandaIcon : IconObject//廡殿頂
 		this.controlPointList = controlPointList;
 		InitControlPointList2lastControlPointPosition();
 
-		verandaIconWidth = initVerandaIconWidth = controlPointList[(int)PointIndex.RightMainRidgePoint].transform.position.x - controlPointList[(int)PointIndex.LeftMainRidgePoint].transform.position.x;
+		verandaIconWidth = initVerandaIconWidth = controlPointList[(int)PointIndex.RightUpPoint].transform.position.x - controlPointList[(int)PointIndex.LeftUpPoint].transform.position.x;
 		verandaIconHeight = initVerandaIconHeight = controlPointList[(int)PointIndex.RightUpPoint].transform.position.y - controlPointList[(int)PointIndex.RightDownPoint].transform.position.y;
 
 		mainRidgeWidth = initMainRidgeWidth = controlPointList[(int)PointIndex.RightMainRidgePoint].transform.position.x - controlPointList[(int)PointIndex.LeftMainRidgePoint].transform.position.x;
@@ -348,7 +348,7 @@ public class VerandaIcon : IconObject//廡殿頂
 					controlPointList[j].transform.position = new Vector3(lastControlPointPosition[j].x - (offset_x), lastControlPointPosition[j].y - (offset_y), lastControlPointPosition[j].z);
 				}
 			}
-			verandaIconWidth = controlPointList[(int)PointIndex.RightMainRidgePoint].transform.position.x - controlPointList[(int)PointIndex.LeftMainRidgePoint].transform.position.x;
+			verandaIconWidth = controlPointList[(int)PointIndex.RightUpPoint].transform.position.x - controlPointList[(int)PointIndex.LeftUpPoint].transform.position.x;
 			verandaIconHeight =controlPointList[(int)PointIndex.RightUpPoint].transform.position.y - controlPointList[(int)PointIndex.RightDownPoint].transform.position.y;
 		}
 		else//mainRidge
@@ -394,7 +394,7 @@ public class ShandingIcon : IconObject//歇山頂
 		this.controlPointList = controlPointList;
 		InitControlPointList2lastControlPointPosition();
 
-		initShandingIconWidth = controlPointList[(int)PointIndex.RightMainRidgePoint].transform.position.x - controlPointList[(int)PointIndex.LeftMainRidgePoint].transform.position.x;
+		initShandingIconWidth = controlPointList[(int)PointIndex.RightUpPoint].transform.position.x - controlPointList[(int)PointIndex.LeftUpPoint].transform.position.x;
 		initShandingIconHeight = controlPointList[(int)PointIndex.RightUpPoint].transform.position.y - controlPointList[(int)PointIndex.RightDownPoint].transform.position.y;
 
 		mFilter.mesh.vertices = new Vector3[] {
@@ -711,7 +711,7 @@ public class MeshObj : MonoBehaviour
 		edgeIndex = verandaIcon.edgeIndex;
 
 		ini_bodydis.x =bodydis.x= (controlPointList[1].transform.position.x - controlPointList[0].transform.position.x)/2.0f;
-		ini_bodydis.y =bodydis.y= controlPointList[1].transform.position.y - controlPointList[2].transform.position.y;
+		ini_bodydis.y =bodydis.y= (controlPointList[1].transform.position.y - controlPointList[2].transform.position.y)/2.0f;
 
 		ini_mainRidgedis =mainRidgedis= (controlPointList[4].transform.position.x - controlPointList[5].transform.position.x)/2.0f;
 
@@ -724,7 +724,7 @@ public class MeshObj : MonoBehaviour
 
 		edgeIndex = shandingIcon.edgeIndex;
 		ini_bodydis.x =bodydis.x= (controlPointList[1].transform.position.x - controlPointList[0].transform.position.x)/2.0f;
-		ini_bodydis.y =bodydis.y= controlPointList[1].transform.position.y - controlPointList[2].transform.position.y;
+		ini_bodydis.y =bodydis.y= (controlPointList[1].transform.position.y - controlPointList[2].transform.position.y)/2.0f;
 
 		ini_mainRidgedis =mainRidgedis= (controlPointList[4].transform.position.x - controlPointList[5].transform.position.x)/2.0f;
 		return shandingIcon;
@@ -809,7 +809,7 @@ public class MeshObj : MonoBehaviour
 					case "VerandaIcon"://specialCase
 						verandaIcon.AdjPos(tmp, i);
 						verandaIcon.AdjMesh();
-						bodydis = new Vector2(verandaIcon.verandaIconWidth / 2.0f, verandaIcon.verandaIconHeight);
+						bodydis = new Vector2(verandaIcon.verandaIconWidth / 2.0f, verandaIcon.verandaIconHeight/2.0f);
 						mainRidgedis=(controlPointList[4].transform.position.x - controlPointList[5].transform.position.x)/2.0f;
 						break;
 					case "ShandingIcon"://specialCase

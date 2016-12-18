@@ -3,18 +3,22 @@ using System.Collections;
 using System.Collections.Generic;
 public class RoofStruct
 {
-	public GameObject body = null;
 	public List<GameObject> bodyControlPointList = new List<GameObject>();
 	public List<GameObject> tailControlPointList = new List<GameObject>();
-	public catline catLine;
+	public catline catLine2Body;
+	public catline catLine2Tail;
 }
 public class BasedRoofIcon : IconObject
 {
 	public RoofStruct rightRoofLine = new RoofStruct();
 	public RoofStruct leftRoofLine = new RoofStruct();
 	Vector3 centerPos;
-	public int numberOfPoints = 10;
-	public int sliceUnit2LineRender = 1;
+	public int numberOfPoints2Body = 10;
+	public int numberOfPoints2Tail = 20;
+	public int sliceUnit2Body = 1;
+	public int sliceUnit2Tail = 1;
+	int linerRenderCount2Body = 0;
+	int linerRenderCount2Tail = 0;
 	public void CreateBasedRoofIcon<T>(T thisGameObject, string objName, List<GameObject> bodyControlPointList, List<GameObject> tailControlPointList, Vector3 centerPos) where T : Component
 	{
 		InitBodySetting(objName, (int)BodyType.GeneralBody);
@@ -26,20 +30,34 @@ public class BasedRoofIcon : IconObject
 		rightRoofLine.tailControlPointList = tailControlPointList;
 
 		//RightCatmullromLine
-		rightRoofLine.body = new GameObject("CatLine_Right");
-		rightRoofLine.body.transform.parent = thisGameObject.transform;
-		rightRoofLine.catLine = rightRoofLine.body.AddComponent<catline>();
+		GameObject body2Body = new GameObject("CatLine_Right_Body");
+		body2Body.transform.parent = thisGameObject.transform;
+		rightRoofLine.catLine2Body = body2Body.AddComponent<catline>();
+
+		GameObject body2Tail = new GameObject("CatLine_Right_Tail");
+		body2Tail.transform.parent = thisGameObject.transform;
+		rightRoofLine.catLine2Tail = body2Tail.AddComponent<catline>();
+
 		for (int i = 0; i < bodyControlPointList.Count; i++)
 		{
-			rightRoofLine.catLine.AddControlPoint(bodyControlPointList[i]);
+			rightRoofLine.catLine2Body.AddControlPoint(bodyControlPointList[i]);
+			controlPointList.Add(bodyControlPointList[i]);
 		}
-		rightRoofLine.catLine.SetLineNumberOfPoints(numberOfPoints);
-		rightRoofLine.catLine.ResetCatmullRom();
+		rightRoofLine.catLine2Tail.AddControlPoint(bodyControlPointList[bodyControlPointList.Count-1]);
+		for (int i = 0; i < tailControlPointList.Count; i++)
+		{
+			rightRoofLine.catLine2Tail.AddControlPoint(tailControlPointList[i]);
+			controlPointList.Add(tailControlPointList[i]);
+		}
 
 		//LeftCatmullromLine
-		leftRoofLine.body = new GameObject("CatLine_Left");
-		leftRoofLine.body.transform.parent = thisGameObject.transform;
-		leftRoofLine.catLine = leftRoofLine.body.AddComponent<catline>();
+		body2Body = new GameObject("CatLine_Left_Body");
+		body2Body.transform.parent = thisGameObject.transform;
+		leftRoofLine.catLine2Body = body2Body.AddComponent<catline>();
+
+		body2Tail = new GameObject("CatLine_Left_Tail");
+		body2Tail.transform.parent = thisGameObject.transform;
+		leftRoofLine.catLine2Tail = body2Tail.AddComponent<catline>();
 
 		for (int i = 0; i < bodyControlPointList.Count; i++)
 		{
@@ -47,17 +65,27 @@ public class BasedRoofIcon : IconObject
 			copy.transform.parent = thisGameObject.transform;
 			copy.transform.position = new Vector3(bodyControlPointList[i].transform.position.x - 2 * (bodyControlPointList[i].transform.position.x - centerPos.x), bodyControlPointList[i].transform.position.y, bodyControlPointList[i].transform.position.z);
 			leftRoofLine.bodyControlPointList.Add(copy);
-			leftRoofLine.catLine.AddControlPoint(copy);
+			leftRoofLine.catLine2Body.AddControlPoint(copy);
 		}
+		leftRoofLine.catLine2Tail.AddControlPoint(leftRoofLine.bodyControlPointList[leftRoofLine.bodyControlPointList.Count - 1]);
 		for (int i = 0; i < tailControlPointList.Count; i++)
 		{
 			GameObject copy = new GameObject();
 			copy.transform.parent = thisGameObject.transform;
 			copy.transform.position = new Vector3(tailControlPointList[i].transform.position.x - 2 * (tailControlPointList[i].transform.position.x - centerPos.x), tailControlPointList[i].transform.position.y, tailControlPointList[i].transform.position.z);
 			leftRoofLine.tailControlPointList.Add(copy);
+			leftRoofLine.catLine2Tail.AddControlPoint(copy);
 		}
-		leftRoofLine.catLine.SetLineNumberOfPoints(numberOfPoints);
-		leftRoofLine.catLine.ResetCatmullRom();
+		InitControlPointList2lastControlPointPosition();
+
+		rightRoofLine.catLine2Body.SetLineNumberOfPoints(numberOfPoints2Body);
+		rightRoofLine.catLine2Body.ResetCatmullRom();
+		rightRoofLine.catLine2Tail.SetLineNumberOfPoints(numberOfPoints2Tail);
+		rightRoofLine.catLine2Tail.ResetCatmullRom();
+		leftRoofLine.catLine2Body.SetLineNumberOfPoints(numberOfPoints2Body);
+		leftRoofLine.catLine2Body.ResetCatmullRom();
+		leftRoofLine.catLine2Tail.SetLineNumberOfPoints(numberOfPoints2Tail);
+		leftRoofLine.catLine2Tail.ResetCatmullRom();
 
 		SetParent2BodyAndControlPointList(thisGameObject);
 		InitLineRender(thisGameObject);
@@ -67,34 +95,49 @@ public class BasedRoofIcon : IconObject
 
 		AdjMesh();
 	}
-	public void AdjPos()
+	public void AdjPos(Vector3 tmp,GameObject chooseObj)
 	{
-		rightRoofLine.catLine.ResetCatmullRom();
+		rightRoofLine.catLine2Body.ResetCatmullRom();
 		for (int i = 0; i < leftRoofLine.bodyControlPointList.Count; i++)
 		{
 			leftRoofLine.bodyControlPointList[i].transform.position = new Vector3(rightRoofLine.bodyControlPointList[i].transform.position.x - 2 * (rightRoofLine.bodyControlPointList[i].transform.position.x - centerPos.x), rightRoofLine.bodyControlPointList[i].transform.position.y, rightRoofLine.bodyControlPointList[i].transform.position.z);
 		}
-		leftRoofLine.catLine.ResetCatmullRom();
+		if (chooseObj == rightRoofLine.bodyControlPointList[rightRoofLine.bodyControlPointList.Count-1])
+		{
+			Vector3 offset=rightRoofLine.bodyControlPointList[rightRoofLine.bodyControlPointList.Count-1].transform.position-lastControlPointPosition[rightRoofLine.bodyControlPointList.Count-1];
+			for(int i=0;i<rightRoofLine.tailControlPointList.Count;i++)
+			{
+				rightRoofLine.tailControlPointList[i].transform.position += offset;
+			}
+		}
+		for (int i = 0; i < leftRoofLine.tailControlPointList.Count; i++)
+		{
+			leftRoofLine.tailControlPointList[i].transform.position = new Vector3(rightRoofLine.tailControlPointList[i].transform.position.x - 2 * (rightRoofLine.tailControlPointList[i].transform.position.x - centerPos.x), rightRoofLine.tailControlPointList[i].transform.position.y, rightRoofLine.tailControlPointList[i].transform.position.z);
+		}
+		leftRoofLine.catLine2Body.ResetCatmullRom();
+		rightRoofLine.catLine2Tail.ResetCatmullRom();
+		leftRoofLine.catLine2Tail.ResetCatmullRom();
+		UpdateLastPos();
 	}
 	public void AdjMesh()
 	{
-		int innerPointCount = rightRoofLine.catLine.innerPointList.Count;
-		float uvR = (rightRoofLine.catLine.innerPointList[rightRoofLine.catLine.innerPointList.Count - 1].x - leftRoofLine.catLine.innerPointList[rightRoofLine.catLine.innerPointList.Count - 1].x)/((float)innerPointCount*2);
+		int innerPointCount = rightRoofLine.catLine2Body.innerPointList.Count;
+		float uvR = (rightRoofLine.catLine2Body.innerPointList[rightRoofLine.catLine2Body.innerPointList.Count - 1].x - leftRoofLine.catLine2Body.innerPointList[rightRoofLine.catLine2Body.innerPointList.Count - 1].x) / ((float)innerPointCount * 2);
 		Vector3[] v = new Vector3[4 * innerPointCount];
 		Vector3[] n = new Vector3[4 * innerPointCount];
 		//Vector2[] uv = new Vector2[2 * innerPointCount];
 		int[] t = new int[6 * (innerPointCount-1) * 2+6];
 		for (int i = 0; i < innerPointCount; i++)
 		{
-			v[i] = rightRoofLine.catLine.innerPointList[i];
+			v[i] = rightRoofLine.catLine2Body.innerPointList[i];
 		}
 		for (int i = 0; i < innerPointCount; i++)
 		{
-			v[i + innerPointCount] = leftRoofLine.catLine.innerPointList[i];
+			v[i + innerPointCount] = leftRoofLine.catLine2Body.innerPointList[i];
 		}
 		for (int i = 0; i < innerPointCount*2; i++)
 		{
-			v[i + innerPointCount*2] = leftRoofLine.catLine.innerPointList[leftRoofLine.catLine.innerPointList.Count - 1] + new Vector3(uvR * (i + 1), 0, 0);
+			v[i + innerPointCount * 2] = leftRoofLine.catLine2Body.innerPointList[leftRoofLine.catLine2Body.innerPointList.Count - 1] + new Vector3(uvR * (i + 1), 0, 0);
 		}
 		int index = 0;
 
@@ -178,34 +221,44 @@ public class BasedRoofIcon : IconObject
 	}
 	public override void InitLineRender<T>(T thisGameObject)
 	{
-
-		for (int i = 0; i < rightRoofLine.catLine.innerPointList.Count; i += sliceUnit2LineRender)
+		for (int i = 0; i < rightRoofLine.catLine2Tail.innerPointList.Count-1; i += sliceUnit2Tail)
 		{
-			if ((i >= rightRoofLine.catLine.innerPointList.Count - 1)) i = rightRoofLine.catLine.innerPointList.Count - 1;
-			CreateLineRenderer(thisGameObject, rightRoofLine.catLine.innerPointList[i], rightRoofLine.catLine.innerPointList[(i + sliceUnit2LineRender) > rightRoofLine.catLine.innerPointList.Count - 1 ? rightRoofLine.catLine.innerPointList.Count - 1 : (i + sliceUnit2LineRender)]);
+			i = Mathf.Min(i, rightRoofLine.catLine2Tail.innerPointList.Count - 1);
+			CreateLineRenderer(thisGameObject, rightRoofLine.catLine2Tail.innerPointList[i], rightRoofLine.catLine2Tail.innerPointList[Mathf.Min((i + sliceUnit2Tail), rightRoofLine.catLine2Tail.innerPointList.Count - 1)]);
+			linerRenderCount2Tail++;
+			if (i == rightRoofLine.catLine2Tail.innerPointList.Count - 1) return;
 		}
-		for (int i = 0; i < leftRoofLine.catLine.innerPointList.Count; i += sliceUnit2LineRender)
+		for (int i = 0; i < leftRoofLine.catLine2Tail.innerPointList.Count-1; i += sliceUnit2Tail)
 		{
-			if ((i >= leftRoofLine.catLine.innerPointList.Count - 1)) i = leftRoofLine.catLine.innerPointList.Count - 1;
-			CreateLineRenderer(thisGameObject, leftRoofLine.catLine.innerPointList[i], leftRoofLine.catLine.innerPointList[(i + sliceUnit2LineRender) > leftRoofLine.catLine.innerPointList.Count - 1 ? leftRoofLine.catLine.innerPointList.Count - 1 : (i + sliceUnit2LineRender)]);
+			i = Mathf.Min(i, leftRoofLine.catLine2Tail.innerPointList.Count - 1);
+			CreateLineRenderer(thisGameObject, leftRoofLine.catLine2Tail.innerPointList[i], leftRoofLine.catLine2Tail.innerPointList[Mathf.Min((i + sliceUnit2Tail), leftRoofLine.catLine2Tail.innerPointList.Count - 1)]);
+			linerRenderCount2Tail++;
+			if (i == leftRoofLine.catLine2Tail.innerPointList.Count - 1) return;
 		}
-		CreateLineRenderer(thisGameObject, leftRoofLine.catLine.innerPointList[0], rightRoofLine.catLine.innerPointList[0]);
-		CreateLineRenderer(thisGameObject, leftRoofLine.catLine.innerPointList[leftRoofLine.catLine.innerPointList.Count - 1], rightRoofLine.catLine.innerPointList[rightRoofLine.catLine.innerPointList.Count - 1]);
 	}
 	public override void UpdateLineRender()
 	{
-
-		int size = lineRenderList.Count - 2;
+		int size = linerRenderCount2Body;
 		for (int i = 0; i < size / 2; i++)
 		{
-			AdjLineRenderer(i, rightRoofLine.catLine.innerPointList[i * sliceUnit2LineRender], rightRoofLine.catLine.innerPointList[(i * sliceUnit2LineRender + sliceUnit2LineRender) > rightRoofLine.catLine.innerPointList.Count - 1 ? rightRoofLine.catLine.innerPointList.Count - 1 : (i * sliceUnit2LineRender + sliceUnit2LineRender)]);
+			AdjLineRenderer(i, rightRoofLine.catLine2Body.innerPointList[i * sliceUnit2Body], rightRoofLine.catLine2Body.innerPointList[Mathf.Min((i * sliceUnit2Body + sliceUnit2Body),rightRoofLine.catLine2Body.innerPointList.Count - 1 )]);
 		}
-		for (int i = size / 2; i < size; i++)
+		for (int i = 0; i < size / 2; i++)
 		{
-			AdjLineRenderer(i, leftRoofLine.catLine.innerPointList[(i - size / 2) * sliceUnit2LineRender], leftRoofLine.catLine.innerPointList[((i - size / 2) * sliceUnit2LineRender + sliceUnit2LineRender) > leftRoofLine.catLine.innerPointList.Count - 1 ? leftRoofLine.catLine.innerPointList.Count - 1 : ((i - size / 2) * sliceUnit2LineRender + sliceUnit2LineRender)]);
+			AdjLineRenderer(i + size / 2, leftRoofLine.catLine2Body.innerPointList[i * sliceUnit2Body], leftRoofLine.catLine2Body.innerPointList[Mathf.Min((i * sliceUnit2Body + sliceUnit2Body), leftRoofLine.catLine2Body.innerPointList.Count - 1)]);
 		}
-		AdjLineRenderer(size, leftRoofLine.catLine.innerPointList[0], rightRoofLine.catLine.innerPointList[0]);
-		AdjLineRenderer(size + 1, leftRoofLine.catLine.innerPointList[leftRoofLine.catLine.innerPointList.Count - 1], rightRoofLine.catLine.innerPointList[rightRoofLine.catLine.innerPointList.Count - 1]);
+		AdjLineRenderer(size, leftRoofLine.catLine2Body.innerPointList[0], rightRoofLine.catLine2Body.innerPointList[0]);
+		AdjLineRenderer(size + 1, leftRoofLine.catLine2Body.innerPointList[leftRoofLine.catLine2Body.innerPointList.Count - 1], rightRoofLine.catLine2Body.innerPointList[rightRoofLine.catLine2Body.innerPointList.Count - 1]);
+
+		size = linerRenderCount2Tail;
+		for (int i = 0; i < size / 2; i++)
+		{
+			AdjLineRenderer(i + linerRenderCount2Body+2, rightRoofLine.catLine2Tail.innerPointList[i * sliceUnit2Tail], rightRoofLine.catLine2Tail.innerPointList[Mathf.Min((i * sliceUnit2Tail + sliceUnit2Tail), rightRoofLine.catLine2Tail.innerPointList.Count - 1)]);
+		}
+		for (int i = 0; i < size / 2; i++)
+		{
+			AdjLineRenderer(i + size / 2 + linerRenderCount2Body+2, leftRoofLine.catLine2Tail.innerPointList[i * sliceUnit2Tail], leftRoofLine.catLine2Tail.innerPointList[Mathf.Min((i * sliceUnit2Tail + sliceUnit2Tail), leftRoofLine.catLine2Tail.innerPointList.Count - 1)]);
+		}
 	}
 	public void SetIconObjectColor()
 	{
@@ -279,7 +332,10 @@ public class Testing : MonoBehaviour
 	}
 	public void adjPos()
 	{
-		basedRoofIcon.AdjPos();
+		Vector3 tmp = dragitemcontroller.chooseObj.transform.position;
+		GameObject chooseObj = dragitemcontroller.chooseObj;
+
+		basedRoofIcon.AdjPos(tmp, chooseObj);
 		basedRoofIcon.AdjMesh();
 
 
