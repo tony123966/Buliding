@@ -221,14 +221,30 @@ public class BasedRoofIcon : IconObject
 	}
 	public override void InitLineRender<T>(T thisGameObject)
 	{
-		for (int i = 0; i < rightRoofLine.catLine2Tail.innerPointList.Count-1; i += sliceUnit2Tail)
+		for (int i = 0; i < rightRoofLine.catLine2Body.innerPointList.Count - 1; i += sliceUnit2Body)
+		{
+			i = Mathf.Min(i, rightRoofLine.catLine2Body.innerPointList.Count - 1);
+			CreateLineRenderer(thisGameObject, rightRoofLine.catLine2Body.innerPointList[i], rightRoofLine.catLine2Body.innerPointList[Mathf.Min((i + sliceUnit2Tail), rightRoofLine.catLine2Body.innerPointList.Count - 1)]);
+			linerRenderCount2Body++;
+			if (i == rightRoofLine.catLine2Body.innerPointList.Count - 1) return;
+		}
+		for (int i = 0; i < leftRoofLine.catLine2Body.innerPointList.Count - 1; i += sliceUnit2Body)
+		{
+			i = Mathf.Min(i, leftRoofLine.catLine2Body.innerPointList.Count - 1);
+			CreateLineRenderer(thisGameObject, leftRoofLine.catLine2Tail.innerPointList[i], leftRoofLine.catLine2Body.innerPointList[Mathf.Min((i + sliceUnit2Tail), leftRoofLine.catLine2Body.innerPointList.Count - 1)]);
+			linerRenderCount2Body++;
+			if (i == leftRoofLine.catLine2Body.innerPointList.Count - 1) return;
+		}
+		CreateLineRenderer(thisGameObject, leftRoofLine.catLine2Body.innerPointList[0], rightRoofLine.catLine2Body.innerPointList[0]);
+		CreateLineRenderer(thisGameObject, leftRoofLine.catLine2Body.innerPointList[leftRoofLine.catLine2Body.innerPointList.Count - 1], rightRoofLine.catLine2Body.innerPointList[rightRoofLine.catLine2Body.innerPointList.Count - 1]);
+		for (int i = 0; i < rightRoofLine.catLine2Tail.innerPointList.Count - 1; i += sliceUnit2Tail)
 		{
 			i = Mathf.Min(i, rightRoofLine.catLine2Tail.innerPointList.Count - 1);
 			CreateLineRenderer(thisGameObject, rightRoofLine.catLine2Tail.innerPointList[i], rightRoofLine.catLine2Tail.innerPointList[Mathf.Min((i + sliceUnit2Tail), rightRoofLine.catLine2Tail.innerPointList.Count - 1)]);
 			linerRenderCount2Tail++;
 			if (i == rightRoofLine.catLine2Tail.innerPointList.Count - 1) return;
 		}
-		for (int i = 0; i < leftRoofLine.catLine2Tail.innerPointList.Count-1; i += sliceUnit2Tail)
+		for (int i = 0; i < leftRoofLine.catLine2Tail.innerPointList.Count - 1; i += sliceUnit2Tail)
 		{
 			i = Mathf.Min(i, leftRoofLine.catLine2Tail.innerPointList.Count - 1);
 			CreateLineRenderer(thisGameObject, leftRoofLine.catLine2Tail.innerPointList[i], leftRoofLine.catLine2Tail.innerPointList[Mathf.Min((i + sliceUnit2Tail), leftRoofLine.catLine2Tail.innerPointList.Count - 1)]);
