@@ -83,7 +83,7 @@ public class lineRendererControl
 }
 
 public class IconObject : lineRendererControl
-{
+{	public enum PointIndex { LeftUpPoint = 0, RightUpPoint = 1, RightDownPoint = 2, LeftDownPoint = 3, };
 	public enum BodyType { GeneralBody = 0, CylinderBody = 1,}
 	public List<GameObject> controlPointList = new List<GameObject>();
 	public Vector3[] lastControlPointPosition = null;
@@ -190,6 +190,7 @@ public class IconObject : lineRendererControl
 	}
 	public void UpdateLastPos()
 	{
+	Debug.Log("njfdjm");
 		if (lastControlPointPosition==null)return;
 		if (lastControlPointPosition.Length < controlPointList.Count)
 		{
@@ -199,6 +200,7 @@ public class IconObject : lineRendererControl
 		{
 			lastControlPointPosition[i] = controlPointList[i].transform.position;
 		}
+		Debug.Log("okoko");
 	}
 	public override void InitLineRender<T>(T thisGameObject)
 	{

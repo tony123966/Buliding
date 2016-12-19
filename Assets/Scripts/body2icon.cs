@@ -1154,12 +1154,10 @@ using System.Collections.Generic;
 
 public class RecMeshCreate : IconObject
 {
-	public enum PointIndex { LeftUpPoint = 0, RightUpPoint = 1, RightDownPoint = 2, LeftDownPoint = 3, };
 	public GameObject rightUpPoint;
 	public GameObject rightDownPoint;
 	public GameObject leftUpPoint;
 	public GameObject leftDownPoint;
-
 	public Mesh CreatRecMesh(Vector3 lu, Vector3 ru, Vector3 rd, Vector3 ld, Mesh ismesh)
 	{
 		if (!ismesh)
@@ -1210,10 +1208,9 @@ public class RecMeshCreate : IconObject
 		}
 	}
 }
-public class DecorateIconObject <T>: RecMeshCreate where T :class
+public class DecorateIconObject : RecMeshCreate
 {
-	 public GameObject correspondingDragItemObject;
-	 public T MainComponent;
+	public GameObject correspondingDragItemObject;
 	public void InitDecorateIconObjectSetting(GameObject correspondingDragItemObject)
 	 {
 
@@ -1233,7 +1230,7 @@ public class DecorateIconObject <T>: RecMeshCreate where T :class
 	 
 	 }
 }
-public class MutiColumnIcon : DecorateIconObject<ColumnIcon>
+public class MutiColumnIcon : DecorateIconObject
 {
 	public Vector3 upPoint;
 	public Vector3 downPoint;
@@ -1277,7 +1274,7 @@ public class MutiColumnIcon : DecorateIconObject<ColumnIcon>
 		mutiColumnIconCount = iconMenuControl.scrollBarButton.scrollBarIconValue;
 	}
 }
-public class DoubleRoofIcon : DecorateIconObject<ColumnIcon>
+public class DoubleRoofIcon : DecorateIconObject
 {
 
 	public Vector3 rightUpPoint;
@@ -1290,7 +1287,6 @@ public class DoubleRoofIcon : DecorateIconObject<ColumnIcon>
 	public void DoubleRoofIconCreate<T>(T thisGameObject, string objName, ColumnIcon columnIcon, float doubleRoofHeight, float doubleRoofWidth, GameObject correspondingDragItemObject)
 	where T : Component
 	{
-		MainComponent=columnIcon;
 		InitBodySetting(objName, (int)BodyType.GeneralBody);
 		InitIconMenuButtonSetting();
 
@@ -1370,12 +1366,11 @@ public class DoubleRoofIcon : DecorateIconObject<ColumnIcon>
 		}
 	}
 }
-public class FriezeIcon : DecorateIconObject<ColumnIcon>
+public class FriezeIcon : DecorateIconObject
 {
 	public float friezeHeight;
 	public void FriezeIconCreate<T>(T thisGameObject, string objName, ColumnIcon columnIcon, float ini_friezeHeight,GameObject correspondingDragItemObject) where T : Component
 	{
-		MainComponent = columnIcon;
 		InitBodySetting(objName, (int)BodyType.GeneralBody);
 		InitIconMenuButtonSetting();
 
@@ -1467,7 +1462,7 @@ public class FriezeIcon : DecorateIconObject<ColumnIcon>
 		}
 	}
 }
-public class WallIcon : DecorateIconObject<ColumnIcon>
+public class WallIcon: DecorateIconObject
 {
 	public enum PointIndex { LeftUpPoint = 0, RightUpPoint = 1, RightDownPoint = 2, LeftDownPoint = 3, LeftUpWindowPoint = 4, RightUpWindowPoint = 5, RightDownWindowPoint = 6, LeftDownWindowPoint = 7, };
 
@@ -1484,6 +1479,8 @@ public class WallIcon : DecorateIconObject<ColumnIcon>
 	public float initWallWidth;
 	public float initWallHeight;
 	public float initWindowsHeight;
+
+	ColumnIcon MainComponent;
 	public void WallIconCreate<T>(T thisGameObject, string objName, ColumnIcon columnIcon, float ini_wallWidth, float ini_windowsHeight, GameObject correspondingDragItemObject) where T : Component
 	{
 		MainComponent=columnIcon;
@@ -1734,12 +1731,11 @@ public class WallIcon : DecorateIconObject<ColumnIcon>
 		windowIconCount = iconMenuControl.scrollBarButton.scrollBarIconValue;
 	}
 }
-public class BalustradeIcon : DecorateIconObject<ColumnIcon>
+public class BalustradeIcon : DecorateIconObject
 {
 	public float balustradeHeight;
 	public void BalustradeIconCreate<T>(T thisGameObject, string objName, ColumnIcon columnIcon, float ini_balustradeHeight, GameObject correspondingDragItemObject) where T : Component
 	{
-		MainComponent = columnIcon;
 		InitBodySetting(objName, (int)BodyType.GeneralBody);
 		InitIconMenuButtonSetting();
 
