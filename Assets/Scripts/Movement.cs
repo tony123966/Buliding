@@ -26,9 +26,8 @@ public class Movement : MonoBehaviour
         List<GameObject> freelist = new List<GameObject>();
 
     }
-    public void Move(Vector2 mospos_)
+	public void Move(Vector2 mospos_)
     {
-
         //1.找自己在哪個list ver or hor
         GameObject obj = dragitemcontroller.chooseObj;
 
@@ -63,29 +62,28 @@ public class Movement : MonoBehaviour
             obj.transform.position = obj.transform.parent.GetComponent<MeshObj>().ClampPos(setPos);
             obj.transform.parent.GetComponent<MeshObj>().adjPos();
         }
-		if (obj.transform.root.GetComponent<platform2icon>())
+		else if (obj.transform.root.GetComponent<platform2icon>())
         {
 			obj.transform.position = obj.transform.root.GetComponent<platform2icon>().ClampPos(setPos);
 			obj.transform.root.GetComponent<platform2icon>().adjPos();
         }
 
-        if (obj.transform.root.GetComponent<body2icon>())
+        else if (obj.transform.root.GetComponent<body2icon>())
         {
 			obj.transform.position = obj.transform.root.GetComponent<body2icon>().ClampPos(setPos);
 			obj.transform.root.GetComponent<body2icon>().adjPos();
         }
         //***********
-        if (obj.transform.parent.GetComponent<rooficon>())
+        else if (obj.transform.parent.GetComponent<rooficon>())
         {
             obj.transform.position = setPos;
             obj.transform.parent.GetComponent<rooficon>().reset();
         }
-        if (obj.transform.parent.GetComponent<Testing>())
+		else if (obj.transform.parent.GetComponent<Testing>())
         {
-            obj.transform.position = setPos;
+			obj.transform.position = obj.transform.parent.GetComponent<Testing>().ClampPos(setPos);
             obj.transform.parent.GetComponent<Testing>().adjPos();
         }
-
     }
     public void intiAllList()
     {

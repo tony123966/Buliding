@@ -282,11 +282,11 @@ public class BasedPlatformBalustradeIcon<M> : DecorateIconObject where M : class
 
 	public int mutiColumnIconCount = 3;
 	public int mutiColumnIconMaxCount = 13;
-	public float balustradeColumnHeight;
-	public float balustradeColumnWidth;
+	public float columnHeight;
+	public float columnWidth;
 
-	public float initBalustradeColumnHeight;
-	public float initBalustradeColumnWidth;
+	public float initColumnHeight;
+	public float initColumnWidth;
 
 	float offset = 0.01f;
 	PlatFormIcon MainComponent;
@@ -295,13 +295,13 @@ public class BasedPlatformBalustradeIcon<M> : DecorateIconObject where M : class
 	{
 		
 		MainComponent = platformIcon as PlatFormIcon;
-Debug.Log("fdfdfdfdf"+MainComponent);
+
 		InitBodySetting(thisGameObject);
 		InitIconMenuButtonSetting();
 
 		Vector3 h = new Vector3(0.0f, columnHeight, 0.0f);
 		Vector3 offsetVector = new Vector3(0.0f, offset, 0.0f);
-		Debug.Log("dsdsdsd" + MainComponent.rightUpPoint);
+
 		Vector3 rightDownPointPos = MainComponent.rightUpPoint.transform.position + offsetVector;
 		Vector3 leftDownPointPos = MainComponent.leftUpPoint.transform.position + offsetVector;
 		Vector3 rightUpPointPos = rightDownPointPos + h;
@@ -314,17 +314,16 @@ Debug.Log("fdfdfdfdf"+MainComponent);
 
 		leftColumn = new Column("BasedPlatformBalustradeIcon", leftUpPoint, leftDownPoint, columnHeight);
 		rightColumn = new Column("BasedPlatformBalustradeIcon", rightUpPoint, rightDownPoint, columnHeight);
-		initBalustradeColumnHeight = balustradeColumnHeight = columnHeight;
-		initBalustradeColumnWidth = balustradeColumnWidth = rightDownPointPos.x - leftDownPointPos.x;
+		initColumnHeight = this.columnHeight = columnHeight;
+		initColumnWidth = this.columnWidth = rightDownPointPos.x - leftDownPointPos.x;
 
-
+		centerX = (rightUpPointPos.x + leftUpPointPos.x) / 2.0f;
 
 		body = new List<GameObject>();
 		body.Add(leftColumn.body);
 		body.Add(rightColumn.body);
 
 
-		//mFilter.mesh = CreatRecMesh(leftUpPoint.transform.position, rightUpPoint.transform.position, rightDownPoint.transform.position, leftDownPoint.transform.position, mFilter.mesh);
 		//初始位置
 		controlPointList.Add(leftColumn.upPoint);
 		controlPointList.Add(rightColumn.upPoint);
@@ -392,35 +391,37 @@ where T : Component
 		float minClampY = float.MinValue;
 		float maxClampY = float.MaxValue;
 
-		float minWidth = (initBalustradeColumnWidth) * 0.4f;
-		float minHeight = (initBalustradeColumnHeight) * 0.4f;
+		float minWidth = closerDis;
+		float minHeight = (initColumnHeight) * 0.4f;
 
 		if (chooseObj == rightUpPoint)
 		{
 			minClampY = rightDownPoint.transform.position.y + minHeight;
+		
 		}
 		else if (chooseObj == leftUpPoint)
 		{
 			minClampY = leftDownPoint.transform.position.y + minHeight;
+		
 		}
 		else if (chooseObj == rightDownPoint)
 		{
+			minClampX = centerX + minWidth;
 			maxClampX = MainComponent.rightUpPoint.transform.position.x;
-			minClampX = leftUpPoint.transform.position.x + minWidth;
 		}
 		else if (chooseObj == leftDownPoint)
 		{
-			maxClampX = rightUpPoint.transform.position.x - minWidth;
+			maxClampX = centerX - minWidth;
 			minClampX = MainComponent.leftUpPoint.transform.position.x;
 		}
 		else if (chooseObj == rightColumn.body)
 		{
+			minClampX = centerX + minWidth;
 			maxClampX = MainComponent.rightUpPoint.transform.position.x;
-			minClampX = leftUpPoint.transform.position.x + minWidth;
 		}
 		else if (chooseObj == leftColumn.body)
 		{
-			maxClampX = rightUpPoint.transform.position.x - minWidth;
+			maxClampX = centerX - minWidth;
 			minClampX = MainComponent.leftUpPoint.transform.position.x;
 		}
 
@@ -433,18 +434,18 @@ where T : Component
 		float OffsetX = 0;
 		if (chooseObject == leftUpPoint || chooseObject == rightUpPoint)
 		{
-			balustradeColumnHeight = (tmp.y - rightColumn.downPoint.transform.position.y);
-			balustradeColumnHeight = Mathf.Abs(balustradeColumnHeight);
+			columnHeight = (tmp.y - rightColumn.downPoint.transform.position.y);
+			columnHeight = Mathf.Abs(columnHeight);
 			//update point
 			rightColumn.upPoint.transform.position = new Vector3(rightColumn.upPoint.transform.position.x, tmp.y, rightColumn.upPoint.transform.position.z);
 			leftColumn.upPoint.transform.position = new Vector3(leftColumn.upPoint.transform.position.x, tmp.y, leftColumn.upPoint.transform.position.z);
 
-			rightColumn.body.transform.position = new Vector3(rightColumn.upPoint.transform.position.x, rightColumn.upPoint.transform.position.y - balustradeColumnHeight / 2.0f, rightColumn.upPoint.transform.position.z);
+			rightColumn.body.transform.position = new Vector3(rightColumn.upPoint.transform.position.x, rightColumn.upPoint.transform.position.y - columnHeight / 2.0f, rightColumn.upPoint.transform.position.z);
 
-			leftColumn.body.transform.position = new Vector3(leftColumn.upPoint.transform.position.x, leftColumn.upPoint.transform.position.y - balustradeColumnHeight / 2.0f, leftColumn.upPoint.transform.position.z);
+			leftColumn.body.transform.position = new Vector3(leftColumn.upPoint.transform.position.x, leftColumn.upPoint.transform.position.y - columnHeight / 2.0f, leftColumn.upPoint.transform.position.z);
 
-			rightColumn.body.transform.localScale = new Vector3(rightColumn.radius, balustradeColumnHeight / 2.0f, rightColumn.radius);
-			leftColumn.body.transform.localScale = new Vector3(leftColumn.radius, balustradeColumnHeight / 2.0f, leftColumn.radius);
+			rightColumn.body.transform.localScale = new Vector3(rightColumn.radius, columnHeight / 2.0f, rightColumn.radius);
+			leftColumn.body.transform.localScale = new Vector3(leftColumn.radius, columnHeight / 2.0f, leftColumn.radius);
 		}
 		else if (chooseObject == rightColumn.body || chooseObject == rightDownPoint)
 		{
@@ -456,7 +457,7 @@ where T : Component
 				leftColumn.controlPointList[i].transform.position = new Vector3(leftColumn.controlPointList[i].transform.position.x - (OffsetX), leftColumn.controlPointList[i].transform.position.y, leftColumn.controlPointList[i].transform.position.z);
 
 			}
-			balustradeColumnWidth = rightDownPoint.transform.position.x - leftDownPoint.transform.position.x;
+			columnWidth = rightDownPoint.transform.position.x - leftDownPoint.transform.position.x;
 		}
 		else if (chooseObject == leftColumn.body || chooseObject == leftDownPoint)
 		{
@@ -467,7 +468,7 @@ where T : Component
 				leftColumn.controlPointList[i].transform.position = new Vector3(tmp.x, leftColumn.controlPointList[i].transform.position.y, leftColumn.controlPointList[i].transform.position.z);
 				rightColumn.controlPointList[i].transform.position = new Vector3(rightColumn.controlPointList[i].transform.position.x - (OffsetX), rightColumn.controlPointList[i].transform.position.y, rightColumn.controlPointList[i].transform.position.z);
 			}
-			balustradeColumnWidth = rightDownPoint.transform.position.x - leftDownPoint.transform.position.x;
+			columnWidth = rightDownPoint.transform.position.x - leftDownPoint.transform.position.x;
 		}
 
 		rightColumn.UpdateLastPos();
@@ -525,9 +526,10 @@ public class CurvePlatformIcon : PlatFormIcon
 	public void CurvePlatformIconCreate<T>(T thisGameObject, string objName, GameObject leftUpPoint, GameObject rightUpPoint, GameObject rightDownPoint, GameObject leftDownPoint, GameObject leftMidPoint, GameObject rightMidPoint)
 	where T : Component
 	{
-	Debug.Log("vvvvv");
 		InitBodySetting(objName, (int)BodyType.GeneralBody);
 		InitIconMenuButtonSetting();
+
+		centerX=(leftUpPoint.transform.position.x+rightUpPoint.transform.position.x)/2.0f;
 
 		this.leftUpPoint = leftUpPoint;
 		this.rightUpPoint = rightUpPoint;
@@ -585,7 +587,6 @@ public class CurvePlatformIcon : PlatFormIcon
 	}
 	public void AdjMesh()
 	{
-		Debug.Log("kopfkgpofkdg");
 		int innerPointCount = rightPlatformLine.catLine.innerPointList.Count;
 
 		Vector3[] v = new Vector3[2 * innerPointCount];
@@ -602,14 +603,14 @@ public class CurvePlatformIcon : PlatFormIcon
 			v[i + innerPointCount] = leftPlatformLine.catLine.innerPointList[i];
 		}
 		int index = 0;
-		for (int i = 0; i < rightPlatformLine.catLine.innerPointList.Count - 1; i++)
+		for (int i = 0; i < innerPointCount - 1; i++)
 		{
 			t[index] = i;
 			t[index + 1] = (i + 1);
-			t[index + 2] = i + rightPlatformLine.catLine.innerPointList.Count;
-			t[index + 3] = i + rightPlatformLine.catLine.innerPointList.Count;
+			t[index + 2] = i + innerPointCount;
+			t[index + 3] = i + innerPointCount;
 			t[index + 4] = (i + 1);
-			t[index + 5] = (i + 1) + rightPlatformLine.catLine.innerPointList.Count;
+			t[index + 5] = (i + 1) + innerPointCount;
 			index += 6;
 		}
 		for (int i = 0; i < 2 * innerPointCount; i++)
@@ -623,7 +624,6 @@ public class CurvePlatformIcon : PlatFormIcon
 
 		mFilter.mesh.RecalculateNormals();
 		mFilter.mesh.RecalculateBounds();
-		Debug.Log("fhjdhfjkdnfk");
 		//mFilter.mesh.uv = uv;
 		UpdateLineRender();
 		UpdateCollider();
@@ -663,50 +663,60 @@ public class CurvePlatformIcon : PlatFormIcon
 	}
 	public Vector3 ClampPos(Vector3 inputPos, GameObject chooseObj)
 	{
+
 		float minClampX = float.MinValue;
 		float maxClampX = float.MaxValue;
 		float minClampY = float.MinValue;
 		float maxClampY = float.MaxValue;
 
-		float minWidth = (initPlatformTopWidth) * 0.4f;
-		float minHeight = (initPlatformHeight) * 0.4f;
-
+		float minWidth = initPlatformTopWidth*0.2f;
+		float minHeight = initPlatformHeight*0.2f;
 		if (chooseObj == controlPointList[(int)PointIndex.LeftUpPoint])
 		{
 			if (basedPlatformBalustradeIcon != null)
 				maxClampX = basedPlatformBalustradeIcon.leftUpPoint.transform.position.x;
 			else
-				maxClampX = controlPointList[(int)PointIndex.RightUpPoint].transform.position.x - minWidth;
-			minClampY = controlPointList[(int)PointIndex.LeftDownPoint].transform.position.y + minHeight;
+				maxClampX = centerX - minWidth/2.0f;
+			minClampY = controlPointList[(int)PointIndex.LeftMidPoint].transform.position.y + minHeight/2.0f;
 		}
 		else if (chooseObj == controlPointList[(int)PointIndex.LeftDownPoint])
 		{
-			maxClampX = controlPointList[(int)PointIndex.RightDownPoint].transform.position.x - minWidth;
-			maxClampY = controlPointList[(int)PointIndex.LeftUpPoint].transform.position.y - minHeight;
+			maxClampX = centerX - minWidth/2.0f;
+			maxClampY = controlPointList[(int)PointIndex.LeftMidPoint].transform.position.y - minHeight / 2.0f;
 		}
 		else if (chooseObj == controlPointList[(int)PointIndex.RightUpPoint])
 		{
 			if (basedPlatformBalustradeIcon != null)
 				minClampX = basedPlatformBalustradeIcon.rightUpPoint.transform.position.x;
 			else
-				minClampX = controlPointList[(int)PointIndex.LeftUpPoint].transform.position.x + minWidth;
+				minClampX = centerX + minWidth / 2.0f;
 
-			minClampY = controlPointList[(int)PointIndex.RightDownPoint].transform.position.y + minHeight;
+			minClampY = controlPointList[(int)PointIndex.RightMidPoint].transform.position.y + minHeight / 2.0f;
 
 		}
 		else if (chooseObj == controlPointList[(int)PointIndex.RightDownPoint])
 		{
-			minClampX = controlPointList[(int)PointIndex.LeftDownPoint].transform.position.x + minWidth;
-			maxClampY = controlPointList[(int)PointIndex.RightUpPoint].transform.position.y - minHeight;
+			minClampX = centerX + minWidth / 2.0f;
+			maxClampY = controlPointList[(int)PointIndex.RightMidPoint].transform.position.y - minHeight / 2.0f;
 		}
-
+		else if (chooseObj == controlPointList[(int)PointIndex.RightMidPoint])
+		{
+			minClampX = centerX + minWidth / 2.0f;
+			maxClampY = controlPointList[(int)PointIndex.RightUpPoint].transform.position.y - minHeight / 2.0f;
+			minClampY = controlPointList[(int)PointIndex.RightDownPoint].transform.position.y + minHeight / 2.0f;
+		}
+		else if (chooseObj == controlPointList[(int)PointIndex.LeftMidPoint])
+		{
+			maxClampX = centerX -minWidth / 2.0f;
+			maxClampY = controlPointList[(int)PointIndex.LeftUpPoint].transform.position.y - minHeight/2.0f;
+			minClampY = controlPointList[(int)PointIndex.LeftDownPoint].transform.position.y + minHeight / 2.0f;
+		}
 		float posX = Mathf.Clamp(inputPos.x, minClampX, maxClampX);
 		float posY = Mathf.Clamp(inputPos.y, minClampY, maxClampY);
 		return new Vector3(posX, posY, inputPos.z);
 	}
 	public Vector3 AdjPos(Vector3 tmp, GameObject chooseObj)
 	{
-	Debug.Log("77777");
 		int index = -1;
 		for (int i = 0; i < controlPointList.Count; i++)
 		{
@@ -717,12 +727,10 @@ public class CurvePlatformIcon : PlatFormIcon
 			}
 		}
 		if (index == -1) return Vector3.zero;
-		Debug.Log("index" + index);
 		float offset_x = tmp.x - lastControlPointPosition[index].x;
 		float offset_y = tmp.y - lastControlPointPosition[index].y;
-		Debug.Log("lastControlPointPosition[index]" + lastControlPointPosition[index]);
-		Debug.Log("zzzz"+new Vector3(offset_x, offset_y, 0));
-		for (int j = 0; j < 4; j++)
+
+		for (int j = 0; j < 6; j++)
 		{
 			if (index == j) continue;
 			if ((lastControlPointPosition[index].y == controlPointList[j].transform.position.y))//y相同
@@ -754,6 +762,9 @@ public class CurvePlatformIcon : PlatFormIcon
 		platformButtonWidth = (rightDownPoint.transform.position.x - leftDownPoint.transform.position.x);
 		UpdateLastPos();
 		UpdateLineRender();
+
+		rightPlatformLine.catLine.ResetCatmullRom();
+		leftPlatformLine.catLine.ResetCatmullRom();
 		return new Vector3(offset_x, offset_y, 0);
 	}
 
@@ -783,6 +794,8 @@ public class BasedPlatformIcon : PlatFormIcon
 	{
 		InitBodySetting("BasedPlatformIcon", (int)BodyType.GeneralBody);
 		InitIconMenuButtonSetting();
+
+		centerX=(leftUpPoint.transform.position.x+rightUpPoint.transform.position.x)/2.0f;
 
 		this.rightUpPoint = rightUpPoint;
 		this.rightDownPoint = rightDownPoint;
@@ -814,20 +827,20 @@ public class BasedPlatformIcon : PlatFormIcon
 		float minClampY = float.MinValue;
 		float maxClampY = float.MaxValue;
 
-		float minWidth = (initPlatformTopWidth) * 0.4f;
-		float minHeight = (initPlatformHeight) * 0.4f;
+		float minWidth = (initPlatformTopWidth) * 0.2f;
+		float minHeight = (initPlatformHeight) * 0.2f;
 
 		if (chooseObj == controlPointList[(int)PointIndex.LeftUpPoint])
 		{
 			if (basedPlatformBalustradeIcon != null)
 				maxClampX = basedPlatformBalustradeIcon.leftUpPoint.transform.position.x;
 			else
-				maxClampX = controlPointList[(int)PointIndex.RightUpPoint].transform.position.x - minWidth;
+				maxClampX = centerX - minWidth/2.0f;
 			minClampY = controlPointList[(int)PointIndex.LeftDownPoint].transform.position.y + minHeight;
 		}
 		else if (chooseObj == controlPointList[(int)PointIndex.LeftDownPoint])
 		{
-			maxClampX = controlPointList[(int)PointIndex.RightDownPoint].transform.position.x - minWidth;
+			maxClampX = centerX - minWidth / 2.0f;
 			maxClampY = controlPointList[(int)PointIndex.LeftUpPoint].transform.position.y - minHeight;
 		}
 		else if (chooseObj == controlPointList[(int)PointIndex.RightUpPoint])
@@ -835,14 +848,14 @@ public class BasedPlatformIcon : PlatFormIcon
 			if (basedPlatformBalustradeIcon != null)
 				minClampX = basedPlatformBalustradeIcon.rightUpPoint.transform.position.x;
 			else
-				minClampX = controlPointList[(int)PointIndex.LeftUpPoint].transform.position.x + minWidth;
+				minClampX = centerX+ minWidth/2.0f;
 
 			minClampY = controlPointList[(int)PointIndex.RightDownPoint].transform.position.y + minHeight;
 
 		}
 		else if (chooseObj == controlPointList[(int)PointIndex.RightDownPoint])
 		{
-			minClampX = controlPointList[(int)PointIndex.LeftDownPoint].transform.position.x + minWidth;
+			minClampX = centerX + minWidth / 2.0f;
 			maxClampY = controlPointList[(int)PointIndex.RightUpPoint].transform.position.y - minHeight;
 		}
 
@@ -1002,13 +1015,11 @@ public class platform2icon : MonoBehaviour
 		switch (gameObject.tag)
 		{
 			case "CurvePlatformIcon"://specialCase
-			Debug.Log("2");
 					curvePlatformIcon.AdjPos(tmp, chooseObj);
 					curvePlatformIcon.AdjMesh();
 				if (chooseObj == curvePlatformIcon.rightUpPoint || chooseObj == curvePlatformIcon.leftUpPoint)
 				{
-					Debug.Log("33");
-
+	
 					platTopWidthDis = curvePlatformIcon.platformTopWidth / 2.0f;
 					platHeightDis = curvePlatformIcon.platformHeight;
 				}
@@ -1026,8 +1037,8 @@ public class platform2icon : MonoBehaviour
 						curvePlatformIcon.basedPlatformBalustradeIcon.AdjPos(tmp, chooseObj);
 					}
 
-					platBalustradeDis.x = curvePlatformIcon.basedPlatformBalustradeIcon.balustradeColumnWidth / 2.0f;
-					platBalustradeDis.y = curvePlatformIcon.basedPlatformBalustradeIcon.balustradeColumnHeight;
+					platBalustradeDis.x = curvePlatformIcon.basedPlatformBalustradeIcon.columnWidth / 2.0f;
+					platBalustradeDis.y = curvePlatformIcon.basedPlatformBalustradeIcon.columnHeight;
 				}
 				break;
 			case "BasedPlatformIcon"://specialCase
@@ -1054,8 +1065,8 @@ public class platform2icon : MonoBehaviour
 						basedPlatformIcon.basedPlatformBalustradeIcon.AdjPos(tmp, chooseObj);
 					}
 
-					platBalustradeDis.x = basedPlatformIcon.basedPlatformBalustradeIcon.balustradeColumnWidth / 2.0f;
-					platBalustradeDis.y = basedPlatformIcon.basedPlatformBalustradeIcon.balustradeColumnHeight;
+					platBalustradeDis.x = basedPlatformIcon.basedPlatformBalustradeIcon.columnWidth / 2.0f;
+					platBalustradeDis.y = basedPlatformIcon.basedPlatformBalustradeIcon.columnHeight;
 				}
 				break;
 		}

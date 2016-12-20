@@ -95,6 +95,9 @@ public class IconObject : lineRendererControl
 	public Material silhouetteShader = null;
 
 	public IconControl iconMenuControl;
+	public float centerX;
+	public float centerY;
+	public float closerDis=0.01f;
 	public IconObject()
 	{
 		if (Shader.Find("Outlined/Silhouetted Bumped Diffuse"))
@@ -190,7 +193,6 @@ public class IconObject : lineRendererControl
 	}
 	public void UpdateLastPos()
 	{
-	Debug.Log("njfdjm");
 		if (lastControlPointPosition==null)return;
 		if (lastControlPointPosition.Length < controlPointList.Count)
 		{
@@ -200,7 +202,6 @@ public class IconObject : lineRendererControl
 		{
 			lastControlPointPosition[i] = controlPointList[i].transform.position;
 		}
-		Debug.Log("okoko");
 	}
 	public override void InitLineRender<T>(T thisGameObject)
 	{
@@ -267,6 +268,7 @@ public class VerandaIcon : IconObject//廡殿頂
 		this.controlPointList = controlPointList;
 		InitControlPointList2lastControlPointPosition();
 
+		centerX = (controlPointList[(int)PointIndex.RightUpPoint].transform.position.x + controlPointList[(int)PointIndex.LeftUpPoint].transform.position.x)/2.0f;
 		verandaIconWidth = initVerandaIconWidth = controlPointList[(int)PointIndex.RightUpPoint].transform.position.x - controlPointList[(int)PointIndex.LeftUpPoint].transform.position.x;
 		verandaIconHeight = initVerandaIconHeight = controlPointList[(int)PointIndex.RightUpPoint].transform.position.y - controlPointList[(int)PointIndex.RightDownPoint].transform.position.y;
 
@@ -294,33 +296,33 @@ public class VerandaIcon : IconObject//廡殿頂
 		float minClampY = float.MinValue;
 		float maxClampY = float.MaxValue;
 
-		float minWidth = initVerandaIconWidth * 0.8f;
+		float minWidth = initVerandaIconWidth * 0.5f;
 		float minHeight = initVerandaIconHeight * 0.5f;
 		switch (index)
 		{
 			case (int)PointIndex.RightMainRidgePoint://rightMainRidge
-				minClampX = controlPointList[(int)PointIndex.LeftMainRidgePoint].transform.position.x;
+				minClampX = centerX+closerDis;
 				maxClampX = controlPointList[(int)PointIndex.RightUpPoint].transform.position.x;
 				break;
 			case (int)PointIndex.LeftMainRidgePoint://leftMainRidge
 				minClampX = controlPointList[(int)PointIndex.LeftUpPoint].transform.position.x;
-				maxClampX = controlPointList[(int)PointIndex.RightMainRidgePoint].transform.position.x;
+				maxClampX = centerX-closerDis;
 				break;
 			case (int)PointIndex.LeftUpPoint://upLeft
-				maxClampX = controlPointList[(int)PointIndex.LeftMainRidgePoint].transform.position.x;
-				minClampY = controlPointList[(int)PointIndex.LeftMainRidgePoint].transform.position.y + minHeight;
+				maxClampX = centerX-minWidth/2.0f;
+				minClampY = controlPointList[(int)PointIndex.LeftMainRidgePoint].transform.position.y + minHeight/2.0f;
 				break;
 			case (int)PointIndex.LeftDownPoint://downLeft
-				maxClampX = controlPointList[(int)PointIndex.LeftMainRidgePoint].transform.position.x;
-				maxClampY = controlPointList[(int)PointIndex.LeftMainRidgePoint].transform.position.y - minHeight;
+				maxClampX = centerX - minWidth / 2.0f;
+				maxClampY = controlPointList[(int)PointIndex.LeftMainRidgePoint].transform.position.y - minHeight/2.0f;
 				break;
 			case (int)PointIndex.RightUpPoint://upRight
-				minClampX = controlPointList[(int)PointIndex.RightMainRidgePoint].transform.position.x;
-				minClampY = controlPointList[(int)PointIndex.RightMainRidgePoint].transform.position.y + minHeight;
+				minClampX = centerX + minWidth / 2.0f;
+				minClampY = controlPointList[(int)PointIndex.RightMainRidgePoint].transform.position.y + minHeight/2.0f;
 				break;
 			case (int)PointIndex.RightDownPoint://downRight
-				minClampX = controlPointList[(int)PointIndex.RightMainRidgePoint].transform.position.x;
-				maxClampY = controlPointList[(int)PointIndex.RightMainRidgePoint].transform.position.y - minHeight;
+				minClampX = centerX + minWidth / 2.0f;
+				maxClampY = controlPointList[(int)PointIndex.RightMainRidgePoint].transform.position.y - minHeight/2.0f;
 				break;
 		}
 
@@ -396,6 +398,9 @@ public class ShandingIcon : IconObject//歇山頂
 		this.controlPointList = controlPointList;
 		InitControlPointList2lastControlPointPosition();
 
+		centerX = (controlPointList[(int)PointIndex.RightUpPoint].transform.position.x + controlPointList[(int)PointIndex.LeftUpPoint].transform.position.x)/2.0f;
+		centerY = (controlPointList[(int)PointIndex.RightUpPoint].transform.position.y + controlPointList[(int)PointIndex.RightDownPoint].transform.position.y) / 2.0f;
+
 		initShandingIconWidth = controlPointList[(int)PointIndex.RightUpPoint].transform.position.x - controlPointList[(int)PointIndex.LeftUpPoint].transform.position.x;
 		initShandingIconHeight = controlPointList[(int)PointIndex.RightUpPoint].transform.position.y - controlPointList[(int)PointIndex.RightDownPoint].transform.position.y;
 
@@ -425,58 +430,58 @@ public class ShandingIcon : IconObject//歇山頂
 		float minClampY = float.MinValue;
 		float maxClampY = float.MaxValue;
 
-		float minWidth = initShandingIconWidth * 0.8f;
+		float minWidth = initShandingIconWidth * 0.5f;
 		float minHeight = initShandingIconHeight * 0.5f;
 
 		switch (index)
 		{
 			case (int)PointIndex.RightMainRidgePoint:
-				minClampX = controlPointList[5].transform.position.x + minWidth;
+				minClampX = centerX + closerDis;
 				maxClampX = controlPointList[1].transform.position.x;
 			break;
 			case (int)PointIndex.LeftMainRidgePoint:
 				minClampX = controlPointList[0].transform.position.x;
-				maxClampX = controlPointList[4].transform.position.x - minWidth;
+				maxClampX = centerX - closerDis;
 			break;
 			case (int)PointIndex.LeftUpPoint:
-				maxClampX = controlPointList[4].transform.position.x - minWidth;
-				minClampY = controlPointList[6].transform.position.y + minHeight;
+				maxClampX = centerX - minWidth/2.0f;
+				minClampY = controlPointList[6].transform.position.y + minHeight/2.0f;
 			break;
 			case (int)PointIndex.LeftDownPoint:
-				maxClampX = controlPointList[4].transform.position.x - minWidth;
-				maxClampY = controlPointList[9].transform.position.y - minHeight;
+				maxClampX = centerX - minWidth/2.0f;
+				maxClampY = controlPointList[9].transform.position.y - minHeight/2.0f;
 			break;
 			case (int)PointIndex.RightUpPoint:
-				minClampX = controlPointList[7].transform.position.x;
-				minClampY = controlPointList[7].transform.position.y + minHeight;
+				minClampX =  centerX + minWidth/2.0f;
+				minClampY = controlPointList[7].transform.position.y + minHeight/2.0f;
 			break;
 			case (int)PointIndex.RightDownPoint:
-				minClampX = controlPointList[8].transform.position.x;
-				maxClampY = controlPointList[8].transform.position.y - minHeight;
+				minClampX = centerX + minWidth / 2.0f;
+				maxClampY = controlPointList[8].transform.position.y - minHeight/2.0f;
 			break;
 			case (int)PointIndex.LeftUpCenterPoint:
 				minClampX = controlPointList[0].transform.position.x;
-				maxClampX = controlPointList[5].transform.position.x;
-				minClampY = controlPointList[5].transform.position.y + minHeight;
-				maxClampY = controlPointList[0].transform.position.y - minHeight;
+				maxClampX = centerX-closerDis;
+				minClampY = centerY + closerDis;
+				maxClampY = controlPointList[0].transform.position.y - closerDis;
 			break;
 			case (int)PointIndex.LeftDownCenterPoint:
 				minClampX = controlPointList[3].transform.position.x;
-				maxClampX = controlPointList[5].transform.position.x;
-				minClampY = controlPointList[3].transform.position.y + minHeight;
-				maxClampY = controlPointList[5].transform.position.y - minHeight;
+				maxClampX = centerX - closerDis;
+				minClampY = controlPointList[3].transform.position.y + closerDis;
+				maxClampY = centerY - closerDis;
 			break;
 			case (int)PointIndex.RightUpCenterPoint:
-				minClampX = controlPointList[5].transform.position.x + minWidth;
+				minClampX = centerX + closerDis;
 				maxClampX = controlPointList[1].transform.position.x;
-				minClampY = controlPointList[4].transform.position.y + minHeight;
-				maxClampY = controlPointList[1].transform.position.y - minHeight;
+				minClampY = centerY + closerDis;
+				maxClampY = controlPointList[1].transform.position.y - closerDis;
 			break;
 			case (int)PointIndex.RightDownCenterPoint:
-				minClampX = controlPointList[5].transform.position.x + minWidth;
+				minClampX = centerX + closerDis;
 				maxClampX = controlPointList[2].transform.position.x;
-				minClampY = controlPointList[2].transform.position.y + minHeight;
-				maxClampY = controlPointList[4].transform.position.y - minHeight;
+				minClampY = controlPointList[2].transform.position.y + closerDis;
+				maxClampY = centerY - closerDis;
 			break;
 
 		}

@@ -12,7 +12,9 @@ public class BasedRoofIcon : IconObject
 {
 	public RoofStruct rightRoofLine = new RoofStruct();
 	public RoofStruct leftRoofLine = new RoofStruct();
-	Vector3 centerPos;
+	Vector3 orginPos;
+	float initWidth;
+	float initHeight;
 	public int numberOfPoints2Body = 10;
 	public int numberOfPoints2Tail = 20;
 	public int sliceUnit2Body = 1;
@@ -24,8 +26,11 @@ public class BasedRoofIcon : IconObject
 		InitBodySetting(objName, (int)BodyType.GeneralBody);
 		InitIconMenuButtonSetting();
 
-		this.centerPos = centerPos;
-
+		this.orginPos = centerPos;
+		centerX = centerPos.x;
+		centerY=(bodyControlPointList[0].transform.position.y+bodyControlPointList[bodyControlPointList.Count-1].transform.position.y)/2.0f;
+		initWidth = bodyControlPointList[(int)bodyControlPointList.Count / 2].transform.position.x - centerX;
+		initHeight=(bodyControlPointList[0].transform.position.y - bodyControlPointList[bodyControlPointList.Count - 1].transform.position.y);
 		rightRoofLine.bodyControlPointList = bodyControlPointList;
 		rightRoofLine.tailControlPointList = tailControlPointList;
 
@@ -43,13 +48,14 @@ public class BasedRoofIcon : IconObject
 			rightRoofLine.catLine2Body.AddControlPoint(bodyControlPointList[i]);
 			controlPointList.Add(bodyControlPointList[i]);
 		}
-		rightRoofLine.catLine2Tail.AddControlPoint(bodyControlPointList[bodyControlPointList.Count-1]);
+		rightRoofLine.catLine2Tail.AddControlPoint(bodyControlPointList[bodyControlPointList.Count - 1]);
 		for (int i = 0; i < tailControlPointList.Count; i++)
 		{
 			rightRoofLine.catLine2Tail.AddControlPoint(tailControlPointList[i]);
 			controlPointList.Add(tailControlPointList[i]);
 		}
 
+		centerY = (bodyControlPointList[0].transform.position.y + bodyControlPointList[bodyControlPointList.Count - 1].transform.position.y) / 2.0f;
 		//LeftCatmullromLine
 		body2Body = new GameObject("CatLine_Left_Body");
 		body2Body.transform.parent = thisGameObject.transform;
@@ -95,24 +101,24 @@ public class BasedRoofIcon : IconObject
 
 		AdjMesh();
 	}
-	public void AdjPos(Vector3 tmp,GameObject chooseObj)
+	public void AdjPos(Vector3 tmp, GameObject chooseObj)
 	{
 		rightRoofLine.catLine2Body.ResetCatmullRom();
 		for (int i = 0; i < leftRoofLine.bodyControlPointList.Count; i++)
 		{
-			leftRoofLine.bodyControlPointList[i].transform.position = new Vector3(rightRoofLine.bodyControlPointList[i].transform.position.x - 2 * (rightRoofLine.bodyControlPointList[i].transform.position.x - centerPos.x), rightRoofLine.bodyControlPointList[i].transform.position.y, rightRoofLine.bodyControlPointList[i].transform.position.z);
+			leftRoofLine.bodyControlPointList[i].transform.position = new Vector3(rightRoofLine.bodyControlPointList[i].transform.position.x - 2 * (rightRoofLine.bodyControlPointList[i].transform.position.x - orginPos.x), rightRoofLine.bodyControlPointList[i].transform.position.y, rightRoofLine.bodyControlPointList[i].transform.position.z);
 		}
-		if (chooseObj == rightRoofLine.bodyControlPointList[rightRoofLine.bodyControlPointList.Count-1])
+		if (chooseObj == rightRoofLine.bodyControlPointList[rightRoofLine.bodyControlPointList.Count - 1])
 		{
-			Vector3 offset=rightRoofLine.bodyControlPointList[rightRoofLine.bodyControlPointList.Count-1].transform.position-lastControlPointPosition[rightRoofLine.bodyControlPointList.Count-1];
-			for(int i=0;i<rightRoofLine.tailControlPointList.Count;i++)
+			Vector3 offset = rightRoofLine.bodyControlPointList[rightRoofLine.bodyControlPointList.Count - 1].transform.position - lastControlPointPosition[rightRoofLine.bodyControlPointList.Count - 1];
+			for (int i = 0; i < rightRoofLine.tailControlPointList.Count; i++)
 			{
 				rightRoofLine.tailControlPointList[i].transform.position += offset;
 			}
 		}
 		for (int i = 0; i < leftRoofLine.tailControlPointList.Count; i++)
 		{
-			leftRoofLine.tailControlPointList[i].transform.position = new Vector3(rightRoofLine.tailControlPointList[i].transform.position.x - 2 * (rightRoofLine.tailControlPointList[i].transform.position.x - centerPos.x), rightRoofLine.tailControlPointList[i].transform.position.y, rightRoofLine.tailControlPointList[i].transform.position.z);
+			leftRoofLine.tailControlPointList[i].transform.position = new Vector3(rightRoofLine.tailControlPointList[i].transform.position.x - 2 * (rightRoofLine.tailControlPointList[i].transform.position.x - orginPos.x), rightRoofLine.tailControlPointList[i].transform.position.y, rightRoofLine.tailControlPointList[i].transform.position.z);
 		}
 		leftRoofLine.catLine2Body.ResetCatmullRom();
 		rightRoofLine.catLine2Tail.ResetCatmullRom();
@@ -122,100 +128,110 @@ public class BasedRoofIcon : IconObject
 	public void AdjMesh()
 	{
 		int innerPointCount = rightRoofLine.catLine2Body.innerPointList.Count;
-		float uvR = (rightRoofLine.catLine2Body.innerPointList[rightRoofLine.catLine2Body.innerPointList.Count - 1].x - leftRoofLine.catLine2Body.innerPointList[rightRoofLine.catLine2Body.innerPointList.Count - 1].x) / ((float)innerPointCount * 2);
-		Vector3[] v = new Vector3[4 * innerPointCount];
-		Vector3[] n = new Vector3[4 * innerPointCount];
+		Vector3[] v;
+		Vector3[] n;
 		//Vector2[] uv = new Vector2[2 * innerPointCount];
-		int[] t = new int[6 * (innerPointCount-1) * 2+6];
-		for (int i = 0; i < innerPointCount; i++)
-		{
-			v[i] = rightRoofLine.catLine2Body.innerPointList[i];
-		}
-		for (int i = 0; i < innerPointCount; i++)
-		{
-			v[i + innerPointCount] = leftRoofLine.catLine2Body.innerPointList[i];
-		}
-		for (int i = 0; i < innerPointCount*2; i++)
-		{
-			v[i + innerPointCount * 2] = leftRoofLine.catLine2Body.innerPointList[leftRoofLine.catLine2Body.innerPointList.Count - 1] + new Vector3(uvR * (i + 1), 0, 0);
-		}
+		int[] t;
 		int index = 0;
+		switch (rightRoofLine.bodyControlPointList[(int)(rightRoofLine.bodyControlPointList.Count / 2)].transform.position.y <= rightRoofLine.bodyControlPointList[0].transform.position.y)
+		{
+			case true:
+				v = new Vector3[2 * innerPointCount];
+				n = new Vector3[2 * innerPointCount];
+				t = new int[6 * innerPointCount];
 
-		t[index] = 0;
-		t[index + 1] = innerPointCount*3;
-		t[index + 2] = innerPointCount;
-		t[index + 3] = innerPointCount;
-		t[index + 4] = innerPointCount*3;
-		t[index + 5] = innerPointCount*3 - 1;
-		index += 6;
+				for (int i = 0; i < innerPointCount; i++)
+				{
+					v[i] = rightRoofLine.catLine2Body.innerPointList[i];
+				}
+				for (int i = 0; i < innerPointCount; i++)
+				{
+					v[i + innerPointCount] = leftRoofLine.catLine2Body.innerPointList[i];
+				}
+				index = 0;
+				for (int i = 0; i < innerPointCount - 1; i++)
+				{
+					t[index] = i;
+					t[index + 1] = (i + 1);
+					t[index + 2] = i + innerPointCount;
+					t[index + 3] = i + innerPointCount;
+					t[index + 4] = (i + 1);
+					t[index + 5] = (i + 1) + innerPointCount;
+					index += 6;
+				}
+				for (int i = 0; i < 2 * innerPointCount; i++)
+				{
+					n[i] = -Vector3.forward;
+				}
+				mFilter.mesh.Clear();
+				mFilter.mesh.vertices = v;
+				mFilter.mesh.triangles = t;
+				mFilter.mesh.normals = n;
 
-		for (int i = 0; i < innerPointCount - 1; i++)
-		{
-			t[index] = i;
-			t[index + 1] = (i + 1);
-			t[index + 2] = (i + 1) + innerPointCount *3;
-			t[index + 3] = i;
-			t[index + 4] = (i + 1) + innerPointCount * 3;
-			t[index + 5] = i + innerPointCount * 3;
-			index += 6;
+				break;
+			case false:
+
+				float uvR = (rightRoofLine.catLine2Body.innerPointList[rightRoofLine.catLine2Body.innerPointList.Count - 1].x - leftRoofLine.catLine2Body.innerPointList[rightRoofLine.catLine2Body.innerPointList.Count - 1].x) / ((float)innerPointCount * 2);
+				v = new Vector3[4 * innerPointCount];
+				n = new Vector3[4 * innerPointCount];
+				t = new int[6 * (innerPointCount - 1) * 2 + 6];
+				for (int i = 0; i < innerPointCount; i++)
+				{
+					v[i] = rightRoofLine.catLine2Body.innerPointList[i];
+				}
+				for (int i = 0; i < innerPointCount; i++)
+				{
+					v[i + innerPointCount] = leftRoofLine.catLine2Body.innerPointList[i];
+				}
+				for (int i = 0; i < innerPointCount * 2; i++)
+				{
+					v[i + innerPointCount * 2] = leftRoofLine.catLine2Body.innerPointList[leftRoofLine.catLine2Body.innerPointList.Count - 1] + new Vector3(uvR * (i + 1), 0, 0);
+				}
+				index = 0;
+
+				t[index] = 0;
+				t[index + 1] = innerPointCount * 3;
+				t[index + 2] = innerPointCount;
+				t[index + 3] = innerPointCount;
+				t[index + 4] = innerPointCount * 3;
+				t[index + 5] = innerPointCount * 3 - 1;
+				index += 6;
+
+				for (int i = 0; i < innerPointCount - 1; i++)
+				{
+					t[index] = i;
+					t[index + 1] = (i + 1);
+					t[index + 2] = (i + 1) + innerPointCount * 3;
+					t[index + 3] = i;
+					t[index + 4] = (i + 1) + innerPointCount * 3;
+					t[index + 5] = i + innerPointCount * 3;
+					index += 6;
+				}
+				for (int i = 0; i < innerPointCount - 1; i++)
+				{
+					t[index] = innerPointCount + i;
+					t[index + 1] = innerPointCount * 3 - 1 - i;
+					t[index + 2] = innerPointCount + 1 + i;
+					t[index + 3] = innerPointCount + 1 + i;
+					t[index + 4] = innerPointCount * 3 - 1 - i;
+					t[index + 5] = innerPointCount * 3 - 2 - i;
+					index += 6;
+				}
+				for (int i = 0; i < 4 * innerPointCount; i++)
+				{
+					n[i] = -Vector3.forward;
+				}
+				mFilter.mesh.Clear();
+				mFilter.mesh.vertices = v;
+				mFilter.mesh.triangles = t;
+				mFilter.mesh.normals = n;
+
+				break;
 		}
-		for (int i = 0; i < innerPointCount - 1; i++)
-		{
-			t[index] = innerPointCount + i;
-			t[index + 1] = innerPointCount *3-1 - i;
-			t[index + 2] = innerPointCount + 1 + i;
-			t[index + 3] = innerPointCount + 1 + i;
-			t[index + 4] = innerPointCount * 3 - 1 - i;
-			t[index + 5] = innerPointCount * 3 - 2 - i;
-			index += 6;
-		}
-		for (int i = 0; i < 4 * innerPointCount; i++)
-		{
-			n[i] = -Vector3.forward;
-		}
-		mFilter.mesh.Clear();
-		mFilter.mesh.vertices = v;
-		mFilter.mesh.triangles = t;
-		mFilter.mesh.normals = n;
 
 		mFilter.mesh.RecalculateNormals();
 		mFilter.mesh.RecalculateBounds();
-		//mFilter.mesh.uv = uv;
-		/*	int innerPointCount = rightRoofLine.catLine.innerPointList.Count;
-			float uvR = (1 / (float)innerPointCount);
-			mFilter.mesh.Clear();
-			Vector3[] v = new Vector3[2 * innerPointCount];
-			Vector3[] n = new Vector3[2 * innerPointCount];
-			//Vector2[] uv = new Vector2[2 * innerPointCount];
-			int[] t = new int[6 * innerPointCount];
 
-			for (int i = 0; i < rightRoofLine.catLine.innerPointList.Count; i++)
-			{
-				v[i] = rightRoofLine.catLine.innerPointList[i];
-			}
-			for (int i = 0; i <leftRoofLine.catLine.innerPointList.Count; i++)
-			{
-				v[i + rightRoofLine.catLine.innerPointList.Count] = leftRoofLine.catLine.innerPointList[i];
-			}
-			int index = 0;
-			for (int i = 0; i < rightRoofLine.catLine.innerPointList.Count - 1; i++)
-			{
-				t[index] = i;
-				t[index + 1] = (i + 1);
-				t[index + 2] = i + rightRoofLine.catLine.innerPointList.Count;
-				t[index + 3] = i + rightRoofLine.catLine.innerPointList.Count;
-				t[index + 4] = (i + 1);
-				t[index + 5] = (i+1) + rightRoofLine.catLine.innerPointList.Count;
-				index += 6;
-			}
-			for (int i = 0; i < 2 * innerPointCount; i++)
-			{
-				n[i]=-Vector3.forward;
-			}
-			mFilter.mesh.vertices = v;
-			mFilter.mesh.triangles = t;
-			mFilter.mesh.normals = n;
-			//mFilter.mesh.uv = uv;*/
 		UpdateLineRender();
 		UpdateCollider();
 	}
@@ -257,7 +273,7 @@ public class BasedRoofIcon : IconObject
 		int size = linerRenderCount2Body;
 		for (int i = 0; i < size / 2; i++)
 		{
-			AdjLineRenderer(i, rightRoofLine.catLine2Body.innerPointList[i * sliceUnit2Body], rightRoofLine.catLine2Body.innerPointList[Mathf.Min((i * sliceUnit2Body + sliceUnit2Body),rightRoofLine.catLine2Body.innerPointList.Count - 1 )]);
+			AdjLineRenderer(i, rightRoofLine.catLine2Body.innerPointList[i * sliceUnit2Body], rightRoofLine.catLine2Body.innerPointList[Mathf.Min((i * sliceUnit2Body + sliceUnit2Body), rightRoofLine.catLine2Body.innerPointList.Count - 1)]);
 		}
 		for (int i = 0; i < size / 2; i++)
 		{
@@ -269,11 +285,11 @@ public class BasedRoofIcon : IconObject
 		size = linerRenderCount2Tail;
 		for (int i = 0; i < size / 2; i++)
 		{
-			AdjLineRenderer(i + linerRenderCount2Body+2, rightRoofLine.catLine2Tail.innerPointList[i * sliceUnit2Tail], rightRoofLine.catLine2Tail.innerPointList[Mathf.Min((i * sliceUnit2Tail + sliceUnit2Tail), rightRoofLine.catLine2Tail.innerPointList.Count - 1)]);
+			AdjLineRenderer(i + linerRenderCount2Body + 2, rightRoofLine.catLine2Tail.innerPointList[i * sliceUnit2Tail], rightRoofLine.catLine2Tail.innerPointList[Mathf.Min((i * sliceUnit2Tail + sliceUnit2Tail), rightRoofLine.catLine2Tail.innerPointList.Count - 1)]);
 		}
 		for (int i = 0; i < size / 2; i++)
 		{
-			AdjLineRenderer(i + size / 2 + linerRenderCount2Body+2, leftRoofLine.catLine2Tail.innerPointList[i * sliceUnit2Tail], leftRoofLine.catLine2Tail.innerPointList[Mathf.Min((i * sliceUnit2Tail + sliceUnit2Tail), leftRoofLine.catLine2Tail.innerPointList.Count - 1)]);
+			AdjLineRenderer(i + size / 2 + linerRenderCount2Body + 2, leftRoofLine.catLine2Tail.innerPointList[i * sliceUnit2Tail], leftRoofLine.catLine2Tail.innerPointList[Mathf.Min((i * sliceUnit2Tail + sliceUnit2Tail), leftRoofLine.catLine2Tail.innerPointList.Count - 1)]);
 		}
 	}
 	public void SetIconObjectColor()
@@ -281,7 +297,7 @@ public class BasedRoofIcon : IconObject
 		mRenderer.material.color = Color.red;
 		for (int i = 0; i < rightRoofLine.bodyControlPointList.Count; i++)
 		{
-			if (silhouetteShader != null) 
+			if (silhouetteShader != null)
 				rightRoofLine.bodyControlPointList[i].GetComponent<MeshRenderer>().material = silhouetteShader;
 
 			rightRoofLine.bodyControlPointList[i].GetComponent<MeshRenderer>().material.color = Color.yellow;
@@ -289,10 +305,50 @@ public class BasedRoofIcon : IconObject
 		for (int i = 0; i < rightRoofLine.tailControlPointList.Count; i++)
 		{
 			if (silhouetteShader != null)
-				 rightRoofLine.tailControlPointList[i].GetComponent<MeshRenderer>().material = silhouetteShader;
+				rightRoofLine.tailControlPointList[i].GetComponent<MeshRenderer>().material = silhouetteShader;
 
 			rightRoofLine.tailControlPointList[i].GetComponent<MeshRenderer>().material.color = Color.yellow;
 		}
+	}
+	public Vector3 ClampPos(Vector3 inputPos, GameObject chooseObj)
+	{
+		float minClampX = float.MinValue;
+		float maxClampX = float.MaxValue;
+		float minClampY = float.MinValue;
+		float maxClampY = float.MaxValue;
+		float minWidth = initWidth * 0.5f;
+		float minHeight = initHeight * 0.3f;
+		if(chooseObj == rightRoofLine.bodyControlPointList[0])
+		{
+			minClampX = centerX;
+			minClampY = rightRoofLine.bodyControlPointList[2].transform.position.y + minHeight;
+			if (rightRoofLine.bodyControlPointList[0].transform.position.y < rightRoofLine.bodyControlPointList[1].transform.position.y)
+				maxClampX = rightRoofLine.bodyControlPointList[1].transform.position.x - closerDis;
+	
+		}
+		else if (chooseObj == rightRoofLine.bodyControlPointList[1])
+		{
+			minClampX = centerX + minWidth;
+			if (rightRoofLine.bodyControlPointList[1].transform.position.x <= rightRoofLine.bodyControlPointList[0].transform.position.x)
+			{
+				maxClampY = rightRoofLine.bodyControlPointList[0].transform.position.y - closerDis;
+				minClampY = rightRoofLine.bodyControlPointList[2].transform.position.y + closerDis;
+				minClampX = centerX + minWidth;
+			}
+			if (rightRoofLine.bodyControlPointList[1].transform.position.y >rightRoofLine.bodyControlPointList[0].transform.position.y)
+				minClampX = rightRoofLine.bodyControlPointList[0].transform.position.x + minWidth;
+	
+			minClampY = rightRoofLine.bodyControlPointList[2].transform.position.y + closerDis;
+		}
+		else if (chooseObj == rightRoofLine.bodyControlPointList[2])
+		{
+			minClampX = centerX;
+			maxClampY = Mathf.Min(rightRoofLine.bodyControlPointList[0].transform.position.y,rightRoofLine.bodyControlPointList[1].transform.position.y)- closerDis;
+		}
+
+		float posX = Mathf.Clamp(inputPos.x, minClampX, maxClampX);
+		float posY = Mathf.Clamp(inputPos.y, minClampY, maxClampY);
+		return new Vector3(posX, posY, inputPos.z);
 	}
 }
 public class Testing : MonoBehaviour
@@ -374,5 +430,18 @@ public class Testing : MonoBehaviour
 		movement.freelist.AddRange(tailControlPointList);
 
 	}
+	public Vector3 ClampPos(Vector3 inputPos)
+	{
+		GameObject chooseObj = dragitemcontroller.chooseObj;
+		foreach (GameObject controlPoint in bodyControlPointList)
+		{
+			return basedRoofIcon.ClampPos(inputPos, chooseObj);
+		}
+		foreach (GameObject controlPoint in tailControlPointList)
+		{
+			return basedRoofIcon.ClampPos(inputPos, chooseObj);
+		}
 
+		return inputPos;
+	}
 }

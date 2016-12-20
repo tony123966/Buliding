@@ -1487,6 +1487,8 @@ public class WallIcon: DecorateIconObject
 		InitBodySetting(objName, (int)BodyType.GeneralBody);
 		InitIconMenuButtonSetting();
 
+		centerX=columnIcon.centerX;
+
 		Vector3 wallOffset = new Vector3(Mathf.Abs(columnIcon.rightColumn.upPoint.transform.transform.position.x - columnIcon.leftColumn.upPoint.transform.transform.position.x) / 2.0f - ini_wallWidth, 0, 0);
 		float columnHeight = columnIcon.rightColumn.upPoint.transform.transform.position.y - columnIcon.rightColumn.downPoint.transform.transform.position.y;
 		Vector3 windowsOffset = new Vector3(0, columnHeight / 2.0f - ini_windowsHeight / 2.0f, 0);
@@ -1581,48 +1583,47 @@ public class WallIcon: DecorateIconObject
 		float minClampY = float.MinValue;
 		float maxClampY = float.MaxValue;
 
-		float minWidth = initWallWidth * 0.2f;
-		float minHeight = initWallHeight * 0.7f;
+		float minWidth = closerDis;
 		float minWindowHeight = initWindowsHeight * 0.2f;
-		float minCloseHeight = MainComponent.initColumnHeight * 0.05f;
+
 		if (chooseObj == rightUpPoint)
 		{
-			maxClampX = MainComponent.rightColumn.upPoint.transform.position.x - minWidth;
-			minClampX = leftUpPoint.transform.position.x + minWidth;
+			maxClampX = MainComponent.rightColumn.upPoint.transform.position.x - closerDis;
+			minClampX = centerX + minWidth;
 		}
 		else if (chooseObj ==rightDownPoint)
 		{
-			maxClampX = MainComponent.rightColumn.downPoint.transform.position.x - minWidth;
-			minClampX = leftUpPoint.transform.position.x + minWidth;
+			maxClampX = MainComponent.rightColumn.downPoint.transform.position.x - closerDis;
+			minClampX = centerX + minWidth;
 		}
 		else if (chooseObj == leftUpPoint)
 		{
-			minClampX = MainComponent.leftColumn.upPoint.transform.position.x + minWidth;
-			maxClampX = rightUpPoint.transform.position.x - minWidth;
+			minClampX = MainComponent.leftColumn.upPoint.transform.position.x + closerDis;
+			maxClampX = centerX - minWidth;
 		}
 		else if (chooseObj == leftDownPoint)
 		{
-			minClampX = MainComponent.leftColumn.downPoint.transform.position.x + minWidth;
-			maxClampX = rightUpPoint.transform.position.x - minWidth;
+			minClampX = MainComponent.leftColumn.downPoint.transform.position.x + closerDis;
+			maxClampX = centerX - minWidth;
 		}
 		else if (chooseObj == rightUpWindowPoint)
 		{
 			minClampY = rightDownWindowPoint.transform.position.y + minWindowHeight;
-			maxClampY = rightUpPoint.transform.position.y - minCloseHeight;
+			maxClampY = rightUpPoint.transform.position.y - closerDis;
 		}
 		else if (chooseObj == leftUpWindowPoint)
 		{
 			minClampY = leftDownWindowPoint.transform.position.y + minWindowHeight;
-			maxClampY = leftUpPoint.transform.position.y - minCloseHeight;
+			maxClampY = leftUpPoint.transform.position.y - closerDis;
 		}
 		else if (chooseObj == rightDownWindowPoint)
 		{
-			minClampY = rightDownPoint.transform.position.y + minCloseHeight;
+			minClampY = rightDownPoint.transform.position.y + closerDis;
 			maxClampY = rightUpWindowPoint.transform.position.y - minWindowHeight;
 		}
 		else if (chooseObj == leftDownWindowPoint)
 		{
-			minClampY = leftDownPoint.transform.position.y + minCloseHeight;
+			minClampY = leftDownPoint.transform.position.y + closerDis;
 			maxClampY = leftUpWindowPoint.transform.position.y - minWindowHeight;
 		}
 
@@ -1863,8 +1864,12 @@ public class ColumnIcon : IconObject
 
 		InitBodySetting(thisGameObject);
 		InitIconMenuButtonSetting();
+
+		centerX=(leftUpPoint.transform.position.x+rightUpPoint.transform.position.x)/2.0f;
+
 		leftColumn = new Column("ColumnIcon", leftUpPoint, leftDownPoint, columnHeight);
 		rightColumn = new Column("ColumnIcon", rightUpPoint, rightDownPoint, columnHeight);
+
 		this.columnHeight = initColumnHeight = columnHeight;
 		this.columnWidth=initColumnWidth = rightUpPoint.transform.position.x - leftUpPoint.transform.position.x;
 		this.initFriezeHeight = ini_friezeHeight;
@@ -1932,65 +1937,58 @@ where T : Component
 		float minClampY = float.MinValue;
 		float maxClampY = float.MaxValue;
 
-		float minWidth = initColumnWidth * 0.2f;
+		float minWidth = closerDis;
 		float minHeight = initColumnHeight * 0.7f;
-		float minCloseHeight = initColumnHeight * 0.05f;
+		float friezeHeight = (friezeIcon != null) ? friezeIcon.friezeHeight : initFriezeHeight;
+		float balustradeHeight = (balustradeIcon != null) ? balustradeIcon.balustradeHeight : initBalustradeHeight;
 
 		if (chooseObj == rightColumn.body)
 		{
-			if (wallIcon != null) minClampX = wallIcon.rightUpPoint.transform.position.x + minWidth;
-			else minClampX = leftColumn.upPoint.transform.position.x + minWidth;
+			if (wallIcon != null) minClampX = wallIcon.rightUpPoint.transform.position.x + closerDis;
+			else minClampX = centerX + minWidth;
 		}
 		else if (chooseObj == leftColumn.body)
 		{
-			if (wallIcon != null) maxClampX = wallIcon.leftUpPoint.transform.position.x - minWidth;
-			else maxClampX = rightColumn.upPoint.transform.position.x - minWidth;
+			if (wallIcon != null) maxClampX = wallIcon.leftUpPoint.transform.position.x - closerDis;
+			else maxClampX = centerX - minWidth;
 		}
 		else if (chooseObj == rightColumn.upPoint)
 		{
-			float friezeHeight=(friezeIcon!=null)?friezeIcon.friezeHeight:initFriezeHeight;
-			float balustradeHeight=(balustradeIcon!=null)?balustradeIcon.balustradeHeight:initBalustradeHeight;
-			if (wallIcon != null) minClampY = wallIcon.rightUpWindowPoint.transform.position.y + minCloseHeight;
-			else minClampY = rightColumn.downPoint.transform.position.y + minCloseHeight + friezeHeight + balustradeHeight;
+			if (wallIcon != null) minClampY = wallIcon.rightUpWindowPoint.transform.position.y + closerDis;
+			else minClampY = rightColumn.downPoint.transform.position.y + closerDis + friezeHeight + balustradeHeight;
 		}
 		else if (chooseObj == rightColumn.downPoint)
 		{
-			float friezeHeight = (friezeIcon != null) ? friezeIcon.friezeHeight : initFriezeHeight;
-			float balustradeHeight = (balustradeIcon != null) ? balustradeIcon.balustradeHeight : initBalustradeHeight;
-			if (wallIcon != null) maxClampY = wallIcon.rightDownWindowPoint.transform.position.y - minCloseHeight;
-			else maxClampY = rightColumn.upPoint.transform.position.y - minCloseHeight - friezeHeight - balustradeHeight;
+			if (wallIcon != null) maxClampY = wallIcon.rightDownWindowPoint.transform.position.y - closerDis;
+			else maxClampY = rightColumn.upPoint.transform.position.y - closerDis - friezeHeight - balustradeHeight;
 		}
 		else if (chooseObj == leftColumn.upPoint)
 		{
-			if (wallIcon != null) minClampY = wallIcon.leftUpWindowPoint.transform.position.y + minCloseHeight;
-			else minClampY = leftColumn.downPoint.transform.position.y + minHeight;
+			if (wallIcon != null) minClampY = wallIcon.leftUpWindowPoint.transform.position.y + closerDis;
+			else minClampY = leftColumn.downPoint.transform.position.y + closerDis + friezeHeight + balustradeHeight;
 		}
 		else if (chooseObj == leftColumn.downPoint)
 		{
-			if (wallIcon != null) maxClampY = wallIcon.leftDownWindowPoint.transform.position.y - minCloseHeight;
-			else maxClampY = leftColumn.upPoint.transform.position.y - minHeight;
+			if (wallIcon != null) maxClampY = wallIcon.leftDownWindowPoint.transform.position.y - closerDis;
+			else maxClampY = leftColumn.upPoint.transform.position.y -closerDis - friezeHeight - balustradeHeight;
 		}
 		else if (chooseObj == rightColumn.friezePoint)
 		{
-			float balustradeHeight = (balustradeIcon != null) ? balustradeIcon.balustradeHeight : initBalustradeHeight;
-			minClampY = rightColumn.downPoint.transform.position.y + minCloseHeight + balustradeHeight;
+			minClampY = rightColumn.downPoint.transform.position.y + closerDis + balustradeHeight;
 			maxClampY =rightColumn.upPoint.transform.position.y - minFriezeHeight;
 		}
 		else if (chooseObj == leftColumn.friezePoint)
 		{
-			float balustradeHeight = (balustradeIcon != null) ? balustradeIcon.balustradeHeight : initBalustradeHeight;
-			minClampY = leftColumn.downPoint.transform.position.y + minCloseHeight + balustradeHeight;
+			minClampY = leftColumn.downPoint.transform.position.y + closerDis + balustradeHeight;
 			maxClampY = leftColumn.upPoint.transform.position.y - minFriezeHeight;
 		}
 		else if (chooseObj == rightColumn.balustradePoint)
 		{
-			float friezeHeight = (friezeIcon != null) ? friezeIcon.friezeHeight : initFriezeHeight;
 			minClampY = rightColumn.downPoint.transform.position.y + minBalustradeHeight;
-			maxClampY = rightColumn.upPoint.transform.position.y - minCloseHeight - friezeHeight;
+			maxClampY = rightColumn.upPoint.transform.position.y - closerDis - friezeHeight;
 		}
 		else if (chooseObj == leftColumn.balustradePoint)
 		{
-			float friezeHeight = (friezeIcon != null) ? friezeIcon.friezeHeight : initFriezeHeight;
 			minClampY = leftColumn.downPoint.transform.position.y + minBalustradeHeight;
 			maxClampY = leftColumn.upPoint.transform.position.y  - friezeHeight;
 		}
@@ -2485,7 +2483,7 @@ public class body2icon : MonoBehaviour
 					return columnIcon.wallIcon.ClampPos(inputPos, chooseObj);
 			}
 		}
-		foreach (GameObject controlPoint in controlPointList)
+		foreach (GameObject controlPoint in columnIcon.controlPointList)
 		{
 			if (chooseObj == controlPoint)
 				return columnIcon.ClampPos(inputPos, chooseObj);
