@@ -87,14 +87,6 @@ public class RidgetailControl : MonoBehaviour {
                 go.GetComponent<catline>().ResetCatmullRom();
 
 
-                //this.GetComponent<circlecut1>().reset();
-                //go.GetComponent<circlecut1>().reset();
-
-
-                //go.GetComponent<Ridgetile>().reset();
-                //go.GetComponent<catline>().AddControlPoint(go.transform.GetChild(0).gameObject);
-                //go.GetComponent<catline>().AddControlPoint(go.transform.GetChild(1).gameObject);
-                //go.GetComponent<catline>().AddControlPoint(go.transform.GetChild(2).gameObject);
 
                 go.transform.parent = this.gameObject.transform.parent;
                 ridgetailmanage.Add(go);
@@ -234,7 +226,6 @@ public class RidgetailControl : MonoBehaviour {
 
         //this.GetComponent<circlecut1>().kill();
         //this.GetComponent<Ridgetile>().kill();
-
 
 
         for (int i = 1; i < ridgetailmanage.Count; i++)

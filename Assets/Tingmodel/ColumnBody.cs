@@ -25,8 +25,8 @@ public class ColumnBody : MonoBehaviour
     private Vector3 Windowsup;
     private Vector3 windowsdown;
 
-    private float up;
-    private float down;
+    public float up;
+    public float down;
 
     private float body_wide;
 
@@ -39,12 +39,14 @@ public class ColumnBody : MonoBehaviour
     {
         //GameObject haha = GameObject.Find("frieze_old");
 
-        haha = GameObject.Find("bigbon");
+        haha = GameObject.Find("bigbonA");
         windows = GameObject.Find("frieze_old");
         
         windows_or_not = true;
 
-      
+
+        up = 1/9f;
+        down = 4 / 9f;
     }
 
 
@@ -64,9 +66,9 @@ public class ColumnBody : MonoBehaviour
     public void ini(float a,float b)
     {
         //ohoh = (int)uict.ohoh.value;
+        print(a+"  **************  "+b);
 
-
-        ohoh = 4;
+        ohoh = 2;
 
         int i = uict.numberslidervalue;
 
@@ -156,7 +158,7 @@ public class ColumnBody : MonoBehaviour
 
 
 
-            balustrade.transform.GetChild(0).transform.GetComponent<Renderer>().material.color = Color.red;
+           // balustrade.transform.GetChild(0).transform.GetComponent<Renderer>().material.color = Color.red;
 
             balustrade.transform.GetChild(0).transform.localScale = scale;
 
@@ -197,7 +199,7 @@ public class ColumnBody : MonoBehaviour
                 scale2.z = 0.8f * scale2.z / zzb2;
 
 
-                balustrade2.transform.GetChild(0).transform.GetComponent<Renderer>().material.color = Color.red;
+                //balustrade2.transform.GetChild(0).transform.GetComponent<Renderer>().material.color = Color.red;
 
                 balustrade2.transform.GetChild(0).transform.localScale = scale2;
 
@@ -425,7 +427,7 @@ public class ColumnBody : MonoBehaviour
 
 
 
-                balustrade.transform.GetChild(0).transform.GetComponent<Renderer>().material.color = Color.red;
+                //balustrade.transform.GetChild(0).transform.GetComponent<Renderer>().material.color = Color.red;
 
                 balustrade.transform.GetChild(0).transform.localScale = scale;
 
@@ -466,7 +468,7 @@ public class ColumnBody : MonoBehaviour
                     scale2.z = 0.8f * scale2.z / zzb2;
 
 
-                    balustrade2.transform.GetChild(0).transform.GetComponent<Renderer>().material.color = Color.red;
+                   // balustrade2.transform.GetChild(0).transform.GetComponent<Renderer>().material.color = Color.red;
 
                     balustrade2.transform.GetChild(0).transform.localScale = scale2;
 
@@ -622,9 +624,13 @@ public class ColumnBody : MonoBehaviour
 
 
 
+        if(uict.isCb==true)
+        { 
+            ini(up,down);
+            build(up, down);
+        }
 
-        ini(1/9f,4/10f);
-        build(1/9f,4/10f);
+
 
         body_wide = Vector3.Distance(columncon.columnmanage[0].transform.GetChild(0).transform.position, columncon.columnmanage[1].transform.GetChild(0).transform.position);
     

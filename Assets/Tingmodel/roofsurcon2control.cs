@@ -27,9 +27,9 @@ public class roofsurcon2control : MonoBehaviour {
     public void ini()
     {
 
-        linen = uict.twvalue;
+        //linen = uict.twvalue;
 
-         //linen =Mathf.RoundToInt(Vector3.Distance(ridgecon.ridgemanage[0].transform.GetChild(2).transform.position,ridgecon.ridgemanage[1].transform.GetChild(2).transform.position)/2);
+         linen =Mathf.RoundToInt(Vector3.Distance(ridgecon.ridgemanage[0].transform.GetChild(2).transform.position,ridgecon.ridgemanage[1].transform.GetChild(2).transform.position)/2);
         
 
        
@@ -182,8 +182,16 @@ public class roofsurcon2control : MonoBehaviour {
 
             linen = uict.twvalue;
 
-            //linen =Mathf.RoundToInt(Vector3.Distance(ridgecon.ridgemanage[0].transform.GetChild(2).transform.position,ridgecon.ridgemanage[1].transform.GetChild(2).transform.position)/2);
+            if (i != angle)
+            {
+                linen = Mathf.RoundToInt(Vector3.Distance(ridgecon.ridgemanage[i - 1].transform.GetChild(2).transform.position, ridgecon.ridgemanage[i].transform.GetChild(2).transform.position) / 2);
+            }
+            else
+            {
 
+                linen = Mathf.RoundToInt(Vector3.Distance(ridgecon.ridgemanage[i - 1].transform.GetChild(2).transform.position, ridgecon.ridgemanage[0].transform.GetChild(2).transform.position) / 2);
+
+            }
 
 
             GameObject RL = new GameObject();

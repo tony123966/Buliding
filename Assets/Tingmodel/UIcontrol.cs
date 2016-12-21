@@ -28,7 +28,7 @@ public class UIcontrol : MonoBehaviour
     public ColumnBody body;
 
     public PlatForm plat;
-
+    public PlatcolumnControl platform;
    // public RidgetailControl rtc;
 
    // public upridge up;
@@ -111,65 +111,19 @@ public class UIcontrol : MonoBehaviour
         
 
 
-
-
-
-
-
-        /*
-        if (transform.parent.GetChild(0).GetChild(0).GetChild(0).GetComponent<catline>())
-        {
-            transform.parent.GetChild(0).GetChild(0).GetChild(0).GetComponent<catline>().ResetCatmullRom();
-        }
-
-
-        if (transform.parent.GetChild(0).childCount>2)
-        {
-                transform.parent.GetChild(0).GetChild(1).GetChild(0).GetComponent<catline>().ResetCatmullRom();
-        }
-        
-
-        if (ridgecontrol)
-        {
-
-            ridgecontrol.reset();
-
-            if (upridge == true)
-            {
-                up.reset();
-            }
-
-            
-            if (rtc)
-            {
-                rtc.reset();
-            }
-             
-            eavecontrol.reset();
-            roofcontrol.reset();
-            roofcontrol2.reset();
-            roofcontrolS.reset();
-        }
-         
-         */
-
         if (columncontrol)
         {
 
             columncontrol.reset();
 
-
-            if (isf==true)
-            {
-                bc.reset();
-            }
-
-            if (isb == true)
-            {
-                fc.reset();
-            }
-            
         }
+
+
+        if (bc) bc.reset();
+        if (fc) fc.reset();
+
+
+
         if (columncontrol_b)
         {
             columncontrol_b.reset();
@@ -177,13 +131,13 @@ public class UIcontrol : MonoBehaviour
 
 
 
-
+        
         if (bb)
         {
             bb.reset();
         }
-
-        if (isCb==true)
+        
+        if (body)
         { 
             body.reset();
         }
@@ -232,6 +186,15 @@ public class UIcontrol : MonoBehaviour
 
             //}
            
+        }
+
+
+        if(platform)
+        {
+
+
+            platform.reset();
+
         }
         
 

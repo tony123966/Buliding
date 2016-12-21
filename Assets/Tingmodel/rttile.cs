@@ -36,11 +36,7 @@ public class rttile : MonoBehaviour {
         RidgetailControl r2 = this.transform.parent.GetChild(0).GetComponent<RidgetailControl>();
 
         circlecut1 pla = transform.GetComponent<circlecut1>();
-        //midplanecut pla = transform.GetComponent<midplanecut>();
-
-        // cir.anchorpointlist
-
-
+       
 
         int c1 = pla.anchorpointlist.Count / 9;
        
@@ -54,7 +50,7 @@ public class rttile : MonoBehaviour {
             Vector3 bottomline = new Vector3(ori.x - letter.x, 0, ori.z - letter.z);
             Vector3 slopeline = ori - letter;
 
-            //Vector3.AngleBetween(bottomline, slopeline);
+           
             float oo = Vector3.Angle(bottomline, slopeline);
             if (letter.y - ori.y < 0)
             {
@@ -72,21 +68,13 @@ public class rttile : MonoBehaviour {
                 tile.transform.parent = this.transform;
                 int angle = r2.ridgetailmanage.IndexOf(this.transform.gameObject);
 
-                //int x = int.Parse(neew.transform.name.Substring(16, 1));
+             
                 int y = i;
 
-                /*
-                Vector3 zr = plane.sloslopR[x + 1, y] - plane.sloslopR[x, y];
-                Vector3 zrp = new Vector3(plane.sloslopR[x + 1, y].x - plane.sloslopR[x, y].x, 0, plane.sloslopR[x + 1, y].z - plane.sloslopR[x, y].z);
-                zz = Vector3.Angle(zr, zrp);
-                */
-
+              
 
                 int j = angle;
-                /*
-                tile.transform.GetChild(2).transform.Rotate(-6, 0, 0);
-                tile.transform.GetChild(4).transform.Rotate(-6, 0, 0);
-                 * */
+             
                 tile.transform.Rotate(oo, -90 + (360 / ui) * (j), 0);
 
                 tile.transform.localScale = new Vector3(tilelong, 0.02f, tilelong2);
@@ -103,16 +91,9 @@ public class rttile : MonoBehaviour {
                 int angle = r2.ridgetailmanage.IndexOf(this.transform.gameObject);
 
 
-                //int x = int.Parse(neew.transform.name.Substring(16, 1));
                 int y = i;
 
-                /*
-                Vector3 zr = plane.sloslopR[x + 1, y] - plane.sloslopR[x, y];
-                Vector3 zrp = new Vector3(plane.sloslopR[x + 1, y].x - plane.sloslopR[x, y].x, 0, plane.sloslopR[x + 1, y].z - plane.sloslopR[x, y].z);
-                zz = Vector3.Angle(zr, zrp);
-
-    */
-
+           
 
 
                 int j = angle;
@@ -133,17 +114,9 @@ public class rttile : MonoBehaviour {
                 int angle = r2.ridgetailmanage.IndexOf(this.transform.gameObject);
 
 
-                //int x = int.Parse(neew.transform.name.Substring(16, 1));
                 int y = i;
 
-                /*
-                Vector3 zr = plane.sloslopR[x + 1, y] - plane.sloslopR[x, y];
-                Vector3 zrp = new Vector3(plane.sloslopR[x + 1, y].x - plane.sloslopR[x, y].x, 0, plane.sloslopR[x + 1, y].z - plane.sloslopR[x, y].z);
-                zz = Vector3.Angle(zr, zrp);
-
-    */
-
-
+        
 
                 int j = angle;
 

@@ -310,6 +310,13 @@ public class roofsurcontrol2 : MonoBehaviour {
     public void ini()
     {
         linen = uict.twvalue;
+
+        //linen = Mathf.RoundToInt(Vector3.Distance(ridgecon.ridgemanage[0].transform.GetChild(2).transform.position, ridgecon.ridgemanage[1].transform.GetChild(2).transform.position) / 2);
+
+        linen = Mathf.RoundToInt(Vector3.Distance(ridgeControl.ridgemanage[0].transform.GetChild(2).transform.position, ridgeControl.ridgemanage[1].transform.GetChild(2).transform.position) / 2);
+
+
+
         Vector3 bornx = new Vector3(0, 0, 0);
         Vector3 born = new Vector3(0, 0, 0);
         Vector3 born2 = new Vector3(0, 0, 0);
@@ -975,12 +982,38 @@ public class roofsurcontrol2 : MonoBehaviour {
     {
         int angle = uict.numberslidervalue;
 
+
+
+
+
+
+
+
+
+
         for (int i = 2; i <= angle; i++)
         {
 
 
-
             linen = uict.twvalue;
+
+
+
+            if (i != angle)
+            {
+                linen = Mathf.RoundToInt(Vector3.Distance(ridgeControl.ridgemanage[i - 1].transform.GetChild(2).transform.position, ridgeControl.ridgemanage[i].transform.GetChild(2).transform.position) / 2);
+            }
+            else
+            {
+
+                linen = Mathf.RoundToInt(Vector3.Distance(ridgeControl.ridgemanage[i - 1].transform.GetChild(2).transform.position, ridgeControl.ridgemanage[0].transform.GetChild(2).transform.position) / 2);
+
+            }
+
+
+
+
+
             Vector3 bornx = new Vector3(0, 0, 0);
             Vector3 born = new Vector3(0, 0, 0);
             Vector3 born2 = new Vector3(0, 0, 0);

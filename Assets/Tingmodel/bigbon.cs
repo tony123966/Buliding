@@ -24,7 +24,7 @@ public class bigbon : MonoBehaviour
     {
         //GameObject haha = GameObject.Find("frieze_old");
 
-        haha = GameObject.Find("bigbon");
+        haha = GameObject.Find("bigbonB");
 
 
     }

@@ -546,8 +546,18 @@ public class CurvePlatformIcon : PlatFormIcon
 		initPlatformHeight = platformHeight = rightUpPoint.transform.position.y - rightDownPoint.transform.position.y;
 		initPlatformTopWidth = platformTopWidth = (rightUpPoint.transform.position.x - leftUpPoint.transform.position.x);
 		initPlatformButtonWidth = platformButtonWidth = (rightDownPoint.transform.position.x - leftDownPoint.transform.position.x);
-		ini_platMidWidthDis = platMidWidthDis = (controlPointList[(int)PointIndex.RightMidPoint].transform.position.x - controlPointList[(int)PointIndex.LeftMidPoint].transform.position.x);
-		ini_platMid2TopDis = platMid2TopDis = (controlPointList[(int)PointIndex.RightUpPoint].transform.position.y - controlPointList[(int)PointIndex.RightMidPoint].transform.position.y);
+
+
+
+
+        Debug.Log((int)PointIndex.LeftMidPoint);
+        Debug.Log(controlPointList.Count);
+
+
+        ini_platMidWidthDis = platMidWidthDis = (rightMidPoint.transform.position.x - leftMidPoint.transform.position.x);
+        ini_platMid2TopDis = platMid2TopDis = (rightUpPoint.transform.position.y - rightMidPoint.transform.position.y);
+
+
 
 		//RightCatmullromLine
 		GameObject cR = new GameObject("CatLine_Right");
@@ -585,6 +595,17 @@ public class CurvePlatformIcon : PlatFormIcon
 		controlPointList.Add(leftDownPoint);
 		controlPointList.Add(leftMidPoint);
 		controlPointList.Add(rightMidPoint);
+
+
+
+
+
+
+
+
+
+
+
 		InitControlPointList2lastControlPointPosition();
 
 		SetParent2BodyAndControlPointList(thisGameObject);
@@ -988,6 +1009,8 @@ public class platform2icon : MonoBehaviour
 				basedPlatformIcon = CreateBasedPlatformIcon();
 				break;
 		}
+
+       
 	}
 	private CurvePlatformIcon CreateCurvePlatformIcon()
 	{

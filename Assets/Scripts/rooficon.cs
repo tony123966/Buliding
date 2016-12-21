@@ -335,11 +335,6 @@ public class rooficon : MonoBehaviour
 
             if (j == 0)
             {
-                /*
-                Vector3 v1 = transform.GetChild(0).GetChild(0).GetComponent<circlecut1>().anchorpointlist[j];
-                Vector3 v2 = transform.GetChild(0).GetChild(1).GetComponent<circlecut1>().anchorpointlist[j+1];
-                Vector3 v3 = transform.GetChild(0).GetChild(0).GetComponent<circlecut1>().anchorpointlist[j+1];
-                */
                 Vector3 v1 = transform.GetComponent<catline>().innerPointList[j];
                 Vector3 v2 = transform.parent.GetChild(1).GetComponent<catline>().innerPointList[j + 1];
                 Vector3 v3 = transform.GetComponent<catline>().innerPointList[j + 1];
@@ -367,7 +362,6 @@ public class rooficon : MonoBehaviour
             }
             else if (j == 1)
             {
-
                 Vector3 v1 = transform.GetComponent<catline>().innerPointList[j];
                 Vector3 v2 = transform.parent.GetChild(1).GetComponent<catline>().innerPointList[j];
                 Vector3 v3 = transform.parent.GetChild(1).GetComponent<catline>().innerPointList[j + 1];
@@ -382,31 +376,18 @@ public class rooficon : MonoBehaviour
                 uv[1] = new Vector2(0, 1 - uvR);
                 uv[2] = new Vector2(uvR, 1 - uvR);
 
-
                 n[0] = -Vector3.forward;
                 n[1] = -Vector3.forward;
                 n[2] = -Vector3.forward;
 
-
-
                 t[0] = j + 2;
                 t[1] = j + 1;
                 t[2] = j;
-
-
-
-
-
-
-
             }
             else
             {
 
-                /*
-                Vector3 v3 = transform.GetChild(0).GetChild(1).GetComponent<circlecut1>().anchorpointlist[j];
-                Vector3 v4 = transform.GetChild(0).GetChild(0).GetComponent<circlecut1>().anchorpointlist[j];
-                */
+               
 
                 Vector3 v3 = transform.parent.GetChild(1).GetComponent<catline>().innerPointList[j];
                 Vector3 v4 = transform.GetComponent<catline>().innerPointList[j];
@@ -436,7 +417,7 @@ public class rooficon : MonoBehaviour
                 t[2 + 6 * (j - 1) - 1] = 2 * j - 1;
                 t[2 + 6 * (j - 1)] = 2 * j - 2;
                 //東西南北
-                /*
+               /*
                 if ((360 / angle) * i <= 90)
                 {
                     n[2 * j - 1] = -Vector3.forward;

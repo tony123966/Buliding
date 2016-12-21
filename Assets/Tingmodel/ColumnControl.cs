@@ -26,6 +26,9 @@ public class ColumnControl : MonoBehaviour
 
     public float ColumnWide;
 
+    public Vector2 ini_EyeToColumn;
+
+
     public GameObject die;
 
 
@@ -59,6 +62,16 @@ public class ColumnControl : MonoBehaviour
         ColumnLong = Mathf.Abs(transform.GetChild(0).transform.position.y - transform.GetChild(3).transform.position.y);
 
         ColumnWide = Vector3.Distance(transform.GetChild(0).transform.position ,transform.GetChild(1).transform.position);
+
+        ini_EyeToColumn.x = transform.position.x ;
+        ini_EyeToColumn.y = transform.position.z;
+        
+
+
+
+
+
+
 
 
         /*
@@ -154,6 +167,8 @@ public class ColumnControl : MonoBehaviour
 
                 go.AddComponent<catline>();
                 go.GetComponent<catline>().ResetCatmullRom();
+             
+
                 go.transform.parent = this.transform.parent;
 
                 columnmanage.Add(go);
@@ -196,20 +211,9 @@ public class ColumnControl : MonoBehaviour
             }
         }
 
-        for (int i = 1; i <= angle; i++)
-        {
 
 
-
-
-
-        }
-
-
-
-
-
-
+        
 
 
         for (int i = 0; i < columnmanage.Count; i++)
@@ -223,11 +227,11 @@ public class ColumnControl : MonoBehaviour
             if (columnmanage[i].GetComponent<circlecut1>())
             {
                 columnmanage[i].GetComponent<circlecut1>().reset();
-                columnmanage[i].GetComponent<Columntile>().reset();
+                columnmanage[i].GetComponent<Columntile>().kill();
             }
 
         }
-
+       
 
 
 
@@ -242,7 +246,7 @@ public class ColumnControl : MonoBehaviour
     public void childbuild(int n)
     {
 
-        //print("childbuild  n  :" + n);
+        
 
 
         int angle = uict.numberslidervalue;
@@ -444,7 +448,7 @@ public class ColumnControl : MonoBehaviour
         {
             childbuild(columnnumber);
         }
-        if(B== true)
+        if(B == true)
         {
             childbuild(bodycolumnnumber);
 

@@ -31,10 +31,20 @@ public class AllInOne : MonoBehaviour
     public List<GameObject> tower_roof = new List<GameObject>();
     //public List<GameOB> tower_roof = new List<GameOB>();
 
+
+    //platform
+
+    public List<GameObject> plat_tower = new List<GameObject>();
+
+
+
+
+
 	public int number;
 
-	//column's percent
-	public float percent;
+	
+
+
 	public float platpercent;
     public float percent2;
 
@@ -52,19 +62,96 @@ public class AllInOne : MonoBehaviour
     public float ini_roof_tall;
     public float ini_roof_long;
 
+    public float ini_platwide;
+    public float ini_plathigh;
+
+
+    //roof
+    public Vector2 ini_main_ridgedis;
+    public Vector2 ini_side_ridgedis;
+
+    public Vector2 main_ridgedis;
+    public Vector2 side_ridgedis;
+
+    public Vector2 main_ridgedis_rec;
+    public Vector2 side_ridgedis_rec;
+
+
+
+    //column's percent
+    public float percent_1;
+    public float percent_2;
+    public float percentdis;
+
+    public float move_percent_1;
+    public float move_percent_2;
+    public float move_percentdis;
+
+    public float percent_1_rec;
+    public float percent_2_rec;
+    public float percentdis_rec;
+
+
+    public Vector2 ini_ridgetail;
+
+    //platform
+    public Vector2 ini_platpoint_0;
+    public Vector2 ini_platpoint_1;
+    public Vector2 ini_platpoint_2;
+    public Vector2 ini_platblas;
+
+
+    public Vector2 move_platpoint_0;
+    public Vector2 move_platpoint_1;
+    public Vector2 move_platpoint_2;
+    public Vector2 move_platblas;
+
+
+    public Vector2 platpoint_0_rec;
+    public Vector2 platpoint_1_rec;
+    public Vector2 platpoint_2_rec;
+    public Vector2 platblas_rec;
+
+
+
+
+
+
+
+    /*
+    public float ini_column;
+    public Vector2 ini_columnRec;
+    */
+    
+
+
+
+
 
     public bool Rectangle_Or_Not;
 
 
     public int inUseTab;
+    public int num;
+
+
+
+    public Vector3 p1;
+    public Vector3 p2;
+    public Vector3 p3;
 
 
 
     void Awake()
     {
         Application.targetFrameRate = 30;
-
+        num = 0;
         inUseTab=0;
+
+
+    
+
+
     }
 
 
@@ -78,6 +165,8 @@ public class AllInOne : MonoBehaviour
 
 		TingPartList.Add(body);
         tower.Add(body);
+
+        plat_tower.Add(platform);
         //tower_roof.Add(roof);
 
 		TingPartList.Add(platform);
@@ -88,7 +177,11 @@ public class AllInOne : MonoBehaviour
 		TingPartPosition.Add(body.transform.position);
 		TingPartPosition.Add(platform.transform.position);
 
-		percent = 1 / body.transform.GetChild(0).GetChild(1).GetChild(0).GetComponent<ColumnControl>().EyeToColumn;
+		percent_1 =  body.transform.GetChild(0).GetChild(1).GetChild(0).GetComponent<ColumnControl>().ini_EyeToColumn.x;
+        percent_2 =  body.transform.GetChild(0).GetChild(1).GetChild(0).GetComponent<ColumnControl>().ini_EyeToColumn.y;
+        percentdis = body.transform.GetChild(0).GetChild(1).GetChild(0).GetComponent<ColumnControl>().ini_EyeToColumn.magnitude;
+
+
 
         percent2 = 1 / body.transform.GetChild(0).GetChild(2).GetChild(0).GetComponent<ColumnControl>().EyeToColumn;
         
@@ -109,75 +202,42 @@ public class AllInOne : MonoBehaviour
         GameObject.Find("bao-ding").transform.position = TingPartList[0].transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0).transform.position;
 
 
+        ini_platwide = Vector3.Distance(TingPartList[2].transform.GetChild(4).GetChild(0).GetChild(0).transform.position,this.transform.GetChild(0).transform.position);
+        ini_plathigh = Vector3.Distance(TingPartList[2].transform.GetChild(4).GetChild(0).GetChild(0).transform.position, TingPartList[2].transform.GetChild(4).GetChild(0).GetChild(1).transform.position);
+
+
+        threep();
+
+
+        ini_main_ridgedis = new Vector2(TingPartList[0].transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0).transform.position.x,TingPartList[0].transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0).transform.position.z);
+
+        ini_side_ridgedis = new Vector2(TingPartList[0].transform.GetChild(0).GetChild(0).GetChild(0).GetChild(2).transform.position.x, TingPartList[0].transform.GetChild(0).GetChild(0).GetChild(0).GetChild(2).transform.position.z);
+
+        ini_ridgetail = new Vector2(TingPartList[0].transform.GetChild(0).GetChild(1).GetChild(0).transform.position.x, TingPartList[0].transform.GetChild(0).GetChild(1).GetChild(0).transform.position.z);
+
+        main_ridgedis= ini_main_ridgedis;
+
+        side_ridgedis = ini_side_ridgedis;
+
+
+        //ini_column = body.transform.GetChild(0).GetChild(1).GetChild(0).GetComponent<ColumnControl>().ColumnWide;
+
+
+
+
+        ini_platpoint_0= new Vector2(TingPartList[2].transform.GetChild(4).GetChild(0).GetChild(0).transform.position.x,TingPartList[2].transform.GetChild(4).GetChild(0).GetChild(0).transform.position.z);
+        ini_platpoint_1 = new Vector2(TingPartList[2].transform.GetChild(4).GetChild(0).GetChild(3).transform.position.x, TingPartList[2].transform.GetChild(4).GetChild(0).GetChild(3).transform.position.z);
+        ini_platpoint_2 = new Vector2(TingPartList[2].transform.GetChild(4).GetChild(0).GetChild(1).transform.position.x, TingPartList[2].transform.GetChild(4).GetChild(0).GetChild(1).transform.position.z);
+        ini_platblas = new Vector2(TingPartList[2].transform.GetChild(4).GetChild(0).GetChild(2).transform.position.x, TingPartList[2].transform.GetChild(4).GetChild(0).GetChild(2).transform.position.z);
+
 	}
 
-	// Update is called once per frame
-	void Update()
-	{
 
-		if (Input.GetKeyDown(KeyCode.Alpha1))
-		{
-
-            ChangeRoof(0, 0.5F, 0.5F);
-		}
-
-		if (Input.GetKeyDown(KeyCode.Alpha2))
-		{
-
-            ChangeRoof(2, 2, 0.7F);
-		}
-
-		if (Input.GetKeyDown(KeyCode.Alpha3))
-		{
-
-            eaveupdate();
-            rectangle_column();
-            rectangle_Platform(roof_tall,roof_long);
-
-		}
-		if (Input.GetKeyDown(KeyCode.Alpha4))
-		{
-
-			UpdateAll(4);
-		}
-		if (Input.GetKeyDown(KeyCode.Alpha5))
-		{
-            //twolayer();
-            Shanding(2f);
-
-		}
-		if (Input.GetKeyDown(KeyCode.Alpha6))
-		{
-
-			//UpdateAll(6);
-
-            eaveupdate2();
-		}
-
-		if (Input.GetKeyDown(KeyCode.Alpha7))
-		{
-
-            upup(17.5f);
-		}
-
-		if (Input.GetKeyDown(KeyCode.Alpha8))
-		{
-
-			UpdateAll(8);
-		}
-
-		if (Input.GetKeyDown(KeyCode.Alpha9))
-		{
-
-			UpdateAll(9);
-		}
-		if (Input.GetKeyDown(KeyCode.Alpha0))
-		{
-
-            Double_Eave();
-		}
-
-        
+    void threep()
+    {
+        p1 = TingPartList[0].transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0).transform.position;
+        p2 = TingPartList[0].transform.GetChild(0).GetChild(0).GetChild(0).GetChild(1).transform.position;
+        p3 = TingPartList[0].transform.GetChild(0).GetChild(0).GetChild(0).GetChild(2).transform.position;
 
 
     }
@@ -185,6 +245,199 @@ public class AllInOne : MonoBehaviour
 
 
 
+	// Update is called once per frame
+	void Update()
+	{
+        
+		if (Input.GetKeyDown(KeyCode.Alpha1))
+		{
+            Shanding(2f);
+            
+		}
+        
+		if (Input.GetKeyDown(KeyCode.Alpha2))
+		{
+            eaveupdate2();
+            
+		}
+
+		if (Input.GetKeyDown(KeyCode.Alpha3))
+		{
+
+
+            TingPartList[2].transform.GetChild(4).GetComponent<PlatcolumnControl>().num = TingPartList[2].transform.GetChild(4).GetComponent<PlatcolumnControl>().num + 2;
+            TingPartList[2].transform.GetChild(4).GetComponent<PlatcolumnControl>().reset();
+
+		}
+		if (Input.GetKeyDown(KeyCode.Alpha4))
+		{
+
+
+            TingPartList[2].transform.GetChild(4).GetComponent<PlatcolumnControl>().num = TingPartList[2].transform.GetChild(4).GetComponent<PlatcolumnControl>().num - 2;
+            TingPartList[2].transform.GetChild(4).GetComponent<PlatcolumnControl>().reset();
+		}
+		if (Input.GetKeyDown(KeyCode.Alpha5))
+		{
+
+            TingPartList[2].transform.GetChild(4).GetComponent<PlatcolumnControl>().stairnum = TingPartList[2].transform.GetChild(4).GetComponent<PlatcolumnControl>().stairnum + 1;
+            TingPartList[2].transform.GetChild(4).GetComponent<PlatcolumnControl>().reset();
+
+		}
+		if (Input.GetKeyDown(KeyCode.Alpha6))
+		{
+            TingPartList[2].transform.GetChild(4).GetComponent<PlatcolumnControl>().stairnum = TingPartList[2].transform.GetChild(4).GetComponent<PlatcolumnControl>().stairnum-1;
+            TingPartList[2].transform.GetChild(4).GetComponent<PlatcolumnControl>().reset();
+		}
+
+		if (Input.GetKeyDown(KeyCode.Alpha7))
+		{
+
+            TingPartList[1].transform.GetChild(0).GetChild(2).GetChild(0).GetComponent<ColumnControl>().bodycolumnnumber = TingPartList[1].transform.GetChild(0).GetChild(2).GetChild(0).GetComponent<ColumnControl>().bodycolumnnumber + 1;
+            TingPartList[1].transform.GetChild(1).GetComponent<UIcontrol>().setnumberslidervalue();
+		}
+
+		if (Input.GetKeyDown(KeyCode.Alpha8))
+		{
+
+            TingPartList[1].transform.GetChild(0).GetChild(2).GetChild(0).GetComponent<ColumnControl>().bodycolumnnumber = TingPartList[1].transform.GetChild(0).GetChild(2).GetChild(0).GetComponent<ColumnControl>().bodycolumnnumber - 1;
+            TingPartList[1].transform.GetChild(1).GetComponent<UIcontrol>().setnumberslidervalue();
+		}
+
+		if (Input.GetKeyDown(KeyCode.Alpha9))
+		{
+
+            TingPartList[1].transform.GetChild(0).GetChild(1).GetChild(0).GetComponent<ColumnControl>().columnnumber = TingPartList[1].transform.GetChild(0).GetChild(1).GetChild(0).GetComponent<ColumnControl>().columnnumber + 2;
+            TingPartList[1].transform.GetChild(1).GetComponent<UIcontrol>().setnumberslidervalue();
+		}
+	
+
+        if (Input.GetKeyDown(KeyCode.Alpha0))
+        {
+            
+            TingPartList[1].transform.GetChild(0).GetChild(1).GetChild(0).GetComponent<ColumnControl>().columnnumber = TingPartList[1].transform.GetChild(0).GetChild(1).GetChild(0).GetComponent<ColumnControl>().columnnumber - 2;
+            TingPartList[1].transform.GetChild(1).GetComponent<UIcontrol>().setnumberslidervalue();
+        
+        }
+        
+
+
+    }
+
+
+
+    public void multi_column(int a)
+    {
+        TingPartList[1].transform.GetChild(0).GetChild(1).GetChild(0).GetComponent<ColumnControl>().columnnumber = a;
+        TingPartList[1].transform.GetChild(1).GetComponent<UIcontrol>().setnumberslidervalue();
+
+    }
+
+    public void multi_body(int a)
+    {
+        TingPartList[1].transform.GetChild(0).GetChild(2).GetChild(0).GetComponent<ColumnControl>().bodycolumnnumber = a;
+        TingPartList[1].transform.GetChild(1).GetComponent<UIcontrol>().setnumberslidervalue();
+
+    }
+
+    public void multi_platbla(int a)
+    {
+        TingPartList[2].transform.GetChild(4).GetComponent<PlatcolumnControl>().num = a;
+        TingPartList[2].transform.GetChild(4).GetComponent<PlatcolumnControl>().reset();
+
+    }
+
+    public void multi_stair(int a)
+    {
+
+        TingPartList[2].transform.GetChild(4).GetComponent<PlatcolumnControl>().stairnum = a;
+        TingPartList[2].transform.GetChild(4).GetComponent<PlatcolumnControl>().reset();
+    }
+
+
+
+
+
+
+    public void Change_Double_Eave(int b)
+    {
+
+
+        GameObject c = tower[b];
+      
+
+        Vector3 v1 = new Vector3(c.transform.GetChild(0).GetChild(1).GetChild(0).GetChild(0).transform.position.x, c.transform.GetChild(0).GetChild(1).GetChild(0).GetChild(0).transform.position.y - 17, c.transform.GetChild(0).GetChild(1).GetChild(0).GetChild(0).transform.position.z);
+
+      
+
+        GameObject clone2 = Instantiate(Resources.Load("RidgeCctwolayer"), v1, Quaternion.identity) as GameObject;
+
+
+        clone2.transform.parent = transform;
+        //clone2.transform.GetChild(1).GetComponent<roofcontrol>().numberslider.value = ucit.numberslidervalue;
+
+        clone2.transform.GetChild(1).GetComponent<roofcontrol>().numberslidervalue = ucit.numberslidervalue;
+
+      
+        clone2.transform.GetChild(1).GetComponent<roofcontrol>().setnumberslidervalue();
+
+
+
+        Destroy(tower_roof[b]);
+
+        tower_roof[b] = clone2;
+
+
+    }
+
+    public void Change_Double_Eave_2()
+    {
+
+
+        GameObject c = TingPartList[1];
+
+        for(int i =0;i<tower.Count;i++)
+        {
+
+            if(tower[i].name==TingPartList[1].name)
+            {
+
+                if (tower_roof[i]!=null)
+                {
+
+                    Vector3 v1 = new Vector3(c.transform.GetChild(0).GetChild(1).GetChild(0).GetChild(0).transform.position.x, c.transform.GetChild(0).GetChild(1).GetChild(0).GetChild(0).transform.position.y - 17, c.transform.GetChild(0).GetChild(1).GetChild(0).GetChild(0).transform.position.z);
+
+
+                    GameObject clone2 = Instantiate(Resources.Load("RidgeCctwolayer"), v1, Quaternion.identity) as GameObject;
+
+
+                    clone2.transform.parent = transform;
+                   // clone2.transform.GetChild(1).GetComponent<roofcontrol>().numberslider.value = ucit.numberslidervalue;
+
+
+                    clone2.transform.GetChild(1).GetComponent<roofcontrol>().numberslidervalue = ucit.numberslidervalue;
+                    clone2.transform.GetChild(1).GetComponent<roofcontrol>().setnumberslidervalue();
+
+                    Destroy(tower_roof[i]);
+
+                    tower_roof[i] = clone2;
+
+                   
+
+                }
+
+
+
+                break;
+            }
+        }
+
+
+
+
+       
+
+
+    }
 
 
 
@@ -194,19 +447,32 @@ public class AllInOne : MonoBehaviour
 
         GameObject cc = TingPartList[1];
 
+       
         Vector3 v1 = new Vector3(cc.transform.GetChild(0).GetChild(1).GetChild(0).GetChild(0).transform.position.x, cc.transform.GetChild(0).GetChild(1).GetChild(0).GetChild(0).transform.position.y - 15, cc.transform.GetChild(0).GetChild(1).GetChild(0).GetChild(0).transform.position.z);
 
-
+        print(" dd  " + v1);
         GameObject clone2 = Instantiate(Resources.Load("RidgeCctwolayer"), v1, Quaternion.identity) as GameObject;
 
 
         clone2.transform.parent = transform;
-        clone2.transform.GetChild(1).GetComponent<roofcontrol>().numberslider.value = ucit.numberslidervalue;
+        //clone2.transform.GetChild(1).GetComponent<roofcontrol>().numberslider.value = ucit.numberslidervalue;
+
+        print(ucit.numberslidervalue);
+
+
+
+        
+         clone2.transform.GetChild(1).GetComponent<roofcontrol>().numberslidervalue = ucit.numberslidervalue;
+         clone2.transform.GetChild(1).GetComponent<roofcontrol>().setnumberslidervalue();
+        
+
 
         tower_roof[inUseTab] = clone2;
      
 
     }
+
+
 
 
 
@@ -248,8 +514,8 @@ public class AllInOne : MonoBehaviour
         clone.transform.parent = transform;
         clone.transform.Translate(0, a, 0);
 
-
-
+        clone.name = "body" + num;
+        num++;
 
 
 
@@ -301,7 +567,7 @@ public class AllInOne : MonoBehaviour
             clone.transform.GetChild(7).GetComponent<ColumnBody>().reset();
         }
 
-
+        threep();
         
 
     }
@@ -322,7 +588,7 @@ public class AllInOne : MonoBehaviour
     public void DeleteLayer(int a)
     {
 
-        print("index: "+a);
+       
 
         TingPartList[1] = tower[a];
         inUseTab = a;
@@ -364,35 +630,26 @@ public class AllInOne : MonoBehaviour
 
 
 
-
-
-        for (int i = 0; i < tower.Count; i++)
-        {
-            if (TingPartList[1].name == tower[i].name)
-            {
-
-                for (int j = i + 1; j < tower.Count; j++)
-                {
-                    tower[j - 1] = tower[j];
-                    if (tower_roof[j - 1] != null)
-                        tower_roof[j - 2] = tower_roof[j - 1];
-                }
-
-                break;
-            }
-
-        }
-
-
+    
 
         
 
         tower.Remove(tower[a]);
 
-        //tower_roof.Remove(tower_roof[a-1]);
+       
+        if (tower_roof[a]!=null)
+        {
+            print("ffffff");
+        Destroy(tower_roof[a].gameObject);
+        }
+        
+        tower_roof.Remove(tower_roof[a]);
 
 
         Destroy(TingPartList[1].gameObject);
+
+
+
         GameObject.Find("bao-ding").transform.position = TingPartList[0].transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0).transform.position;
         if(a!=0)
         { 
@@ -408,8 +665,9 @@ public class AllInOne : MonoBehaviour
 
         }
         //changeLayer(inUseTab);
-    
+        threep();
     }
+
 
 
 
@@ -436,6 +694,100 @@ public class AllInOne : MonoBehaviour
     }
 
     //**** ****************
+
+    //平台tower系統
+    public void addplatform()
+    {
+
+       float  a = plat_tower[plat_tower.Count - 1].transform.GetChild(4).GetComponent<PlatcolumnControl>().high;
+        
+
+
+        TingPartList[0].transform.Translate(0, a, 0);
+
+
+
+        //GameObject clone = Instantiate(TingPartList[1], TingPartList[1].transform.position, Quaternion.identity) as GameObject;
+
+        GameObject clone = Instantiate(plat_tower[plat_tower.Count - 1], plat_tower[plat_tower.Count - 1].transform.position, Quaternion.identity) as GameObject;
+
+        clone.transform.parent = transform;
+        clone.transform.Translate(0, a, 0);
+
+        clone.name = "PLAT" + num;
+        num++;
+
+
+
+
+        for (int i = 0; i<tower.Count; i++)
+        {
+            tower[i].transform.Translate(0, a, 0);
+
+        }
+        for (int i = 0; i < tower_roof.Count; i++)
+        {
+            if (tower_roof[i]!=null)
+            tower_roof[i].transform.Translate(0, a, 0);
+
+        }
+
+            //MoveTowerBody(clone);
+
+            //clone.transform.GetChild(2).GetComponent<UIcontrol>().numberslidervalue = ucit.numberslidervalue;
+
+
+            /*
+            clone.transform.GetChild(0).GetChild(1).GetChild(0).GetComponent<catline>().ResetCatmullRom();
+            clone.transform.GetChild(0).GetChild(1).GetChild(0).GetComponent<circlecut1>().reset();
+            clone.transform.GetChild(0).GetChild(1).GetChild(0).GetComponent<Columntile>().reset();
+
+
+            clone.transform.GetChild(0).GetChild(2).GetChild(0).GetComponent<catline>().ResetCatmullRom();
+            clone.transform.GetChild(0).GetChild(2).GetChild(0).GetComponent<circlecut1>().reset();
+            clone.transform.GetChild(0).GetChild(2).GetChild(0).GetComponent<Columntile>().reset();
+
+            clone.transform.GetChild(1).GetComponent<UIcontrol>().setnumberslidervalue();
+           */
+
+
+            GameObject.Find("bao-ding").transform.position = TingPartList[0].transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0).transform.position;
+
+       
+
+        TingPartList[2] = clone;
+
+
+
+
+        plat_tower.Add(clone);
+       
+        /*
+
+        if (TingPartList[1].transform.GetChild(1).GetComponent<UIcontrol>().isCb == true)
+        {
+            clone.transform.GetChild(7).GetComponent<ColumnBody>().reset();
+        }
+
+        */
+
+
+
+
+
+    }
+
+
+    public void deleteplatform()
+    {
+
+
+
+
+
+
+    }
+
 
 
 
@@ -476,12 +828,67 @@ public class AllInOne : MonoBehaviour
 
     //長方形屋頂
 
+    //恢復
+    public void rectangleundo()
+    {
+
+        Rectangle_Or_Not = false;
+
+        float newmx = main_ridgedis.x - ini_main_ridgedis.x;
+        float newmz = main_ridgedis.y - ini_main_ridgedis.y;
+
+        float newsx = side_ridgedis.x - ini_side_ridgedis.x;
+        float newsz = side_ridgedis.y - ini_side_ridgedis.y;
+
+
+
+
+
+
+        //ChangeRoof(0,-newmx,-newmz);
+        //ChangeRoof(2, -newsx, -newsz);
+        if (ini_side_ridgedis != side_ridgedis || ini_main_ridgedis != main_ridgedis)
+        {
+
+         
+
+
+
+        TingPartList[0].transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0).transform.position = new Vector3(ini_main_ridgedis.x, TingPartList[0].transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0).transform.position.y, ini_main_ridgedis.y);
+        TingPartList[0].transform.GetChild(0).GetChild(0).GetChild(0).GetChild(2).transform.position = new Vector3(ini_side_ridgedis.x, TingPartList[0].transform.GetChild(0).GetChild(0).GetChild(0).GetChild(2).transform.position.y, ini_side_ridgedis.y);
+        TingPartList[0].transform.GetChild(0).GetChild(0).GetChild(0).GetChild(1).transform.position = con2posiotion(TingPartList[0].transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0).transform.position, TingPartList[0].transform.GetChild(0).GetChild(0).GetChild(0).GetChild(2).transform.position);
+
+        TingPartList[0].transform.GetChild(0).GetChild(1).GetChild(0).transform.position = new Vector3(ini_ridgetail.x, TingPartList[0].transform.GetChild(0).GetChild(1).GetChild(0).transform.position.y, ini_ridgetail.y);
+
+            /*
+        TingPartList[0].transform.GetChild(0).GetChild(0).GetChild(0).GetComponent<RidgeControl>().reset();
+        TingPartList[0].transform.GetChild(0).GetChild(1).GetChild(0).GetComponent<RidgetailControl>().reset();
+            */
+
+            /*
+        rectangle_column(-newsx,-newsz);
+        rectangle_Platform(-newsx, -newsz);
+            */
+        
+        }
+
+
+
+
+        main_ridgedis = ini_main_ridgedis;
+        side_ridgedis = ini_side_ridgedis;
+
+
+
+    }
+
+
 
     public void ChangeRoof(int n, float a, float b)
     {
 
-       
-       
+
+        
 
 
         GameObject Ridge_Nick = TingPartList[0].transform.GetChild(0).GetChild(0).gameObject;
@@ -490,19 +897,25 @@ public class AllInOne : MonoBehaviour
 
         if (n == 0)
         {
-            /*
-            Ridge_Nick.transform.GetChild(0).GetChild(n).transform.Translate(a, 0, a);
-            Ridge_Nick.transform.GetChild(1).GetChild(n).transform.Translate(a, 0, -a);
-            Ridge_Nick.transform.GetChild(2).GetChild(n).transform.Translate(a, 0, a);
-            Ridge_Nick.transform.GetChild(3).GetChild(n).transform.Translate(a, 0, -a);
-            */
-            print(a+"   +    "+b);
             
+           
+            /*
             Ridge_Nick.transform.GetChild(0).GetChild(n).transform.Translate(a, 0, b);
             Ridge_Nick.transform.GetChild(1).GetChild(n).transform.Translate(-b, 0, -a);
             Ridge_Nick.transform.GetChild(2).GetChild(n).transform.Translate(-a, 0, -b);
-            Ridge_Nick.transform.GetChild(3).GetChild(n).transform.Translate(b, 0, a);
+
+            if (Ridge_Nick.transform.GetChild(3))
+             Ridge_Nick.transform.GetChild(3).GetChild(n).transform.Translate(b, 0, a);
+            */
+
             
+
+            Ridge_Nick.transform.GetChild(0).GetChild(n).transform.position = new Vector3(ini_main_ridgedis.x + a * Mathf.Cos(45f), Ridge_Nick.transform.GetChild(0).GetChild(n).transform.position.y, ini_main_ridgedis.y + b * Mathf.Cos(45f));
+
+
+
+
+
 
 
 
@@ -521,9 +934,6 @@ public class AllInOne : MonoBehaviour
 
             Ridge_Nick.transform.parent.parent.GetChild(7).GetComponent<upridge>().upridgemanage[3].transform.GetChild(0).transform.Translate(a, 0, -b);
            // Ridge_Nick.transform.parent.parent.GetChild(7).GetComponent<upridge>().upridgemanage[3].transform.GetChild(2).transform.Translate(b, 0, -a);
-           
-
-
 
 
 
@@ -533,37 +943,70 @@ public class AllInOne : MonoBehaviour
         }
         else if (n == 2)
         {
+            /*
             Ridge_Nick.transform.GetChild(0).GetChild(n).transform.Translate(a, 0, b);
+            */
+            //print(a+"   :  "+b);
+            Ridge_Nick.transform.GetChild(0).GetChild(n).transform.position = new Vector3(ini_side_ridgedis.x + a * Mathf.Cos(45f), Ridge_Nick.transform.GetChild(0).GetChild(n).transform.position.y, ini_side_ridgedis.y + b * Mathf.Cos(45f));
+           
+            //Ridge_Nick.transform.GetChild(0).GetChild(n).transform.position = new Vector3(ini_side_ridgedis.x , Ridge_Nick.transform.GetChild(0).GetChild(n).transform.position.y, ini_side_ridgedis.y );
+
+
+
+
+            //ini_side_ridgedis;
+
+
+            /*
+             
             Ridge_Nick.transform.GetChild(1).GetChild(n).transform.Translate(-b, 0, -a);
             Ridge_Nick.transform.GetChild(2).GetChild(n).transform.Translate(-a, 0, -b);
+
+            if (Ridge_Nick.transform.GetChild(3))
             Ridge_Nick.transform.GetChild(3).GetChild(n).transform.Translate(b, 0, a);
+
+            */
+
+            side_ridgedis = new Vector2(side_ridgedis.x + a, side_ridgedis.y + b);
+
+            TingPartList[0].transform.GetChild(0).GetChild(1).GetChild(0).transform.Translate(a, 0, b);
+
+
         }
 
 
         Ridge_Nick.transform.GetChild(0).GetChild(1).transform.position = con2posiotion(Ridge_Nick.transform.GetChild(0).GetChild(0).transform.position, Ridge_Nick.transform.GetChild(0).GetChild(2).transform.position);
         Ridge_Nick.transform.GetChild(1).GetChild(1).transform.position = con2posiotion(Ridge_Nick.transform.GetChild(1).GetChild(0).transform.position, Ridge_Nick.transform.GetChild(1).GetChild(2).transform.position);
         Ridge_Nick.transform.GetChild(2).GetChild(1).transform.position = con2posiotion(Ridge_Nick.transform.GetChild(2).GetChild(0).transform.position, Ridge_Nick.transform.GetChild(2).GetChild(2).transform.position);
+
+        if (Ridge_Nick.transform.GetChild(3))
         Ridge_Nick.transform.GetChild(3).GetChild(1).transform.position = con2posiotion(Ridge_Nick.transform.GetChild(3).GetChild(0).transform.position, Ridge_Nick.transform.GetChild(3).GetChild(2).transform.position);
 
         //Ridge重整
         Ridge_Nick.transform.GetChild(0).GetComponent<catline>().ResetCatmullRom();
         Ridge_Nick.transform.GetChild(1).GetComponent<catline>().ResetCatmullRom();
         Ridge_Nick.transform.GetChild(2).GetComponent<catline>().ResetCatmullRom();
+        if (Ridge_Nick.transform.GetChild(3))
         Ridge_Nick.transform.GetChild(3).GetComponent<catline>().ResetCatmullRom();
 
         Ridge_Nick.transform.GetChild(0).GetComponent<circlecut1>().reset();
         Ridge_Nick.transform.GetChild(1).GetComponent<circlecut1>().reset();
         Ridge_Nick.transform.GetChild(2).GetComponent<circlecut1>().reset();
+        if (Ridge_Nick.transform.GetChild(3))
         Ridge_Nick.transform.GetChild(3).GetComponent<circlecut1>().reset();
 
         Ridge_Nick.transform.GetChild(0).GetComponent<Ridgetile>().reset();
+
+        /*
         Ridge_Nick.transform.GetChild(1).GetComponent<Ridgetile>().reset();
+
         Ridge_Nick.transform.GetChild(2).GetComponent<Ridgetile>().reset();
+        if (Ridge_Nick.transform.GetChild(3))
         Ridge_Nick.transform.GetChild(3).GetComponent<Ridgetile>().reset();
 
-        
 
-
+        TingPartList[0].transform.GetChild(0).GetChild(1).GetChild(0).GetComponent<RidgetailControl>().reset();
+        */
         //eaveupdate();
 
 
@@ -573,9 +1016,16 @@ public class AllInOne : MonoBehaviour
         roof_tall = Vector3.Distance(Ridge_Nick.transform.GetChild(0).GetChild(2).transform.position, Ridge_Nick.transform.GetChild(3).GetChild(2).transform.position);
         roof_long = Vector3.Distance(Ridge_Nick.transform.GetChild(0).GetChild(2).transform.position, Ridge_Nick.transform.GetChild(1).GetChild(2).transform.position);
 
+         main_ridgedis_rec = new Vector2(ini_main_ridgedis.x + a * Mathf.Cos(45f),ini_main_ridgedis.y + b * Mathf.Cos(45f));
+         side_ridgedis_rec = new Vector2(ini_side_ridgedis.x + a * Mathf.Cos(45f), ini_side_ridgedis.y + b * Mathf.Cos(45f));
+       
+         percent_1_rec = percent_1+ a * Mathf.Cos(45f);
+         percent_2_rec = percent_2 + b * Mathf.Cos(45f);
 
-
-
+         platpoint_0_rec = new Vector2(ini_platpoint_0.x + a * Mathf.Cos(45f), ini_platpoint_0.y + b * Mathf.Cos(45f));
+         platpoint_1_rec = new Vector2(ini_platpoint_1.x + a * Mathf.Cos(45f), ini_platpoint_1.y + b * Mathf.Cos(45f));
+         platpoint_2_rec = new Vector2(ini_platpoint_2.x + a * Mathf.Cos(45f), ini_platpoint_2.y + b * Mathf.Cos(45f));
+         platblas_rec = new Vector2(ini_platblas.x + a * Mathf.Cos(45f), ini_platblas.y + b * Mathf.Cos(45f));
 
     }
 
@@ -600,46 +1050,7 @@ public class AllInOne : MonoBehaviour
         Ridge_Nick.transform.parent.parent.GetChild(3).GetComponent<roofsurcon2control>().reset();
         Ridge_Nick.transform.parent.parent.GetChild(4).GetComponent<roofsurcontrol2>().reset();
 
-        /*
         
-        ups.inig1(ups.transform.GetChild(1).transform.gameObject);
-        ups.inig2(ups.transform.GetChild(3).transform.gameObject);
-
-        ups.inig3(ups.transform.GetChild(2).transform.gameObject);
-        ups.inig4(ups.transform.GetChild(0).transform.gameObject);
-
-        
-
-
-
-        //eave
-        Ridge_Nick.transform.parent.parent.GetChild(5).GetComponent<EaveControl>().inig(Ridge_Nick.transform.parent.parent.GetChild(5).GetComponent<EaveControl>().eavemanage[0]);
-        Ridge_Nick.transform.parent.parent.GetChild(5).GetComponent<EaveControl>().inig(Ridge_Nick.transform.parent.parent.GetChild(5).GetComponent<EaveControl>().eavemanage[2]);
-        Ridge_Nick.transform.parent.parent.GetChild(5).GetComponent<EaveControl>().inig(Ridge_Nick.transform.parent.parent.GetChild(5).GetComponent<EaveControl>().eavemanage[1]);
-        Ridge_Nick.transform.parent.parent.GetChild(5).GetComponent<EaveControl>().inig(Ridge_Nick.transform.parent.parent.GetChild(5).GetComponent<EaveControl>().eavemanage[3]);
-
-        //rf
-        Ridge_Nick.transform.parent.parent.GetChild(2).GetComponent<roofsurcontrol>().inig(Ridge_Nick.transform.parent.parent.GetChild(2).GetComponent<roofsurcontrol>().roofsurfacemanage[0]);
-        Ridge_Nick.transform.parent.parent.GetChild(2).GetComponent<roofsurcontrol>().inig(Ridge_Nick.transform.parent.parent.GetChild(2).GetComponent<roofsurcontrol>().roofsurfacemanage[2]);
-        Ridge_Nick.transform.parent.parent.GetChild(2).GetComponent<roofsurcontrol>().inig(Ridge_Nick.transform.parent.parent.GetChild(2).GetComponent<roofsurcontrol>().roofsurfacemanage[1]);
-        Ridge_Nick.transform.parent.parent.GetChild(2).GetComponent<roofsurcontrol>().inig(Ridge_Nick.transform.parent.parent.GetChild(2).GetComponent<roofsurcontrol>().roofsurfacemanage[3]);
-
-        //RRR
-        Ridge_Nick.transform.parent.parent.GetChild(3).GetComponent<roofsurcon2control>().inig(Ridge_Nick.transform.parent.parent.GetChild(3).GetComponent<roofsurcon2control>().rrrRL[0]);
-        Ridge_Nick.transform.parent.parent.GetChild(3).GetComponent<roofsurcon2control>().inig(Ridge_Nick.transform.parent.parent.GetChild(3).GetComponent<roofsurcon2control>().rrrRL[2]);
-        Ridge_Nick.transform.parent.parent.GetChild(3).GetComponent<roofsurcon2control>().inig(Ridge_Nick.transform.parent.parent.GetChild(3).GetComponent<roofsurcon2control>().rrrRL[1]);
-        Ridge_Nick.transform.parent.parent.GetChild(3).GetComponent<roofsurcon2control>().inig(Ridge_Nick.transform.parent.parent.GetChild(3).GetComponent<roofsurcon2control>().rrrRL[3]);
-        //rf2
-
-
-        Ridge_Nick.transform.parent.parent.GetChild(4).GetComponent<roofsurcontrol2>().inig(Ridge_Nick.transform.parent.parent.GetChild(4).GetComponent<roofsurcontrol2>().roofsurface2manage[0]);
-        Ridge_Nick.transform.parent.parent.GetChild(4).GetComponent<roofsurcontrol2>().inig(Ridge_Nick.transform.parent.parent.GetChild(4).GetComponent<roofsurcontrol2>().roofsurface2manage[2]);
-        Ridge_Nick.transform.parent.parent.GetChild(4).GetComponent<roofsurcontrol2>().inig(Ridge_Nick.transform.parent.parent.GetChild(4).GetComponent<roofsurcontrol2>().roofsurface2manage[1]);
-        Ridge_Nick.transform.parent.parent.GetChild(4).GetComponent<roofsurcontrol2>().inig(Ridge_Nick.transform.parent.parent.GetChild(4).GetComponent<roofsurcontrol2>().roofsurface2manage[3]);
-
-
-        */
-
 
 
     }
@@ -650,7 +1061,7 @@ public class AllInOne : MonoBehaviour
     public void eaveupdate2()
     {
 
-        Rectangle_Or_Not = true;
+        //Rectangle_Or_Not = true;
 
         GameObject Ridge_Nick = TingPartList[0].transform.GetChild(0).GetChild(0).gameObject;
 
@@ -786,86 +1197,219 @@ public class AllInOne : MonoBehaviour
 
     }
 
-    public void rectangle_column()
+    public void rectangle_column(float a,float b)
     {
 
         GameObject Ridge_Nick = TingPartList[0].transform.GetChild(0).GetChild(0).gameObject;
-        GameObject column_nick = TingPartList[1].transform.GetChild(0).GetChild(1).gameObject;
 
-        GameObject column_BODY_nick = TingPartList[1].transform.GetChild(0).GetChild(2).gameObject;
+        print("  cccccc     "+a + "   :  " + b);
 
-        print("oeoeoeoeoeoe");
-        for(int i=0;i<4;i++)
+        for (int k = 0; k < tower.Count; k++)
         {
+            GameObject column_nick = tower[k].transform.GetChild(0).GetChild(1).gameObject;
+            GameObject column_BODY_nick = tower[k].transform.GetChild(0).GetChild(2).gameObject;
 
+            
 
-            for(int j=0;j<4;j++)
+            
+            for (int i = 0; i < 4; i++)
             {
-                
-                column_nick.transform.GetChild(i).GetChild(j).transform.position = new Vector3(Ridge_Nick.transform.GetChild(i).GetChild(1).transform.position.x, column_nick.transform.GetChild(i).GetChild(j).transform.position.y, Ridge_Nick.transform.GetChild(i).GetChild(1).transform.position.z);
 
-                if (TingPartList[1].transform.GetChild(1).GetComponent<UIcontrol>().isCb == true)
+
+                for (int j = 0; j < 4; j++)
                 {
-                    column_BODY_nick.transform.GetChild(i).GetChild(j).transform.position = new Vector3(Ridge_Nick.transform.GetChild(i).GetChild(1).transform.position.x, column_BODY_nick.transform.GetChild(i).GetChild(j).transform.position.y, Ridge_Nick.transform.GetChild(i).GetChild(1).transform.position.z);
+
+
+                    //column_nick.transform.GetChild(i).GetChild(j).transform.position = new Vector3(percent_1 , column_nick.transform.GetChild(i).GetChild(j).transform.position.y, percent_2 );
+
+
+
+
+
+
+
+
+                    column_nick.transform.GetChild(i).transform.position = new Vector3(percent_1 + a * Mathf.Cos(45f), column_nick.transform.GetChild(i).transform.position.y, percent_2 + b * Mathf.Cos(45f));
+
+                    column_BODY_nick.transform.GetChild(i).transform.position = new Vector3(percent_1 + a * Mathf.Cos(45f), column_BODY_nick.transform.GetChild(i).transform.position.y, percent_2 + b * Mathf.Cos(45f));
+                    
+
+                    /*
+                    column_nick.transform.GetChild(i).GetChild(j).transform.Translate(a, 0, b);
+                    column_BODY_nick.transform.GetChild(i).GetChild(j).transform.Translate(a, 0, b);
+
+                    */
+
+
+
                 }
-            }
 
 
-            column_nick.transform.GetChild(i).GetComponent<catline>().ResetCatmullRom();
-            column_nick.transform.GetChild(i).GetComponent<circlecut1>().reset();
-            column_nick.transform.GetChild(i).GetComponent<Columntile>().reset();
+                column_nick.transform.GetChild(i).GetComponent<catline>().ResetCatmullRom();
+                column_nick.transform.GetChild(i).GetComponent<circlecut1>().reset();
+                column_nick.transform.GetChild(i).GetComponent<Columntile>().reset();
 
-            if (TingPartList[1].transform.GetChild(1).GetComponent<UIcontrol>().isCb == true)
-            {
+
                 column_BODY_nick.transform.GetChild(i).GetComponent<catline>().ResetCatmullRom();
                 column_BODY_nick.transform.GetChild(i).GetComponent<circlecut1>().reset();
                 column_BODY_nick.transform.GetChild(i).GetComponent<Columntile>().reset();
+
+
+
             }
             
+            column_nick.transform.GetChild(0).GetComponent<catline>().ResetCatmullRom();
+            column_nick.transform.GetChild(0).GetComponent<circlecut1>().reset();
+            column_nick.transform.GetChild(0).GetComponent<Columntile>().reset();
+
+
+            column_BODY_nick.transform.GetChild(0).GetComponent<catline>().ResetCatmullRom();
+            column_BODY_nick.transform.GetChild(0).GetComponent<circlecut1>().reset();
+            column_BODY_nick.transform.GetChild(0).GetComponent<Columntile>().reset();
+            
+
+
+
+
+
+            tower[k].transform.GetChild(0).GetChild(1).GetChild(0).GetComponent<ColumnControl>().columnmanage[0].GetComponent<catline>().ResetCatmullRom();
+            column_nick.transform.GetChild(0).GetComponent<ColumnControl>().reset();
+            column_BODY_nick.transform.GetChild(0).GetComponent<ColumnControl>().reset();
+
+
+            tower[k].transform.GetChild(3).GetComponent<FC>().reset();
+            tower[k].transform.GetChild(2).GetComponent<BC>().reset();
+
+
+
+            //上梁
+            tower[k].transform.GetChild(6).GetComponent<bigbon>().reset();
+
+            tower[k].transform.GetChild(7).GetComponent<ColumnBody>().reset();
+            
+          
 
         }
 
 
 
-        column_nick.transform.GetChild(0).GetComponent<ColumnControl>().reset();
 
-
-
-        if (TingPartList[1].transform.GetChild(1).GetComponent<UIcontrol>().isf == true)
-        {
-        TingPartList[1].transform.GetChild(3).GetComponent<FC>().reset();
-        }
-        if (TingPartList[1].transform.GetChild(1).GetComponent<UIcontrol>().isb == true)
-        {
-            TingPartList[1].transform.GetChild(2).GetComponent<BC>().reset();
-        }
-
-
-        //上梁
-        TingPartList[1].transform.GetChild(6).GetComponent<bigbon>().reset();
-
-        if (TingPartList[1].transform.GetChild(1).GetComponent<UIcontrol>().isCb == true)
-        {
-            TingPartList[1].transform.GetChild(7).GetComponent<ColumnBody>().reset();
-        }
 
 
 
 
 
     }
+
+    public void multi_roof()
+    {
+
+        for (int k = 0; k < tower.Count; k++)
+        {
+            if (tower_roof[k] != null)
+            {
+                Change_Double_Eave(k);
+            }
+        }
+
+
+    }
+
+
+
 
     public void rectangle_Platform(float a,float b)
     {
 
-        TingPartList[2].transform.GetChild(2).GetComponent<PlatForm>().para3reset(roof_tall, roof_long);
+        /*
+        for(int i=0;i<plat_tower.Count;i++)
+        {
+            plat_tower[i].transform.GetChild(4).transform.GetChild(0).GetChild(0).transform.Translate(a, 0, b);
+            plat_tower[i].transform.GetChild(4).transform.GetChild(0).GetChild(1).transform.Translate(a, 0, b);
+            plat_tower[i].transform.GetChild(4).transform.GetChild(0).GetChild(2).transform.Translate(a, 0, b);
+            plat_tower[i].transform.GetChild(4).transform.GetChild(0).GetChild(3).transform.Translate(a, 0, b);
 
-    
+
+            plat_tower[i].transform.GetChild(1).GetComponent<UIcontrol>().setnumberslidervalue();
+
+
+        }
+        */
+
+        for (int i = 0; i < plat_tower.Count; i++)
+        {
+            plat_tower[i].transform.GetChild(4).transform.GetChild(0).GetChild(0).transform.position = new Vector3(ini_platpoint_0.x +  a * Mathf.Cos(45), plat_tower[i].transform.GetChild(4).transform.GetChild(0).GetChild(0).transform.position.y, ini_platpoint_0.y +  b * Mathf.Cos(45));
+            plat_tower[i].transform.GetChild(4).transform.GetChild(0).GetChild(1).transform.position = new Vector3(ini_platpoint_2.x +  a * Mathf.Cos(45), plat_tower[i].transform.GetChild(4).transform.GetChild(0).GetChild(1).transform.position.y, ini_platpoint_2.y +  b * Mathf.Cos(45));
+            plat_tower[i].transform.GetChild(4).transform.GetChild(0).GetChild(2).transform.position = new Vector3(ini_platblas.x +  a * Mathf.Cos(45), plat_tower[i].transform.GetChild(4).transform.GetChild(0).GetChild(2).transform.position.y, ini_platblas.y +  b * Mathf.Cos(45));
+            plat_tower[i].transform.GetChild(4).transform.GetChild(0).GetChild(3).transform.position = new Vector3(ini_platpoint_1.x +  a * Mathf.Cos(45), plat_tower[i].transform.GetChild(4).transform.GetChild(0).GetChild(3).transform.position.y, ini_platpoint_1.y +  b * Mathf.Cos(45));
+
+
+            plat_tower[i].transform.GetChild(1).GetComponent<UIcontrol>().setnumberslidervalue();
+
+
+        }
+
+
+
+
+
     }
 
 
-    //rectangle_up
 
+    //刪除
+
+
+    public void deleteFrieze()
+    {
+
+        TingPartList[1].transform.GetChild(1).GetComponent<UIcontrol>().isb = false;
+
+        TingPartList[1].transform.GetChild(1).GetComponent<UIcontrol>().setnumberslidervalue();
+    }
+
+    public void deleteBalustrade()
+    {
+
+        TingPartList[1].transform.GetChild(1).GetComponent<UIcontrol>().isf = false;
+
+        TingPartList[1].transform.GetChild(1).GetComponent<UIcontrol>().setnumberslidervalue();
+    }
+
+    public void deleteBody()
+    {
+
+        TingPartList[1].transform.GetChild(1).GetComponent<UIcontrol>().isCb = false;
+
+        TingPartList[1].transform.GetChild(1).GetComponent<UIcontrol>().setnumberslidervalue();
+    }
+
+    public void deleteDoubleRoof()
+    {
+
+        for(int i =0;i<tower.Count;i++)
+        {
+
+            if (tower[i].name == TingPartList[1].name)
+            {
+                Destroy(tower_roof[i]);
+                tower_roof[i] = null;
+
+                break;
+            }
+
+
+
+        }
+
+
+
+    }
+
+
+
+    //rectangle_up
+    /*
     public void twolayer()
     {
 
@@ -881,7 +1425,7 @@ public class AllInOne : MonoBehaviour
         
        // TingPartList[0].transform.GetChild(1).GetComponent<roofcontrol>().setnumberslidervalue();
     }
-
+    */
 
 
 
@@ -899,7 +1443,10 @@ public class AllInOne : MonoBehaviour
 
 		clone.transform.parent = transform;
 
-		clone.transform.GetChild(1).GetComponent<roofcontrol>().numberslider.value = a;
+		//clone.transform.GetChild(1).GetComponent<roofcontrol>().numberslider.value = a;
+
+        clone.transform.GetChild(1).GetComponent<roofcontrol>().numberslidervalue = a;
+        clone.transform.GetChild(1).GetComponent<roofcontrol>().setnumberslidervalue();
 		//clone.transform.GetChild(1).GetComponent<roofcontrol>().setnumberslidervalue();
 
 		TingPartList[0] = clone;
@@ -918,6 +1465,7 @@ public class AllInOne : MonoBehaviour
 
 
     }
+
 	public void ResetBody(int a)
 	{
 
@@ -953,6 +1501,9 @@ public class AllInOne : MonoBehaviour
 
 	public void ResetAll(int a)
 	{
+        
+
+
 		ResetRoof(a);
 		ResetBody(a);
 		ResetPlatForm(a);
@@ -967,63 +1518,57 @@ public class AllInOne : MonoBehaviour
 
 	}
 
+    //this 
+
 	public void UpdateAll(int a)
 	{
-		TingPartList[0].transform.GetChild(1).GetComponent<roofcontrol>().numberslider.value = a;
-		TingPartList[1].transform.GetChild(1).GetComponent<UIcontrol>().numberslider.value = a;
-		TingPartList[2].transform.GetChild(1).GetComponent<UIcontrol>().numberslider.value = a;
-
-        GameObject.Find("bao-ding").transform.position = TingPartList[0].transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0).transform.position;
-
-        GameObject Ridge_Nick = TingPartList[0].transform.GetChild(0).GetChild(0).gameObject;
-
-        
-            TingPartList[1].transform.GetChild(0).GetChild(2).GetChild(0).GetComponent<ColumnControl>().reset();
-         
-            
-        if (TingPartList[1].transform.GetChild(1).GetComponent<UIcontrol>().isCb == true)
+       
+        //TingPartList[0].transform.GetChild(1).GetComponent<roofcontrol>().numberslider.value = a;
+        TingPartList[0].transform.GetChild(1).GetComponent<roofcontrol>().numberslidervalue = a;
+         TingPartList[0].transform.GetChild(1).GetComponent<roofcontrol>().setnumberslidervalue();
+      
+        for (int i = 0; i < tower.Count ;i++ )
         {
-            TingPartList[1].transform.GetChild(7).GetComponent<ColumnBody>().reset();
+
+
+            tower[i].transform.GetChild(1).GetComponent<UIcontrol>().numberslider.value = a;
+            if (tower_roof[i] != null)
+            {
+
+
+                tower[i].transform.GetChild(0).GetChild(2).GetChild(0).GetComponent<ColumnControl>().reset();
+
+                tower[i].transform.GetChild(7).GetComponent<ColumnBody>().reset();
+
+
+                Change_Double_Eave(i);
+            }
         }
 
 
 
+        for (int i = 0; i < plat_tower.Count; i++)
+        {
+            plat_tower[i].transform.GetChild(1).GetComponent<UIcontrol>().numberslider.value = a;
+        }
+
+
+
+        GameObject.Find("bao-ding").transform.position = TingPartList[0].transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0).transform.position;
+        GameObject Ridge_Nick = TingPartList[0].transform.GetChild(0).GetChild(0).gameObject;
+        
+
+        if(a==4)
+        { 
         ini_roof_tall = Vector3.Distance(Ridge_Nick.transform.GetChild(0).GetChild(2).transform.position, Ridge_Nick.transform.GetChild(3).GetChild(2).transform.position) / 2f;
         ini_roof_long = Vector3.Distance(Ridge_Nick.transform.GetChild(0).GetChild(2).transform.position, Ridge_Nick.transform.GetChild(1).GetChild(2).transform.position) / 2f;
-    
+        }
     
     }
 
 
 
-	/*
-	public void MoveBody()
-	{
-
-		TingPartList[1].transform.GetChild(0).GetChild(1).GetChild(0).transform.Translate(1, 0, 0);
-
-
-       
-		TingPartList[1].transform.GetChild(0).GetChild(1).GetChild(0).GetComponent<ColumnControl>().columnmanage[0].GetComponent<catline>().ResetCatmullRom();
-		TingPartList[1].transform.GetChild(0).GetChild(1).GetChild(0).GetComponent<ColumnControl>().reset();
-
-
-	}
-	 * */
-    /*
-	public void MoveBody2()
-	{
-
-		TingPartList[1].transform.GetChild(0).GetChild(1).GetChild(0).transform.Translate(-1, 0, 0);
-
-
-
-		TingPartList[1].transform.GetChild(0).GetChild(1).GetChild(0).GetComponent<ColumnControl>().columnmanage[0].GetComponent<catline>().ResetCatmullRom();
-		TingPartList[1].transform.GetChild(0).GetChild(1).GetChild(0).GetComponent<ColumnControl>().reset();
-
-
-	}
-    */
+	
 
 
 	//formfactor
@@ -1105,15 +1650,83 @@ public class AllInOne : MonoBehaviour
 
 
 	//body
-	public void MoveBody(float a)
+
+   
+	public IEnumerator MoveBody(float a)
 	{
 
-		TingPartList[1].transform.GetChild(0).GetChild(1).GetChild(0).transform.Translate((1 / percent) * a, 0, 0);
-        //temp
+        Vector3 arrow = TingPartList[1].transform.GetChild(0).GetChild(1).GetChild(0).GetChild(3).transform.position-this.transform.GetChild(0).transform.position;
 
 
 
-       // TingPartList[1].transform.GetChild(0).GetChild(2).GetChild(0).transform.Translate((1 / percent) * a *1/3, 0, 0);
+        Vector3 arrow2 = Vector3.Normalize(arrow);
+
+      
+
+        /*
+        TingPartList[1].transform.GetChild(0).GetChild(1).GetChild(0).transform.position = new Vector3(TingPartList[1].transform.GetChild(0).GetChild(1).GetChild(0).transform.position.x + ((1 / percent) * a * arrow2.x), TingPartList[1].transform.GetChild(0).GetChild(1).GetChild(0).transform.position.y, TingPartList[1].transform.GetChild(0).GetChild(1).GetChild(0).transform.position.z + ((1 / percent) * a * arrow2.z));
+
+
+
+        if (TingPartList[1].transform.GetChild(1).GetComponent<UIcontrol>().isCb == false)
+        {
+            TingPartList[1].transform.GetChild(0).GetChild(2).GetChild(0).transform.position = new Vector3(TingPartList[1].transform.GetChild(0).GetChild(2).GetChild(0).transform.position.x + ((1 / percent) * a * arrow2.x), TingPartList[1].transform.GetChild(0).GetChild(2).GetChild(0).transform.position.y, TingPartList[1].transform.GetChild(0).GetChild(2).GetChild(0).transform.position.z + ((1 / percent) * a * arrow2.z));
+        }
+        
+        */
+
+        /*
+        print("~AAAAA~    " + arrow2);
+        print("~~~~~~~~~~~~    "+a);
+        print(arrow2.x);
+        print(arrow2.z);
+        */
+
+
+
+
+        if(Rectangle_Or_Not==false)
+        { 
+        TingPartList[1].transform.GetChild(0).GetChild(1).GetChild(0).transform.position = new Vector3(percent_1 + percentdis * (a - 1) * arrow2.x, TingPartList[1].transform.GetChild(0).GetChild(1).GetChild(0).transform.position.y, percent_2 + percentdis * (a - 1) * arrow2.z);
+
+
+
+        //TingPartList[1].transform.GetChild(0).GetChild(1).GetChild(0).transform.position = new Vector3(percent_1*2, TingPartList[1].transform.GetChild(0).GetChild(1).GetChild(0).transform.position.y, percent_2 *2);
+        if (TingPartList[1].transform.GetChild(1).GetComponent<UIcontrol>().isCb == false)
+        {
+
+            //TingPartList[1].transform.GetChild(0).GetChild(2).GetChild(0).transform.position = new Vector3(percent_1 + ((percentdis) * (a - 1) * arrow2.x), TingPartList[1].transform.GetChild(0).GetChild(2).GetChild(0).transform.position.y, percent_2 + percentdis * (a - 1) * arrow2.z);
+
+            TingPartList[1].transform.GetChild(0).GetChild(2).GetChild(0).transform.position = new Vector3(percent_1 + ((arrow.magnitude) * (a - 1) * arrow2.x), TingPartList[1].transform.GetChild(0).GetChild(2).GetChild(0).transform.position.y, percent_2 + arrow.magnitude * (a - 1) * arrow2.z);
+       
+        
+        
+        }
+
+        }
+        else
+        {
+            TingPartList[1].transform.GetChild(0).GetChild(1).GetChild(0).transform.position = new Vector3(percent_1_rec + percentdis * (a - 1) * arrow2.x, TingPartList[1].transform.GetChild(0).GetChild(1).GetChild(0).transform.position.y, percent_2_rec + percentdis * (a - 1) * arrow2.z);
+
+
+
+            //TingPartList[1].transform.GetChild(0).GetChild(1).GetChild(0).transform.position = new Vector3(percent_1*2, TingPartList[1].transform.GetChild(0).GetChild(1).GetChild(0).transform.position.y, percent_2 *2);
+            if (TingPartList[1].transform.GetChild(1).GetComponent<UIcontrol>().isCb == false)
+            {
+                TingPartList[1].transform.GetChild(0).GetChild(2).GetChild(0).transform.position = new Vector3(percent_1_rec + ((percentdis) * (a - 1) * arrow2.x), TingPartList[1].transform.GetChild(0).GetChild(2).GetChild(0).transform.position.y, percent_2_rec + percentdis * (a - 1) * arrow2.z);
+
+
+
+            }
+
+        }
+
+
+
+
+
+
+
         //*************
 		TingPartList[1].transform.GetChild(0).GetChild(1).GetChild(0).GetComponent<ColumnControl>().columnmanage[0].GetComponent<catline>().ResetCatmullRom();
 		TingPartList[1].transform.GetChild(0).GetChild(1).GetChild(0).GetComponent<ColumnControl>().reset();
@@ -1122,7 +1735,7 @@ public class AllInOne : MonoBehaviour
         
             TingPartList[1].transform.GetChild(0).GetChild(2).GetChild(0).GetComponent<ColumnControl>().columnmanage[0].GetComponent<catline>().ResetCatmullRom();
             TingPartList[1].transform.GetChild(0).GetChild(2).GetChild(0).GetComponent<ColumnControl>().reset();
- if (TingPartList[1].transform.GetChild(1).GetComponent<UIcontrol>().isCb == true)
+        if (TingPartList[1].transform.GetChild(1).GetComponent<UIcontrol>().isCb == true)
         {
             TingPartList[1].transform.GetChild(7).GetComponent<ColumnBody>().reset();
         }
@@ -1146,8 +1759,8 @@ public class AllInOne : MonoBehaviour
 
         
         TingPartList[1].transform.GetChild(6).GetComponent<bigbon>().reset();
-       
-        
+
+        yield return 0;
 
 	}
 
@@ -1199,10 +1812,18 @@ public class AllInOne : MonoBehaviour
     public void moveBOBODY(float a)
     {
 
+
+
+
+
         if (TingPartList[1].transform.GetChild(1).GetComponent<UIcontrol>().isCb == true)
         {
-            TingPartList[1].transform.GetChild(0).GetChild(2).GetChild(0).transform.Translate((1 / percent2) * a, 0, 0);
+           // TingPartList[1].transform.GetChild(0).GetChild(2).GetChild(0).transform.Translate((1 / percent2) * a, 0, 0);
         }
+
+
+
+
 
         TingPartList[1].transform.GetChild(0).GetChild(2).GetChild(0).GetComponent<ColumnControl>().columnmanage[0].GetComponent<catline>().ResetCatmullRom();
         TingPartList[1].transform.GetChild(0).GetChild(2).GetChild(0).GetComponent<ColumnControl>().reset();
@@ -1251,72 +1872,24 @@ public class AllInOne : MonoBehaviour
 
         }
 
-                //TingPartList[1].transform.Translate(0, (columntall) * a, 0);
-
-
-
-
-        /*
-        TingPartList[1].transform.GetChild(0).GetChild(1).GetChild(0).GetChild(0).transform.Translate(0, (columntall) * a, 0);
-        TingPartList[1].transform.GetChild(0).GetChild(1).GetChild(0).GetChild(1).transform.Translate(0, (columntall) * a, 0);
-
-        TingPartList[1].transform.GetChild(0).GetChild(2).GetChild(0).GetChild(0).transform.Translate(0, (columntall) * a, 0);
-        TingPartList[1].transform.GetChild(0).GetChild(2).GetChild(0).GetChild(1).transform.Translate(0, (columntall) * a, 0);
-
-
-        */
-
-
-        //MoveTowerBody(TingPartList[1]);
-
-
-
-        //clone.transform.GetChild(2).GetComponent<UIcontrol>().numberslidervalue = ucit.numberslidervalue;
-        
-        
         TingPartList[1].transform.GetChild(1).GetComponent<UIcontrol>().setnumberslidervalue();
-
-
-        /*
-        TingPartList[1].transform.GetChild(0).GetChild(1).GetChild(0).GetComponent<catline>().ResetCatmullRom();
-        TingPartList[1].transform.GetChild(0).GetChild(1).GetChild(0).GetComponent<circlecut1>().reset();
-        TingPartList[1].transform.GetChild(0).GetChild(1).GetChild(0).GetComponent<Columntile>().reset();
-
-        TingPartList[1].transform.GetChild(7).GetComponent<ColumnBody>().reset();
-
-        */
-
         columntall = TingPartList[1].transform.GetChild(0).GetChild(1).GetChild(0).GetComponent<ColumnControl>().ColumnLong;
-
-
-        /*
-        GameObject cc = TingPartList[1];
-
-        Vector3 v1 = new Vector3(cc.transform.GetChild(0).GetChild(1).GetChild(0).GetChild(0).transform.position.x, cc.transform.GetChild(0).GetChild(1).GetChild(0).GetChild(0).transform.position.y-15,cc.transform.GetChild(0).GetChild(1).GetChild(0).GetChild(0).transform.position.z);
-
-
-
-        
-        GameObject clone2 = Instantiate(Resources.Load("RidgeCctwolayer"), v1, Quaternion.identity) as GameObject;
-        
-       
-        clone2.transform.parent = transform;
-        clone2.transform.GetChild(1).GetComponent<roofcontrol>().numberslider.value = ucit.numberslidervalue;
-        */
 
 
         GameObject.Find("bao-ding").transform.position = TingPartList[0].transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0).transform.position;
 
-        // TingPartList[0].transform.GetChild(1).GetComponent<roofcontrol>().setnumberslidervalue();
 
-
-
+        
     }
 
+    public void window(float a, float b)
+    {
 
+        TingPartList[1].transform.GetChild(7).GetComponent<ColumnBody>().up = a;
+        TingPartList[1].transform.GetChild(7).GetComponent<ColumnBody>().down = b;
 
-
-
+        TingPartList[1].transform.GetChild(1).GetComponent<UIcontrol>().setnumberslidervalue();
+    }
 
 
 
@@ -1331,21 +1904,258 @@ public class AllInOne : MonoBehaviour
 	}
 
 
+    public void moveplatform(float a,float b,float c)
+    {
+        //注意
+        print(a+" + "+c);
+
+
+        //Vector3 arrow = TingPartList[2].transform.GetChild(4).GetChild(0).GetChild(0).transform.position - this.transform.GetChild(0).transform.position;
+        Vector3 arrow = new Vector3(1, 0, 0);
+        Vector3 arrow2 = Vector3.Normalize(arrow);
+
+        
+        b = 1;
+        /*
+        TingPartList[2].transform.GetChild(4).GetChild(0).GetChild(0).transform.Translate((ini_platwide) * a * arrow2.x, b * (ini_plathigh), (ini_platwide) * a * arrow2.z);
+        TingPartList[2].transform.GetChild(4).GetChild(0).GetChild(1).transform.Translate((ini_platwide) * c * arrow2.x, -b * (ini_plathigh), (ini_platwide) * c * arrow2.z);
+        TingPartList[2].transform.GetChild(4).GetChild(0).GetChild(2).transform.Translate((ini_platwide) * a * arrow2.x, b * (ini_plathigh), (ini_platwide) * a * arrow2.z);
+        */
+
+
+        if(Rectangle_Or_Not==false)
+        { 
+        TingPartList[2].transform.GetChild(4).GetChild(0).GetChild(0).transform.position = new Vector3(ini_platpoint_0.x + ini_platpoint_0.magnitude * (a - 1) * arrow2.x, TingPartList[2].transform.GetChild(4).GetChild(0).GetChild(0).transform.position.y, ini_platpoint_0.y + ini_platpoint_0.magnitude*(a-1) * arrow2.z);
+        TingPartList[2].transform.GetChild(4).GetChild(0).GetChild(2).transform.position = new Vector3(ini_platblas.x + ini_platblas.magnitude * (a - 1) * arrow2.x, TingPartList[2].transform.GetChild(4).GetChild(0).GetChild(2).transform.position.y, ini_platblas.y + ini_platblas.magnitude * (a-1) * arrow2.z);
+        
+        TingPartList[2].transform.GetChild(4).GetChild(0).GetChild(1).transform.position = new Vector3(ini_platpoint_2.x + ini_platpoint_2.magnitude * (c - 1) * arrow2.x, TingPartList[2].transform.GetChild(4).GetChild(0).GetChild(1).transform.position.y, ini_platpoint_2.y + ini_platpoint_2.magnitude * (c-1) * arrow2.z);
+        }
+        else
+        {
+            TingPartList[2].transform.GetChild(4).GetChild(0).GetChild(0).transform.position = new Vector3(platpoint_0_rec.x + platpoint_0_rec.magnitude * (a - 1) * arrow2.x, TingPartList[2].transform.GetChild(4).GetChild(0).GetChild(0).transform.position.y, platpoint_0_rec.y + platpoint_0_rec.magnitude * (a-1) * arrow2.z);
+            TingPartList[2].transform.GetChild(4).GetChild(0).GetChild(2).transform.position = new Vector3(platblas_rec.x + platblas_rec.magnitude * (a - 1) * arrow2.x, TingPartList[2].transform.GetChild(4).GetChild(0).GetChild(2).transform.position.y, platblas_rec.y + platblas_rec.magnitude * (a-1) * arrow2.z);
+
+            TingPartList[2].transform.GetChild(4).GetChild(0).GetChild(1).transform.position = new Vector3(platpoint_2_rec.x + platpoint_2_rec.magnitude * (c - 1) * arrow2.x, TingPartList[2].transform.GetChild(4).GetChild(0).GetChild(1).transform.position.y, platpoint_2_rec.y + platpoint_2_rec.magnitude * (c-1) * arrow2.z);
+
+
+        }
+
+
+        
+        
+        
+        
+        
+        
+        TingPartList[2].transform.GetChild(4).GetChild(0).GetChild(3).transform.position = halfposition(TingPartList[2].transform.GetChild(4).GetChild(0).GetChild(0).transform.position, TingPartList[2].transform.GetChild(4).GetChild(0).GetChild(1).transform.position);
+
+
+        TingPartList[2].transform.GetChild(4).GetComponent<PlatcolumnControl>().reset();
+        /*
+        TingPartList[0].transform.Translate(0, b * (ini_plathigh), 0);
+
+        
+        for (int i = 0; i < tower.Count; i++)
+        {
+            
+
+               
+                    tower[i].transform.Translate(0, b * (ini_plathigh), 0);
+                    if (tower_roof[i] != null)
+                        tower_roof[i].transform.Translate(0, b * (ini_plathigh), 0);
+                
+        }
+
+
+        for (int i = 0; i < plat_tower.Count; i++)
+        {
+            if (TingPartList[2].name == plat_tower[i].name)
+            {
+
+                for (int j = i+1; j < plat_tower.Count; j++)
+                {
+                    plat_tower[j].transform.Translate(0, b * (ini_plathigh), 0);
+                    print("haha");
+                }
+
+
+
+                for (int j = i - 1; j >=0; j--)
+                {
+                    plat_tower[j].transform.Translate(0, -b * (ini_plathigh), 0);
+                    print("haha2");
+                }
+
+                break;
+            }
+
+        }
+
+        */
+
+
+        GameObject.Find("bao-ding").transform.position = TingPartList[0].transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0).transform.position;
+
+
+    }
+
+
+    public Vector3 halfposition(Vector3 a,Vector3 b)
+    {
+
+
+        Vector3  c = (a + b) / 2;
+
+        return c;
+
+    }
 
 
 
 
+    public void changplatblaustrade(float a,float b)
+    {
+        Vector3 arrow = TingPartList[2].transform.GetChild(4).GetChild(0).GetChild(0).transform.position - this.transform.GetChild(0).transform.position;
+
+        Vector3 arrow2 = Vector3.Normalize(arrow);
+
+        //TingPartList[2].transform.GetChild(4).GetChild(0).GetChild(0).transform.Translate((ini_platwide) * a * arrow2.x, b * (ini_plathigh), (ini_platwide) * a * arrow2.z);
+        
+        TingPartList[2].transform.GetChild(4).GetChild(0).GetChild(2).transform.Translate((ini_platwide) * a * arrow2.x, b * (ini_plathigh), (ini_platwide) * a * arrow2.z);
+
+
+       
+
+        TingPartList[2].transform.GetChild(4).GetComponent<PlatcolumnControl>().reset();
+
+    }
+
+    public void changeplatlayer(int a)
+    {
+        TingPartList[2] = plat_tower[a];
+        inUseTab = a;
+
+
+        //columntall = TingPartList[2].transform.GetChild(4).GetComponent<ColumnControl>().ColumnLong;
+
+    }
 
 
 
-	void OnGUI()
-	{
+
+    public void deleteplatlayer(int a)
+    {
+        TingPartList[2] = plat_tower[a];
+        inUseTab = a;
+
+
+        columntall = plat_tower[a].transform.GetChild(4).GetComponent<PlatcolumnControl>().high;
 
 
 
+        TingPartList[0].transform.Translate(0, -columntall, 0);
 
-	}
 
+
+        for (int i = 0; i < tower.Count; i++)
+        {
+
+            tower[i].transform.Translate(0, -columntall, 0);
+            if (tower_roof[i]!=null)
+            tower_roof[i].transform.Translate(0, -columntall, 0);
+              
+
+           
+        }
+
+
+        for (int i = 0; i < plat_tower.Count; i++)
+        {
+            if (TingPartList[2].name == plat_tower[i].name)
+            {
+
+                for (int j = i + 1; j < plat_tower.Count; j++)
+                {
+                    plat_tower[j].transform.Translate(0, -columntall, 0);
+                    print("haha");
+                }
+
+                /*
+                for (int j = i - 1; j >= 0; j--)
+                {
+                    plat_tower[j].transform.Translate(0, -columntall, 0);
+                    print("haha2");
+                }
+
+                */
+
+                break;
+            }
+
+        }
+
+
+        plat_tower.Remove(plat_tower[a]);
+
+
+        Destroy(TingPartList[2].gameObject);
+
+
+
+        GameObject.Find("bao-ding").transform.position = TingPartList[0].transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0).transform.position;
+        
+        if (a != 0)
+        {
+
+            TingPartList[2] = plat_tower[a - 1];
+            inUseTab = a - 1;
+        }
+        else
+        {
+            TingPartList[2] = plat_tower[a];
+            inUseTab = a;
+
+
+        }
+
+    }
+
+ 
+
+
+    public void platblas(bool a)
+    {
+
+
+        TingPartList[2].transform.GetChild(4).GetComponent<PlatcolumnControl>().B=a;
+        TingPartList[2].transform.GetChild(4).GetComponent<PlatcolumnControl>().reset();
+
+    }
+
+   public void platstair(bool a)
+    {
+        if (TingPartList[2].transform.GetChild(4).GetComponent<PlatcolumnControl>().B==true)
+        { 
+        TingPartList[2].transform.GetChild(4).GetComponent<PlatcolumnControl>().S = a;
+        TingPartList[2].transform.GetChild(4).GetComponent<PlatcolumnControl>().reset();
+        }
+    }
+
+
+    public void delete_platblas()
+   {
+       TingPartList[2].transform.GetChild(4).GetComponent<PlatcolumnControl>().B = false;
+       TingPartList[2].transform.GetChild(4).GetComponent<PlatcolumnControl>().S = false;
+       TingPartList[2].transform.GetChild(4).GetComponent<PlatcolumnControl>().reset();
+
+   }
+
+    public void delete_platstair()
+    {
+        TingPartList[2].transform.GetChild(4).GetComponent<PlatcolumnControl>().S = false;
+        TingPartList[2].transform.GetChild(4).GetComponent<PlatcolumnControl>().reset();
+
+    }
 
 
 

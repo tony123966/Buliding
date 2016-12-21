@@ -249,8 +249,12 @@ public class BC : MonoBehaviour {
         }
         BCL.Clear();
 
-        ini();
-        build();
+
+        if(uict.isf==true)
+        { 
+             ini();
+             build();
+        }
     }
 
 

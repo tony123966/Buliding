@@ -361,9 +361,11 @@ public class FC : MonoBehaviour {
         FCL.Clear();
 
 
-
-        ini();
-        build();
+        if (uict.isb == true)
+        {
+            ini();
+            build();
+        }
     }
 
 

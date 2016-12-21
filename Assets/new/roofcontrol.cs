@@ -16,9 +16,14 @@ public class roofcontrol : MonoBehaviour
 
     public bool upridge = false;
 
+    /*
     public Slider numberslider;
     public Slider tiledwideslider;
     public Slider ohoh;
+    */
+
+
+
 
     public int numberslidervalue;
     public int twvalue;
@@ -32,10 +37,17 @@ public class roofcontrol : MonoBehaviour
     {
         center = transform.parent.parent.GetChild(0).gameObject;
         
-        numberslidervalue = (int)numberslider.value;
+        //numberslidervalue = (int)numberslider.value;
+
+
+        //numberslidervalue = 5;
+        
         //ohohv = (int)ohoh.value;
 
-        setnumberslidervalue();
+
+            setnumberslidervalue();
+        
+    
     }
 
     // Update is called once per frame
@@ -80,11 +92,11 @@ public class roofcontrol : MonoBehaviour
     public void setnumberslidervalue()
     {
 
-
+       
 
 
        
-        numberslidervalue = (int)numberslider.value;
+        //numberslidervalue = (int)numberslider.value;
 
 
 

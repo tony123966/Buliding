@@ -195,7 +195,7 @@ public class roofsurcontrol : MonoBehaviour {
         Vector3 v2 = eaveControl.eavemanage[0].transform.GetChild(3).transform.position;
         Vector3 v3 = (ridgeControl.ridgemanage[0].transform.GetChild(1).transform.position + ridgeControl.ridgemanage[1].transform.GetChild(1).transform.position) / 2;
         //Vector3 v4 = (v1 + v3) / 2;
-        v3.y = v3.y - 2f;
+        v3.y = v3.y - 1f;
 
         GameObject rf = new GameObject();
         rf.AddComponent<catline>();
@@ -285,7 +285,7 @@ public class roofsurcontrol : MonoBehaviour {
          v3 = (ridgeControl.ridgemanage[i - 1].transform.GetChild(1).transform.position + ridgeControl.ridgemanage[i].transform.GetChild(1).transform.position) / 2;
         
         }
-        v3.y = v3.y - 2f;
+        v3.y = v3.y - 1f;
 
 
 
