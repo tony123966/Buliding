@@ -83,8 +83,9 @@ public class lineRendererControl
 }
 
 public class IconObject : lineRendererControl
-{	public enum PointIndex { LeftUpPoint = 0, RightUpPoint = 1, RightDownPoint = 2, LeftDownPoint = 3, };
-	public enum BodyType { GeneralBody = 0, CylinderBody = 1,}
+{
+	public enum PointIndex { LeftUpPoint = 0, RightUpPoint = 1, RightDownPoint = 2, LeftDownPoint = 3, };
+	public enum BodyType { GeneralBody = 0, CylinderBody = 1, }
 	public List<GameObject> controlPointList = new List<GameObject>();
 	public Vector3[] lastControlPointPosition = null;
 	public List<Vector3> controlPointList_Vec3_2_LineRender = new List<Vector3>();//用於lineRenderer的controlPoint
@@ -97,17 +98,17 @@ public class IconObject : lineRendererControl
 	public IconControl iconMenuControl;
 	public float centerX;
 	public float centerY;
-	public float closerDis=0.01f;
+	public float closerDis = 0.01f;
 	public IconObject()
 	{
 		if (Shader.Find("Outlined/Silhouetted Bumped Diffuse"))
 			silhouetteShader = new Material(Shader.Find("Outlined/Silhouetted Bumped Diffuse"));
 
 	}
-	public virtual void InitIconMenuButtonUpdate(){}
+	public virtual void InitIconMenuButtonUpdate() { }
 	public void InitIconMenuButtonSetting()
 	{
-		iconMenuControl.delelteButton.isDeleteIconButton=true;
+		iconMenuControl.delelteButton.isDeleteIconButton = true;
 		iconMenuControl.scrollBarButton.isScrollBarIconButton = false;
 	}
 	public void InitBodySetting(string objName, int bodyType)
@@ -193,7 +194,7 @@ public class IconObject : lineRendererControl
 	}
 	public void UpdateLastPos()
 	{
-		if (lastControlPointPosition==null)return;
+		if (lastControlPointPosition == null) return;
 		if (lastControlPointPosition.Length < controlPointList.Count)
 		{
 			lastControlPointPosition = new Vector3[controlPointList.Count];
@@ -250,6 +251,12 @@ public class IconObject : lineRendererControl
 			controlPointList[i].transform.parent = thisGameObject.transform;
 		}
 	}
+	public Vector3 ClampPos(Vector3 inputPos, GameObject chooseObj, Vector3 center)
+	{
+
+			return new Vector3(inputPos.x, inputPos.y, inputPos.z);
+	
+	}
 }
 public class VerandaIcon : IconObject//廡殿頂
 {
@@ -268,7 +275,7 @@ public class VerandaIcon : IconObject//廡殿頂
 		this.controlPointList = controlPointList;
 		InitControlPointList2lastControlPointPosition();
 
-		centerX = (controlPointList[(int)PointIndex.RightUpPoint].transform.position.x + controlPointList[(int)PointIndex.LeftUpPoint].transform.position.x)/2.0f;
+		centerX = (controlPointList[(int)PointIndex.RightUpPoint].transform.position.x + controlPointList[(int)PointIndex.LeftUpPoint].transform.position.x) / 2.0f;
 		verandaIconWidth = initVerandaIconWidth = controlPointList[(int)PointIndex.RightUpPoint].transform.position.x - controlPointList[(int)PointIndex.LeftUpPoint].transform.position.x;
 		verandaIconHeight = initVerandaIconHeight = controlPointList[(int)PointIndex.RightUpPoint].transform.position.y - controlPointList[(int)PointIndex.RightDownPoint].transform.position.y;
 
@@ -301,28 +308,28 @@ public class VerandaIcon : IconObject//廡殿頂
 		switch (index)
 		{
 			case (int)PointIndex.RightMainRidgePoint://rightMainRidge
-				minClampX = centerX+closerDis;
+				minClampX = centerX + closerDis;
 				maxClampX = controlPointList[(int)PointIndex.RightUpPoint].transform.position.x;
 				break;
 			case (int)PointIndex.LeftMainRidgePoint://leftMainRidge
 				minClampX = controlPointList[(int)PointIndex.LeftUpPoint].transform.position.x;
-				maxClampX = centerX-closerDis;
+				maxClampX = centerX - closerDis;
 				break;
 			case (int)PointIndex.LeftUpPoint://upLeft
-				maxClampX = centerX-minWidth/2.0f;
-				minClampY = controlPointList[(int)PointIndex.LeftMainRidgePoint].transform.position.y + minHeight/2.0f;
+				maxClampX = centerX - minWidth / 2.0f;
+				minClampY = controlPointList[(int)PointIndex.LeftMainRidgePoint].transform.position.y + minHeight / 2.0f;
 				break;
 			case (int)PointIndex.LeftDownPoint://downLeft
 				maxClampX = centerX - minWidth / 2.0f;
-				maxClampY = controlPointList[(int)PointIndex.LeftMainRidgePoint].transform.position.y - minHeight/2.0f;
+				maxClampY = controlPointList[(int)PointIndex.LeftMainRidgePoint].transform.position.y - minHeight / 2.0f;
 				break;
 			case (int)PointIndex.RightUpPoint://upRight
 				minClampX = centerX + minWidth / 2.0f;
-				minClampY = controlPointList[(int)PointIndex.RightMainRidgePoint].transform.position.y + minHeight/2.0f;
+				minClampY = controlPointList[(int)PointIndex.RightMainRidgePoint].transform.position.y + minHeight / 2.0f;
 				break;
 			case (int)PointIndex.RightDownPoint://downRight
 				minClampX = centerX + minWidth / 2.0f;
-				maxClampY = controlPointList[(int)PointIndex.RightMainRidgePoint].transform.position.y - minHeight/2.0f;
+				maxClampY = controlPointList[(int)PointIndex.RightMainRidgePoint].transform.position.y - minHeight / 2.0f;
 				break;
 		}
 
@@ -353,7 +360,7 @@ public class VerandaIcon : IconObject//廡殿頂
 				}
 			}
 			verandaIconWidth = controlPointList[(int)PointIndex.RightUpPoint].transform.position.x - controlPointList[(int)PointIndex.LeftUpPoint].transform.position.x;
-			verandaIconHeight =controlPointList[(int)PointIndex.RightUpPoint].transform.position.y - controlPointList[(int)PointIndex.RightDownPoint].transform.position.y;
+			verandaIconHeight = controlPointList[(int)PointIndex.RightUpPoint].transform.position.y - controlPointList[(int)PointIndex.RightDownPoint].transform.position.y;
 		}
 		else//mainRidge
 		{
@@ -365,7 +372,7 @@ public class VerandaIcon : IconObject//廡殿頂
 			{
 				controlPointList[(int)PointIndex.RightMainRidgePoint].transform.position = new Vector3(lastControlPointPosition[(int)PointIndex.RightMainRidgePoint].x - (offset_x), lastControlPointPosition[(int)PointIndex.RightMainRidgePoint].y, lastControlPointPosition[(int)PointIndex.RightMainRidgePoint].z);
 			}
-			mainRidgeWidth  = controlPointList[(int)PointIndex.RightMainRidgePoint].transform.position.x - controlPointList[(int)PointIndex.LeftMainRidgePoint].transform.position.x;
+			mainRidgeWidth = controlPointList[(int)PointIndex.RightMainRidgePoint].transform.position.x - controlPointList[(int)PointIndex.LeftMainRidgePoint].transform.position.x;
 		}
 		UpdateLastPos();
 		UpdateLineRender();
@@ -398,7 +405,7 @@ public class ShandingIcon : IconObject//歇山頂
 		this.controlPointList = controlPointList;
 		InitControlPointList2lastControlPointPosition();
 
-		centerX = (controlPointList[(int)PointIndex.RightUpPoint].transform.position.x + controlPointList[(int)PointIndex.LeftUpPoint].transform.position.x)/2.0f;
+		centerX = (controlPointList[(int)PointIndex.RightUpPoint].transform.position.x + controlPointList[(int)PointIndex.LeftUpPoint].transform.position.x) / 2.0f;
 		centerY = (controlPointList[(int)PointIndex.RightUpPoint].transform.position.y + controlPointList[(int)PointIndex.RightDownPoint].transform.position.y) / 2.0f;
 
 		initShandingIconWidth = controlPointList[(int)PointIndex.RightUpPoint].transform.position.x - controlPointList[(int)PointIndex.LeftUpPoint].transform.position.x;
@@ -438,51 +445,51 @@ public class ShandingIcon : IconObject//歇山頂
 			case (int)PointIndex.RightMainRidgePoint:
 				minClampX = centerX + closerDis;
 				maxClampX = controlPointList[1].transform.position.x;
-			break;
+				break;
 			case (int)PointIndex.LeftMainRidgePoint:
 				minClampX = controlPointList[0].transform.position.x;
 				maxClampX = centerX - closerDis;
-			break;
+				break;
 			case (int)PointIndex.LeftUpPoint:
-				maxClampX = centerX - minWidth/2.0f;
-				minClampY = controlPointList[6].transform.position.y + minHeight/2.0f;
-			break;
+				maxClampX = centerX - minWidth / 2.0f;
+				minClampY = controlPointList[6].transform.position.y + minHeight / 2.0f;
+				break;
 			case (int)PointIndex.LeftDownPoint:
-				maxClampX = centerX - minWidth/2.0f;
-				maxClampY = controlPointList[9].transform.position.y - minHeight/2.0f;
-			break;
+				maxClampX = centerX - minWidth / 2.0f;
+				maxClampY = controlPointList[9].transform.position.y - minHeight / 2.0f;
+				break;
 			case (int)PointIndex.RightUpPoint:
-				minClampX =  centerX + minWidth/2.0f;
-				minClampY = controlPointList[7].transform.position.y + minHeight/2.0f;
-			break;
+				minClampX = centerX + minWidth / 2.0f;
+				minClampY = controlPointList[7].transform.position.y + minHeight / 2.0f;
+				break;
 			case (int)PointIndex.RightDownPoint:
 				minClampX = centerX + minWidth / 2.0f;
-				maxClampY = controlPointList[8].transform.position.y - minHeight/2.0f;
-			break;
+				maxClampY = controlPointList[8].transform.position.y - minHeight / 2.0f;
+				break;
 			case (int)PointIndex.LeftUpCenterPoint:
 				minClampX = controlPointList[0].transform.position.x;
-				maxClampX = centerX-closerDis;
+				maxClampX = centerX - closerDis;
 				minClampY = centerY + closerDis;
 				maxClampY = controlPointList[0].transform.position.y - closerDis;
-			break;
+				break;
 			case (int)PointIndex.LeftDownCenterPoint:
 				minClampX = controlPointList[3].transform.position.x;
 				maxClampX = centerX - closerDis;
 				minClampY = controlPointList[3].transform.position.y + closerDis;
 				maxClampY = centerY - closerDis;
-			break;
+				break;
 			case (int)PointIndex.RightUpCenterPoint:
 				minClampX = centerX + closerDis;
 				maxClampX = controlPointList[1].transform.position.x;
 				minClampY = centerY + closerDis;
 				maxClampY = controlPointList[1].transform.position.y - closerDis;
-			break;
+				break;
 			case (int)PointIndex.RightDownCenterPoint:
 				minClampX = centerX + closerDis;
 				maxClampX = controlPointList[2].transform.position.x;
 				minClampY = controlPointList[2].transform.position.y + closerDis;
 				maxClampY = centerY - closerDis;
-			break;
+				break;
 
 		}
 		float posX = Mathf.Clamp(inputPos.x, minClampX, maxClampX);
@@ -717,10 +724,10 @@ public class MeshObj : MonoBehaviour
 
 		edgeIndex = verandaIcon.edgeIndex;
 
-		ini_bodydis.x =bodydis.x= (controlPointList[1].transform.position.x - controlPointList[0].transform.position.x)/2.0f;
-		ini_bodydis.y =bodydis.y= (controlPointList[1].transform.position.y - controlPointList[2].transform.position.y)/2.0f;
+		ini_bodydis.x = bodydis.x = (controlPointList[1].transform.position.x - controlPointList[0].transform.position.x) / 2.0f;
+		ini_bodydis.y = bodydis.y = (controlPointList[1].transform.position.y - controlPointList[2].transform.position.y) / 2.0f;
 
-		ini_mainRidgedis =mainRidgedis= (controlPointList[4].transform.position.x - controlPointList[5].transform.position.x)/2.0f;
+		ini_mainRidgedis = mainRidgedis = (controlPointList[4].transform.position.x - controlPointList[5].transform.position.x) / 2.0f;
 
 		return verandaIcon;
 	}
@@ -730,10 +737,10 @@ public class MeshObj : MonoBehaviour
 		shandingIcon.ShandingIconCreate(this, "ShandingIcon", controlPointList);
 
 		edgeIndex = shandingIcon.edgeIndex;
-		ini_bodydis.x =bodydis.x= (controlPointList[1].transform.position.x - controlPointList[0].transform.position.x)/2.0f;
-		ini_bodydis.y =bodydis.y= (controlPointList[1].transform.position.y - controlPointList[2].transform.position.y)/2.0f;
+		ini_bodydis.x = bodydis.x = (controlPointList[1].transform.position.x - controlPointList[0].transform.position.x) / 2.0f;
+		ini_bodydis.y = bodydis.y = (controlPointList[1].transform.position.y - controlPointList[2].transform.position.y) / 2.0f;
 
-		ini_mainRidgedis =mainRidgedis= (controlPointList[4].transform.position.x - controlPointList[5].transform.position.x)/2.0f;
+		ini_mainRidgedis = mainRidgedis = (controlPointList[4].transform.position.x - controlPointList[5].transform.position.x) / 2.0f;
 		return shandingIcon;
 	}
 	TriangleIcon CreateTriangleIcon()
@@ -816,8 +823,8 @@ public class MeshObj : MonoBehaviour
 					case "VerandaIcon"://specialCase
 						verandaIcon.AdjPos(tmp, i);
 						verandaIcon.AdjMesh();
-						bodydis = new Vector2(verandaIcon.verandaIconWidth / 2.0f, verandaIcon.verandaIconHeight/2.0f);
-						mainRidgedis=(controlPointList[4].transform.position.x - controlPointList[5].transform.position.x)/2.0f;
+						bodydis = new Vector2(verandaIcon.verandaIconWidth / 2.0f, verandaIcon.verandaIconHeight / 2.0f);
+						mainRidgedis = (controlPointList[4].transform.position.x - controlPointList[5].transform.position.x) / 2.0f;
 						break;
 					case "ShandingIcon"://specialCase
 						shandingIcon.AdjPos(tmp, i);
@@ -880,25 +887,41 @@ public class MeshObj : MonoBehaviour
 	}
 	public Vector3 ClampPos(Vector3 inputPos)
 	{
-		if (this.tag == "VerandaIcon")
+		GameObject chooseObj = dragitemcontroller.chooseObj;
+		Vector3 center = transform.position;
+		switch (gameObject.tag)
 		{
-			for (int i = 0; i < controlPointList.Count; i++)
-			{
-				if (dragitemcontroller.chooseObj == controlPointList[i])
+			case "VerandaIcon"://specialCase
+				for (int i = 0; i < controlPointList.Count; i++)
 				{
-					return verandaIcon.ClampPos(inputPos, i);
+					if (dragitemcontroller.chooseObj == controlPointList[i])
+					{
+						return verandaIcon.ClampPos(inputPos, i);
+					}
 				}
-			}
-		}
-		else if (this.tag == "ShandingIcon")
-		{
-			for (int i = 0; i < controlPointList.Count; i++)
-			{
-				if (dragitemcontroller.chooseObj == controlPointList[i])
+				break;
+			case "ShandingIcon"://specialCase
+				for (int i = 0; i < controlPointList.Count; i++)
 				{
-					return shandingIcon.ClampPos(inputPos, i);
+					if (dragitemcontroller.chooseObj == controlPointList[i])
+					{
+						return shandingIcon.ClampPos(inputPos, i);
+					}
 				}
-			}
+				break;
+			case "TriangleIcon":
+				return triangleIcon.ClampPos(inputPos, chooseObj, center);
+				break;
+			case "RectangleIcon":
+
+				break;
+			case "PentagonIcon":
+
+				break;
+			case "HexagonIcon":
+
+				break;
+
 		}
 		return inputPos;
 	}

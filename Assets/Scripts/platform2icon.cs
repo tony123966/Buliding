@@ -510,6 +510,10 @@ public class PlatFormIcon : RecMeshCreate
 public class CurvePlatformIcon : PlatFormIcon
 {
 	public enum PointIndex { LeftUpPoint = 0, RightUpPoint = 1, RightDownPoint = 2, LeftDownPoint = 3, LeftMidPoint = 4, RightMidPoint = 5, };
+	public float platMidWidthDis;
+	public float ini_platMidWidthDis;
+	public float platMid2TopDis;
+	public float ini_platMid2TopDis;
 
 	public GameObject rightMidPoint;
 	public GameObject leftMidPoint;
@@ -542,6 +546,9 @@ public class CurvePlatformIcon : PlatFormIcon
 		initPlatformHeight = platformHeight = rightUpPoint.transform.position.y - rightDownPoint.transform.position.y;
 		initPlatformTopWidth = platformTopWidth = (rightUpPoint.transform.position.x - leftUpPoint.transform.position.x);
 		initPlatformButtonWidth = platformButtonWidth = (rightDownPoint.transform.position.x - leftDownPoint.transform.position.x);
+		ini_platMidWidthDis = platMidWidthDis = (controlPointList[(int)PointIndex.RightMidPoint].transform.position.x - controlPointList[(int)PointIndex.LeftMidPoint].transform.position.x);
+		ini_platMid2TopDis = platMid2TopDis = (controlPointList[(int)PointIndex.RightUpPoint].transform.position.y - controlPointList[(int)PointIndex.RightMidPoint].transform.position.y);
+
 		//RightCatmullromLine
 		GameObject cR = new GameObject("CatLine_Right");
 		cR.transform.parent = thisGameObject.transform;
@@ -569,6 +576,8 @@ public class CurvePlatformIcon : PlatFormIcon
 
 		leftPlatformLine.catLine.SetLineNumberOfPoints(numberOfPoints);
 		leftPlatformLine.catLine.ResetCatmullRom();
+
+
 
 		controlPointList.Add(leftUpPoint);
 		controlPointList.Add(rightUpPoint);
@@ -730,7 +739,7 @@ public class CurvePlatformIcon : PlatFormIcon
 		float offset_x = tmp.x - lastControlPointPosition[index].x;
 		float offset_y = tmp.y - lastControlPointPosition[index].y;
 
-		for (int j = 0; j < 6; j++)
+		for (int j = 0; j < controlPointList.Count; j++)
 		{
 			if (index == j) continue;
 			if ((lastControlPointPosition[index].y == controlPointList[j].transform.position.y))//y相同
@@ -760,6 +769,8 @@ public class CurvePlatformIcon : PlatFormIcon
 		platformHeight = rightUpPoint.transform.position.y - rightDownPoint.transform.position.y;
 		platformTopWidth = (rightUpPoint.transform.position.x - leftUpPoint.transform.position.x);
 		platformButtonWidth = (rightDownPoint.transform.position.x - leftDownPoint.transform.position.x);
+		platMidWidthDis = (rightMidPoint.transform.position.x - leftMidPoint.transform.position.x);
+		platMid2TopDis = (rightUpPoint.transform.position.y - rightMidPoint.transform.position.y);
 		UpdateLastPos();
 		UpdateLineRender();
 
@@ -946,6 +957,10 @@ public class platform2icon : MonoBehaviour
 	public CurvePlatformIcon curvePlatformIcon;
 	public float stairWidth;
 	//for ratio
+	public float platMidWidthDis;
+	public float ini_platMidWidthDis;
+	public float platMid2TopDis;
+	public float ini_platMid2TopDis;
 	public float platTopWidthDis;
 	public float ini_platTopWidthDis;
 	public float platButtomWidthDis;
@@ -984,6 +999,9 @@ public class platform2icon : MonoBehaviour
 		ini_platButtomWidthDis = platButtomWidthDis = (controlPointList[(int)PointIndex.RightDownPoint].transform.position.x - controlPointList[(int)PointIndex.LeftDownPoint].transform.position.x) / 2.0f;
 		ini_platHeightDis = (controlPointList[(int)PointIndex.RightUpPoint].transform.position.y - controlPointList[(int)PointIndex.RightDownPoint].transform.position.y);
 
+		ini_platMidWidthDis=platMidWidthDis = (controlPointList[(int)PointIndex.RightMidPoint].transform.position.x - controlPointList[(int)PointIndex.LeftMidPoint].transform.position.x) / 2.0f;
+		ini_platMid2TopDis = platMid2TopDis = (controlPointList[(int)PointIndex.RightUpPoint].transform.position.y - controlPointList[(int)PointIndex.RightMidPoint].transform.position.y);
+
 		ini_platBalustradeDis.x = ini_platTopWidthDis;
 		ini_platBalustradeDis.y = ini_platHeightDis * 0.8f;
 
@@ -1000,6 +1018,7 @@ public class platform2icon : MonoBehaviour
 		ini_platTopWidthDis = platTopWidthDis = (controlPointList[(int)PointIndex.RightUpPoint].transform.position.x - controlPointList[(int)PointIndex.LeftUpPoint].transform.position.x) / 2.0f;
 		ini_platButtomWidthDis = platButtomWidthDis = (controlPointList[(int)PointIndex.RightDownPoint].transform.position.x - controlPointList[(int)PointIndex.LeftDownPoint].transform.position.x) / 2.0f;
 		ini_platHeightDis = (controlPointList[(int)PointIndex.RightUpPoint].transform.position.y - controlPointList[(int)PointIndex.RightDownPoint].transform.position.y);
+
 
 		ini_platBalustradeDis.x = ini_platTopWidthDis;
 		ini_platBalustradeDis.y = ini_platHeightDis * 0.8f;
@@ -1025,10 +1044,13 @@ public class platform2icon : MonoBehaviour
 				}
 				else if (chooseObj == curvePlatformIcon.rightDownPoint || chooseObj == curvePlatformIcon.leftDownPoint)
 				{
-			
-
 					platButtomWidthDis = curvePlatformIcon.platformButtonWidth / 2.0f;
 					platHeightDis = curvePlatformIcon.platformHeight;
+				}
+				else if (chooseObj == curvePlatformIcon.rightMidPoint || chooseObj == curvePlatformIcon.leftMidPoint)
+				{
+					platMidWidthDis = curvePlatformIcon.platMidWidthDis/2.0f;
+					platMid2TopDis = curvePlatformIcon.platMid2TopDis;
 				}
 				if (isPlatformBalustrade)
 				{

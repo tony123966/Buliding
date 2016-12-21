@@ -2256,7 +2256,7 @@ public class body2icon : MonoBehaviour
 
 		ini_bodydis.x = columnIcon.rightColumn.upPoint.transform.position.x - columnIcon.leftColumn.upPoint.transform.position.x;
 		ini_bodydis.x = ini_bodydis.x / 2.0f;
-		ini_wallWidth = ini_bodydis.x * 0.6f;
+		ini_wallWidth = ini_bodydis.x * 0.4f;
 
 		movement.horlist.Add(columnIcon.leftColumn.body);
 		movement.horlist.Add(columnIcon.rightColumn.body);
@@ -2427,7 +2427,7 @@ public class body2icon : MonoBehaviour
 				if (columnIcon.wallIcon == null)
 				{
 					isWall = true;
-
+					ini_wallWidth = columnIcon.columnWidth/2.0f * 0.6f;
 					columnIcon.CreateWall(this, "WallIcon", ini_wallWidth, ini_windowHeight, correspondingDragItemObject);
 
 				/*	movement.horlist.Add(columnIcon.wallIcon.rightDownPoint);
